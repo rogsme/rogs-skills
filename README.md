@@ -100,6 +100,7 @@ Model-invoked:
 Model-invoked:
 
 - [avoid-ai-tropes](skills/writing/avoid-ai-tropes/SKILL.md): write, proofread or deep-rewrite prose without the tells of machine-written text, keeping its meaning and the author's voice.
+- [asd-ste100](skills/writing/asd-ste100/SKILL.md): write or rewrite technical documentation in ASD-STE100 Simplified Technical English (Issue 9).
 - [chat-paste](skills/writing/chat-paste/SKILL.md): turn a message into a local preview page with buttons that copy it as Slack or Teams rich text.
 
 ## Credits
@@ -119,6 +120,7 @@ Other bundled work:
 
 | Skill | Source | License |
 |---|---|---|
+| `asd-ste100` | Written by David Mills; a working summary of [ASD-STE100](https://www.asd-ste100.org/) Issue 9, whose copyright ASD owns. Its folder carries his license notice. | MIT |
 | `chat-paste` | [marked](https://github.com/markedjs/marked) 18.1.0, vendored in `assets/vendor/` with its license | MIT |
 
 ## License
