@@ -34,6 +34,7 @@ User-invoked:
 
 Model-invoked:
 - [create-ticket](skills/lifecycle/create-ticket/SKILL.md): audit the code and the tracker, then draft and create worktree-safe tickets after you approve a preview.
+- [start-ticket](skills/lifecycle/start-ticket/SKILL.md): investigate a ticket read-only in its worktree and return a plan for approval.
 
 ### Engineering
 

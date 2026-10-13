@@ -8,3 +8,4 @@ Skills that carry a ticket from creation to a merged pull request. Run `/setup-r
 
 ## Model-invoked
 - [create-ticket](./create-ticket/SKILL.md): audit the code and the tracker, then draft and create worktree-safe tickets after you approve a preview.
+- [start-ticket](./start-ticket/SKILL.md): investigate a ticket read-only in its worktree and return a plan for approval.
