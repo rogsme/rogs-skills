@@ -47,7 +47,7 @@ A skill never links into another skill's folder. Material that two skills need l
 
 ## Agnosticism
 
-Skills say "the tracker" and "the forge" and take every concrete operation from the project's configuration. Only the built-in guides (`skills/lifecycle/setup-rogs/assets/tracker-*.md` and `assets/forge-*.md`) name a tracker, a forge, their CLIs or their MCP tools. `setup-rogs/SKILL.md` and `setup-rogs/references/explore.md` may name the built-in guides when offering them.
+Skills say "the tracker" and "the forge" and take every concrete operation from the project's configuration. Only the built-in guides (`skills/lifecycle/setup-rogs/assets/tracker-*.md` and `assets/forge-*.md`) name a tracker, a forge, their CLIs or their MCP tools. `setup-rogs/SKILL.md` and `setup-rogs/references/explore.md` may name the built-in guides when offering them, and a `## Sources` section may cite a vendor's documentation.
 
 ## Configuration contract
 
@@ -166,7 +166,7 @@ Dashes (prints nothing when clean):
 grep -rnP '[\x{2013}\x{2014}]' --exclude-dir=.git .
 ```
 
-Agnosticism (prints only the built-in guides and the two allowed setup files; tool names are matched as proper nouns so ordinary words like "linear" pass):
+Agnosticism (prints only the built-in guides, the two allowed setup files, and `commit/references/git-edge-cases.md` for its sources; tool names are matched as proper nouns so ordinary words like "linear" pass):
 
 ```bash
 grep -rlE '\bLinear\b|\bKaneo\b|GitHub|Gitea|GitLab|\bgh |\btea |\bglab |mcp__' skills
