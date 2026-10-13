@@ -27,13 +27,12 @@ description: "One quoted line of at most 1024 characters."
 license: MIT
 metadata:
   rogs-skills/contract: "1"
-  opencode/slash: "true"
 ---
 ```
 
 - `name` equals the folder name and matches `^[a-z0-9]+(-[a-z0-9]+)*$`.
 - The description stays on one quoted line. When the YAML fails to parse, Claude Code silently drops every field, including the ones that keep a skill user-invoked.
-- Metadata values are strings. `rogs-skills/contract` is the configuration contract version the skill expects; `opencode/slash` exposes the skill as a `/name` command in OpenCode.
+- Metadata values are strings. `rogs-skills/contract` is the configuration contract version the skill expects. OpenCode v2 lists every skill under `@` in its prompt, so no metadata key is needed to expose one; it ignores the v1 `opencode/slash` key.
 - `compatibility` is optional and used only for real environment requirements.
 
 ## Invocation
@@ -139,8 +138,7 @@ for md in skills:
         and 1 <= len(description) <= 1024 and "\n" not in description,
         "license must be MIT": fm.get("license") == "MIT",
         "metadata values must be strings": all(isinstance(v, str) for v in meta.values()),
-        "metadata needs rogs-skills/contract and opencode/slash": "rogs-skills/contract" in meta
-        and meta.get("opencode/slash") == "true",
+        "metadata needs rogs-skills/contract": "rogs-skills/contract" in meta,
         "invocation keys must pair up": (fm.get("disable-model-invocation") is True)
         == (meta.get("opencode/autoinvoke") == "false"),
         "SKILL.md must stay under 500 lines": text.count("\n") < 500,

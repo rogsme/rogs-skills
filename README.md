@@ -18,6 +18,8 @@ npx skills add https://gitlab.com/rogs/skills.git --skill tdd
 
 Pull newer versions later with `npx skills update`.
 
+This README writes skill names as Claude Code commands, such as `/setup-rogs`. In OpenCode, mention the skill as `@setup-rogs` instead.
+
 ## Set up a repository
 
 The lifecycle skills are general: they learn where tickets live, how the forge is driven and how the code is checked from a few prose files in the repository. In each repository, run:
