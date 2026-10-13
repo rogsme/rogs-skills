@@ -31,7 +31,7 @@ Read only, before any tracker action.
 
    When the files are missing here but exist in the main worktree (the first entry of `git worktree list --porcelain`), the second line says instead: "The configuration exists in <path> but not on this branch. Commit `docs/agents/` to the base branch, then merge the base into this branch." When the marker shows another version, it says: "The configuration is version <n>; this skill expects version 1.", followed by "Run /setup-rogs here to update it." for an older version or "Run `npx skills update` to update the installed skills." for a newer one.
 
-From here on, "the tracker" and every operation named in backticks (`search`, `create`, `relate`, ...) mean what `issue-tracker.md` defines, under its `## Operating rules`. When an operation says `Capability: Unsupported`, follow its fallback or the gap the file describes; stop with `Status: BLOCKED` and a `Reason:` line when no way forward exists.
+From here on, "the tracker" and every operation named in backticks (`search`, `create`, `relate`, ...) mean what `issue-tracker.md` defines, under its `## Operating rules`. When an operation says `Capability: Unsupported`, follow its fallback or the gap the file describes; stop with `Status: BLOCKED` and a `Reason:` line when no way forward exists. Any other stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`.
 
 ## 1. Classify the request
 

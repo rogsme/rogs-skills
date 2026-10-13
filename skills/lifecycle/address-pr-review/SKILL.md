@@ -35,7 +35,7 @@ Read only, before any git, tracker or forge action.
 
    When the files are missing here but exist in the main worktree (the first entry of `git worktree list --porcelain`), the second line says instead: "The configuration exists in <path> but not on this branch. Commit `docs/agents/` to the base branch, then merge the base into this branch." When the marker shows another version, it says: "The configuration is version <n>; this skill expects version 1.", followed by "Run /setup-rogs here to update it." for an older version or "Run `npx skills update` to update the installed skills." for a newer one.
 
-From here on, "the tracker", "the forge" and every operation named in backticks (`feedback`, `reply`, `push`, ...) mean what those files define, under their operating rules.
+From here on, "the tracker", "the forge" and every operation named in backticks (`feedback`, `reply`, `push`, ...) mean what those files define, under their operating rules. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`.
 
 ## 1. Verify the branch and the pull request
 
@@ -64,7 +64,7 @@ A reply this skill posted starts with one of the four prefixes in step 6. Treat 
 When there is no unanswered feedback:
 
 - If the base moved past the pull request (the fetched base is not an ancestor of the head), which is also what a review or a merge attempt that stopped with `BLOCKED_FOR_SYNC` found, run the sync-only pass in step 9.
-- Otherwise report that and stop, without creating commits or comments.
+- Otherwise report that and stop, without creating commits or comments, ending with `Status: READY_FOR_REVIEW`: the pull request is still waiting for review.
 
 ## 4. Validate each comment
 

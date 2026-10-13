@@ -35,7 +35,7 @@ Summarize what is present, what is missing, what conflicts, and what the configu
 
 Take the sections below in order, one per turn. Lead each with your recommended answer so the user can accept it in a word, and add a one-line explanation only where the choice genuinely branches. Skip a section that exploration already settled, and say what settled it. When the user answers "use your recommendations" for the rest, take them, and still stop for any live check that fails.
 
-A. Tracker: which tracker, the connection (the exact MCP server name, the CLI and host, or the directory), and the identity (workspace, team or project, ticket key and id format). Then run the guide's connection check. When it fails, stop: write nothing, explain that setup records the connection but never edits the harness configuration, tell the user how to add it (the guide's setup notes say how), and ask them to run `/setup-rogs` again afterwards.
+A. Tracker: which tracker, the connection (the exact MCP server name, the CLI and host, or the directory), and the identity (workspace, team or project, ticket key and id format). Then run the guide's connection check. When it fails, stop: write nothing, explain that setup records the connection but never edits the harness configuration, tell the user how to add it (the guide's setup notes say how), and ask them to run `/setup-rogs` again afterwards. End with `Status: BLOCKED` and a one-line `Reason:`; every other stop in this skill ends the same way.
 
 B. States: map each lifecycle role (`new`, `ready`, `in-progress`, `in-review`, `done`, `canceled`, `blocked`) to the live states, and ask whether the tracker moves tickets on its own, for example when a pull request opens or merges.
 
