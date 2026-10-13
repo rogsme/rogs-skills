@@ -5,19 +5,15 @@ Agent skills that carry a ticket from creation to a merged pull request, plus th
 ## Install
 
 ```bash
-npx skills add https://git.rogs.me/rogs/rogs-skills.git
+npx skills add https://gitlab.com/rogs/rogs-skills.git
 ```
 
-The CLI asks which skills to take, which agents to install them for, and whether they go into the current project or into your home directory. The same repository over SSH:
-
-```bash
-npx skills add git@git.rogs.me:rogs/rogs-skills.git
-```
+The CLI asks which skills to take, which agents to install them for, and whether they go into the current project or into your home directory.
 
 One skill on its own:
 
 ```bash
-npx skills add https://git.rogs.me/rogs/rogs-skills.git --skill tdd
+npx skills add https://gitlab.com/rogs/rogs-skills.git --skill tdd
 ```
 
 Pull newer versions later with `npx skills update`.
