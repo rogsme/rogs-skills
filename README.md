@@ -87,6 +87,7 @@ Model-invoked:
 - [tdd](skills/engineering/tdd/SKILL.md): test-driven development in vertical red-green slices, testing behavior at agreed seams.
 - [writing-for-agents](skills/engineering/writing-for-agents/SKILL.md): how to write skills, `AGENTS.md`/`CLAUDE.md` and any other document an agent reads.
 - [resolving-merge-conflicts](skills/engineering/resolving-merge-conflicts/SKILL.md): resolve an in-progress merge or rebase conflict hunk by hunk, by tracing each side's intent to its source.
+- [diagnosing-bugs](skills/engineering/diagnosing-bugs/SKILL.md): reproduce a hard bug or performance regression with a tight loop that goes red, then minimise, hypothesise, instrument, fix and clean up.
 - [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md): grill a plan or design in rounds until every decision is settled, recording glossary terms and ADRs as they land.
 - [commit](skills/engineering/commit/SKILL.md): turn the worktree, or a scope another skill hands over, into atomic commits that follow the repository's conventions.
 - [create-pr](skills/engineering/create-pr/SKILL.md): open one pull request on any forge from the repository's template, with every field verified after publishing; work-ticket publishes through it.
@@ -111,6 +112,7 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 | `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
 | `resolving-merge-conflicts` | `skills/engineering/resolving-merge-conflicts/` (deleted upstream in `daa01d8`) | `3216582` |
 | `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/productivity/grilling/`, `skills/engineering/domain-modeling/` | `49dd158` |
+| `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
 | `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `49dd158` |
 | `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `49dd158` |
 

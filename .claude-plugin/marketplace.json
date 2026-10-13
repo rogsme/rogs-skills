@@ -13,6 +13,7 @@
       "skills": [
         "./skills/engineering/commit",
         "./skills/engineering/create-pr",
+        "./skills/engineering/diagnosing-bugs",
         "./skills/engineering/git-archaeology",
         "./skills/engineering/grill-with-docs",
         "./skills/engineering/resolving-merge-conflicts",
