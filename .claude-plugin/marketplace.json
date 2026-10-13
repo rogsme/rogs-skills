@@ -1,0 +1,49 @@
+{
+  "name": "rogs-skills",
+  "description": "Agent Skills for a ticket-to-merge workflow.",
+  "owner": {
+    "name": "Roger Gonzalez",
+    "url": "https://git.rogs.me/rogs"
+  },
+  "plugins": [
+    {
+      "name": "engineering",
+      "source": "./",
+      "description": "Skills that stand on their own, including the ones the lifecycle calls.",
+      "skills": [
+        "./skills/engineering/commit",
+        "./skills/engineering/create-pr",
+        "./skills/engineering/git-archaeology",
+        "./skills/engineering/grill-with-docs",
+        "./skills/engineering/resolving-merge-conflicts",
+        "./skills/engineering/tdd",
+        "./skills/engineering/wiki",
+        "./skills/engineering/writing-for-agents"
+      ]
+    },
+    {
+      "name": "lifecycle",
+      "source": "./",
+      "description": "setup-rogs and the ticket skills that read the configuration it writes.",
+      "skills": [
+        "./skills/lifecycle/address-pr-review",
+        "./skills/lifecycle/create-ticket",
+        "./skills/lifecycle/finish-ticket",
+        "./skills/lifecycle/review-pr",
+        "./skills/lifecycle/setup-rogs",
+        "./skills/lifecycle/start-ticket",
+        "./skills/lifecycle/work-ticket"
+      ]
+    },
+    {
+      "name": "writing",
+      "source": "./",
+      "description": "Skills for prose meant for people: style, controlled English, chat formatting.",
+      "skills": [
+        "./skills/writing/asd-ste100",
+        "./skills/writing/avoid-ai-tropes",
+        "./skills/writing/chat-paste"
+      ]
+    }
+  ]
+}

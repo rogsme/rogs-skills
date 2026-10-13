@@ -10,9 +10,9 @@ Skills live in bucket folders under `skills/`:
 - `engineering/`: skills that stand on their own, including the ones the lifecycle calls.
 - `writing/`: skills for prose meant for people: style, controlled English, chat formatting.
 
-A skill is a folder whose name equals its `name`, holding a `SKILL.md` and, when needed, `references/`, `assets/`, `scripts/`, `tests/` or `evals/`. Each bucket has a `README.md` listing its skills (name linked to `SKILL.md`, one-line description) under **User-invoked** and **Model-invoked**. The top-level `README.md` lists every skill the same way. A commit that adds, renames or removes a skill updates both.
+A skill is a folder whose name equals its `name`, holding a `SKILL.md` and, when needed, `references/`, `assets/`, `scripts/`, `tests/` or `evals/`. Each bucket has a `README.md` listing its skills (name linked to `SKILL.md`, one-line description) under **User-invoked** and **Model-invoked**. The top-level `README.md` lists every skill the same way. `.claude-plugin/marketplace.json` lists every skill's path under the plugin named after its bucket; the skills CLI turns each plugin into a collapsible group in the `npx skills add` picker and puts unlisted skills under "Other". A commit that adds, renames or removes a skill updates all three.
 
-The repository ships skills and nothing else. Subagent definitions, harness commands, CI workflows, harness config files (`.mcp.json`, `opencode.json`), plugin manifests and `agents/openai.yaml` stay out.
+The repository ships skills and nothing else. Subagent definitions, harness commands, CI workflows, harness config files (`.mcp.json`, `opencode.json`), `agents/openai.yaml` and plugin manifests other than that `marketplace.json` stay out.
 
 Never install skills into this checkout. `.gitignore` keeps a test install out of git, but the skills CLI would still discover it as a second copy of every skill.
 
@@ -104,11 +104,11 @@ To sync a fork, download the upstream files at the pinned commit and at the new 
 
 Run these from the repository root before pushing.
 
-Frontmatter, size and links:
+Frontmatter, size, links and marketplace groups:
 
 ```bash
 uv run --quiet --with pyyaml python3 - <<'PY'
-import pathlib, re, sys
+import json, pathlib, re, sys
 import yaml
 
 ALLOWED = {"name", "description", "license", "compatibility", "metadata",
@@ -156,6 +156,16 @@ for md in sorted(pathlib.Path("skills").rglob("*.md")):
             errors.append(f"{md}: broken link {target}")
         elif root and root.resolve() not in (path, *path.parents):
             errors.append(f"{md}: link leaves its skill folder: {target}")
+manifest = json.loads(pathlib.Path(".claude-plugin/marketplace.json").read_text())
+grouped = [(plugin["name"], path) for plugin in manifest["plugins"] for path in plugin["skills"]]
+expected = {f"./{md.parent}": md.parent.parent.name for md in skills}
+for plugin, path in grouped:
+    if expected.get(path) != plugin:
+        errors.append(f"marketplace.json: {path} does not belong in plugin {plugin}")
+for path in expected.keys() - {path for _, path in grouped}:
+    errors.append(f"marketplace.json: {path} is missing")
+if len(grouped) != len({path for _, path in grouped}):
+    errors.append("marketplace.json: a skill is listed twice")
 print("\n".join(errors) or f"OK: {len(skills)} skills")
 sys.exit(1 if errors else 0)
 PY
@@ -173,7 +183,7 @@ Agnosticism (prints only the built-in guides, the two allowed setup files, and `
 grep -rlE '\bLinear\b|\bKaneo\b|GitHub|Gitea|GitLab|\bgh |\btea |\bglab |mcp__' skills
 ```
 
-Discovery (lists every skill exactly once):
+Discovery (lists every skill exactly once, under the headers Engineering, Lifecycle and Writing):
 
 ```bash
 npx skills@latest add "$PWD" --list
