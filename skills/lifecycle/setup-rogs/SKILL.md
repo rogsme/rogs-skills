@@ -13,7 +13,11 @@ metadata:
 
 Write the prose configuration the lifecycle skills (`create-ticket`, `start-ticket`, `work-ticket`, `review-pr`, `address-pr-review`, `finish-ticket`) read in this repository: where tickets live, how the forge is driven, how the code is verified, where the domain docs are, and which optional features are on. [references/contract.md](references/contract.md) defines every file and heading; the seeds and built-in guides in `assets/` follow it.
 
-This is a prompt-driven skill. Explore, present what you found, confirm one section at a time, show the drafts, then write. Running it again is always safe: it updates its own files in place, never duplicates anything, never overwrites an edit without showing it, and never deletes a file.
+This is a prompt-driven skill. Explore, record what the repository and the live checks settle, ask only the decisions they leave open, show a summary of the drafts, then write. Running it again is always safe: it updates its own files in place, never duplicates anything, never overwrites an edit without showing it, and never deletes a file.
+
+## Asking
+
+Every choice goes through the harness's structured question tool (`AskUserQuestion` in Claude Code, `question` in OpenCode), up to four questions per call: one decision per question, two to four mutually exclusive options, the recommended option first with "(Recommended)" at the end of its label, and a one-line description per option saying what gets recorded. The tool adds a free-text answer on its own. Material only the user can describe in their own words, such as the operation-by-operation questions of the custom tracker and forge guides, is asked in plain text. Without a question tool, ask in text and put every open decision in one message. Every stop that waits on the user uses this, the final write and commit choices included.
 
 ## Modes
 
@@ -26,14 +30,21 @@ Follow [references/explore.md](references/explore.md). It covers the repository 
 
 ## 2. Present the findings
 
-Summarize what is present, what is missing, what conflicts, and what the configuration would supersede (older project copies of the lifecycle skills, hand-written tracker or forge docs). Name the built-in guides you would use:
+Summarize briefly what is present, what is missing, what conflicts, and what the configuration would supersede (older project copies of the lifecycle skills, hand-written tracker or forge docs). Report a contradiction in a file this skill never edits, such as a rule file that rebases where the lifecycle merges, as a finding for the user to fix; it is not a question. Then list, grouped by the sections of step 3, the values exploration settled and will record without asking, one line of evidence each; the user corrects any of them in step 5 instead of confirming them one by one. Name the built-in guides you would use:
 
 - Trackers: [Linear](assets/tracker-linear.md), [Kaneo](assets/tracker-kaneo.md), [GitHub Issues](assets/tracker-github.md), [local markdown](assets/tracker-local.md), or [any other tracker](assets/tracker-custom.md) the user describes.
 - Forges: [GitHub](assets/forge-github.md), [Gitea](assets/forge-gitea.md), [GitLab](assets/forge-gitlab.md), or [any other forge](assets/forge-custom.md) the user describes.
 
-## 3. Interview
+## 3. Resolve the open decisions
 
-Take the sections below in order, one per turn. Lead each with your recommended answer so the user can accept it in a word, and add a one-line explanation only where the choice genuinely branches. Skip a section that exploration already settled, and say what settled it. When the user answers "use your recommendations" for the rest, take them, and still stop for any live check that fails.
+The sections below are what the configuration must cover, not a sequence of turns. Record every value the evidence settles. A value becomes a question only when:
+
+- exploration found no evidence for it;
+- the evidence conflicts, such as an assignee pattern in history against a team that just changed;
+- it is a policy the repository cannot show, such as automations configured inside the tracker;
+- it drops or replaces existing user content (step 6 lists those cases).
+
+Settle section A's connection first, and stop when its check fails. Then ask the open decisions in batches of up to four, in section order, and still stop for any live check that fails.
 
 A. Tracker: which tracker, the connection (the exact MCP server name, the CLI and host, or the directory), and the identity (workspace, team or project, ticket key and id format). Then run the guide's connection check. When it fails, stop: write nothing, explain that setup records the connection but never edits the harness configuration, tell the user how to add it (the guide's setup notes say how), and ask them to run `/setup-rogs` again afterwards. End with `Status: BLOCKED` and a one-line `Reason:`; every other stop in this skill ends the same way.
 
@@ -79,7 +90,7 @@ A guide's `## Setup notes` stay in the guide. When a guide offers variants (stat
 
 ## 5. Show the drafts
 
-Call the Skill tool with "writing-for-agents" before drafting. Then show the full text of every new file, a unified diff for every existing one, and the block with the file it goes into. Let the user edit before anything is written.
+Call the Skill tool with "writing-for-agents" before drafting. Write the drafts to a temporary directory outside the repository. Show a table with one row per file: its path, whether it is created or updated, and what it records in one line. Add a unified diff for every existing file and the block with the file it goes into, and ask any step 6 decision not yet asked. Then ask once, naming the draft directory so the user can edit the files first: write them (recommended), show the full drafts first, or cancel.
 
 ## 6. Write
 
@@ -95,7 +106,7 @@ Never edit `.gitignore` (propose the lines instead), harness configuration, CI f
 
 ## 7. Report
 
-List the files created, updated and left unchanged, the docs the configuration supersedes, and any proposed `.gitignore` lines. Tell the user to commit `docs/agents/` and the block to the base branch before cutting ticket worktrees, since the lifecycle skills read the configuration from the checkout they run in. Commit only when the user asks: then call the Skill tool with "commit", scoped to exactly those files.
+List the files created, updated and left unchanged, the docs the configuration supersedes, and any proposed `.gitignore` lines. Tell the user to commit `docs/agents/` and the block to the base branch before cutting ticket worktrees, since the lifecycle skills read the configuration from the checkout they run in. Then ask whether to commit them now or leave them uncommitted; on commit, call the Skill tool with "commit", scoped to exactly those files.
 
 End with `Status: CONFIGURED`.
 
