@@ -30,7 +30,7 @@ The version is one integer for the whole contract. It changes only for a breakin
 
 Seeds mark every value setup still has to fill as `{{FILL: what goes here}}`. A file that still contains `{{FILL:` is incomplete.
 
-Each operation (an H3 under `## Operations`) ends with exactly one capability line:
+Each operation (an H3 under `## Operations`) ends with exactly one capability line, and a short note before the first operation (on placeholders, for example) is allowed:
 
 - `Capability: Supported`
 - `Capability: Fallback: <what to do instead>`
@@ -62,10 +62,10 @@ Tracker operations:
 | `metadata` | States, labels, members and projects, read live at use time. |
 | `create` | Title, description, state, priority, labels, assignee and project; returns the new id and URL. |
 | `update` | Change a ticket's description or fields; states whether label writes replace the whole set. |
-| `relate` | Add blocked-by, related and parent relations; states which are append-only and which the tracker lacks. |
+| `relate` | Add blocked-by, related and parent relations; states which are append-only. A tracker that lacks some relation types stays `Supported` and names the missing ones, and the skills use description lines for those; a tracker with no relations at all is `Fallback: description lines`. |
 | `comment` | Find an existing comment by its first-line heading and reuse or edit it; otherwise create one; read it back. |
 | `transition` | Move a ticket to the state mapped to a role, then read the state back. |
-| `attach` | Upload a file to a ticket and return a stable URL. |
+| `attach` | Upload a file to a ticket. The body says whether the returned URL is permanent; when it is not, the skills link the forge's permanent URL for the same file instead. |
 
 ## forge.md
 
@@ -183,7 +183,7 @@ An operation marked `Capability: Unsupported` still satisfies the heading check.
 | Gap | What the skills do |
 |---|---|
 | The tracker cannot attach files | Upload captures to the forge only; the tracker comment links the forge URLs. |
-| The forge cannot attach files | Upload captures to the tracker only and link them from the pull request. |
+| The forge cannot attach files | Upload captures to the tracker only, and link them from the pull request when the tracker's URLs are permanent; otherwise treat it as neither side being able to attach. |
 | Neither can attach | Keep captures in a temporary directory outside the repository, list their paths, and mark every visible criterion as needing human confirmation. |
 | No relations | Use the `Blocked by:` and `Delivers with:` lines in ticket descriptions alone. |
 | No native states | Use whatever `## States` maps the roles to (labels, a project field, open and closed). |
