@@ -61,6 +61,14 @@ Skills say "the tracker" and "the forge" and take every concrete operation from 
 
 The repository is MIT. Text derived from mattpocock/skills (MIT, Copyright (c) 2026 Matt Pocock) keeps his notice: each skill folder that contains it carries a `LICENSE` with both notices, so the notice travels with installed copies, and the "Credits" section of `README.md` records the upstream path and commit of every derived file.
 
+## Upstream forks
+
+| Skill | Upstream (mattpocock/skills) | Pinned commit |
+|---|---|---|
+| `tdd` | `skills/engineering/tdd/` | `49dd158` |
+
+To sync a fork, download the upstream files at the pinned commit and at the new one into a scratch directory outside this checkout, diff the two, port the changes that fit this repository's conventions, then update the pinned commit here and in the "Credits" table of `README.md`.
+
 ## Verification
 
 Run these from the repository root before pushing.

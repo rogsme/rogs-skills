@@ -22,6 +22,22 @@ npx skills add https://git.rogs.me/rogs/rogs-skills.git --skill tdd
 
 Pull newer versions later with `npx skills update`.
 
+## Skills
+
+### Engineering
+
+Model-invoked:
+
+- [tdd](skills/engineering/tdd/SKILL.md): test-driven development in vertical red-green slices, testing behavior at agreed seams.
+
+## Credits
+
+Several skills are adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c) 2026 Matt Pocock). Each folder below carries his license notice.
+
+| Skill | Upstream source | Commit |
+|---|---|---|
+| `tdd` | `skills/engineering/tdd/` | `49dd158` |
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
