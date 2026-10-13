@@ -29,6 +29,7 @@ Pull newer versions later with `npx skills update`.
 Model-invoked:
 
 - [tdd](skills/engineering/tdd/SKILL.md): test-driven development in vertical red-green slices, testing behavior at agreed seams.
+- [writing-for-agents](skills/engineering/writing-for-agents/SKILL.md): how to write skills, `AGENTS.md`/`CLAUDE.md` and any other document an agent reads.
 
 ## Credits
 
@@ -37,6 +38,7 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 | Skill | Upstream source | Commit |
 |---|---|---|
 | `tdd` | `skills/engineering/tdd/` | `49dd158` |
+| `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
 
 ## License
 
