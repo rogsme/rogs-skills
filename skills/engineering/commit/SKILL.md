@@ -1,20 +1,18 @@
 ---
 name: commit
-description: >-
-  This skill should be used when the user asks to "commit", "commit changes",
-  "commit my work", "make a commit", "create commits", "commit what I have",
-  or any variation of committing unstaged/staged changes. Also triggers on
-  "/commit". Analyzes changes and creates one or more logical atomic commits
-  following the repository's own commit conventions. Discussion, research,
-  and message drafting alone do not authorize creating commits.
-compatibility: Requires Git and a non-interactive shell; designed for Claude Code and OpenCode.
+description: "Create one or more logical atomic commits that follow the repository's own commit conventions. Use when the user asks to commit (\"commit\", \"commit my work\", \"make a commit\", \"create commits\", /commit), or when another skill hands over an explicit commit scope. Discussion, research and message drafting alone do not authorize commits."
+license: MIT
+compatibility: Requires Git and a non-interactive shell.
+metadata:
+  rogs-skills/contract: "1"
+  opencode/slash: "true"
 ---
 
 # Commit
 
 Create the smallest useful set of atomic commits while preserving worktree content and
 preexisting staged content, including versions that exist only in the index.
-A bare request to "commit" includes the entire worktree: staged, unstaged, and untracked
+A bare request from the user to "commit" includes the entire worktree: staged, unstaged, and untracked
 changes. Honor explicit scope and exact-message requests. Otherwise treat supplied message
 text as guidance and adapt it to repository conventions. Ask if explicit requirements conflict.
 
@@ -24,6 +22,22 @@ commands. Never use interactive staging, editors, or pagers.
 Run Git from the worktree root. For discovered filenames, use shell-safe arguments and
 `git --literal-pathspecs <command> ... -- <paths>`; `--` alone does not disable pathspec magic.
 Use NUL-delimited output for machine parsing, not whitespace splitting or shell reparsing.
+
+## Scope and Authorization
+
+Two kinds of request reach this skill:
+
+- The user asks to commit. Discussion, research and message drafting alone are not a request.
+- Another skill that holds commit permission hands over one coherent unit: the exact paths, its
+  constraints, and its intent. That handover is an explicit request scoped to those paths.
+
+Never widen a handed-over scope. Changes outside it, staged or not, stay exactly as they are; list
+them as untouched in the report. Honor every constraint the caller states on top of repository
+policy. Unless a project rule requires otherwise, add no AI attribution, `Co-Authored-By`, or
+"generated with" trailers. When an in-scope path cannot be committed (secret screening, a hook,
+a conflict), skip it, say why, and report it, so the caller can stop instead of assuming the unit
+landed. Concluding an in-progress merge belongs to the caller; step 1 still stops on one that was
+not explicitly handed over.
 
 ## 1. Inspect Safely
 

@@ -54,6 +54,12 @@
       "prompt": "Investigate best practices for committing and suggest improvements to our commit skill. Do not create a commit.",
       "expected_output": "Research and discuss recommendations without staging, committing, or treating discussion as authorization.",
       "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "The work-ticket skill hands over an explicit scope: commit only src/parser.py and tests/test_parser.py as one unit, with no AI attribution. The worktree also holds an unrelated staged change to README.md and an unstaged edit to docs/notes.md. A pre-commit hook runs the test suite.",
+      "expected_output": "Treat the handover as an explicit request scoped to the two paths: create one commit containing exactly those files, keep the README.md staging and the docs/notes.md edit byte for byte, run the hook without bypassing it, add no attribution trailers, verify the committed tree, and report the paths left untouched.",
+      "files": []
     }
   ]
 }

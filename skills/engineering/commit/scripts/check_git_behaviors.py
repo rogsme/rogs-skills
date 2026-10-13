@@ -30,6 +30,7 @@ def git(repo, *args, check=True, env=None):
         ["git", "--no-pager", *args],
         cwd=repo,
         env=ENV | (env or {}),
+        stdin=subprocess.DEVNULL,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         timeout=20,
@@ -217,7 +218,7 @@ def main():
         raise SystemExit("Git is required")
     eval_path = Path(__file__).resolve().parents[1] / "evals/evals.json"
     evals = json.loads(eval_path.read_text())
-    assert evals["skill_name"] == "commit" and len(evals["evals"]) == 9
+    assert evals["skill_name"] == "commit" and len(evals["evals"]) == 10
     tests = [
         staged_only,
         literal_filenames,
@@ -228,9 +229,7 @@ def main():
         excluded_staging,
         paused_linked_rebase,
     ]
-    with tempfile.TemporaryDirectory(
-        prefix="commit-skill-check-", dir="/tmp/opencode"
-    ) as tmp:
+    with tempfile.TemporaryDirectory(prefix="commit-skill-check-") as tmp:
         root = Path(tmp)
         root.chmod(0o700)
         for test in tests:
