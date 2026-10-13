@@ -11,3 +11,4 @@ Skills that carry a ticket from creation to a merged pull request. Run `/setup-r
 - [start-ticket](./start-ticket/SKILL.md): investigate a ticket read-only in its worktree and return a plan for approval.
 - [work-ticket](./work-ticket/SKILL.md): implement the approved plan through atomic commits, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
 - [review-pr](./review-pr/SKILL.md): review a pull request independently at its exact head and post evidence-backed findings with a verdict.
+- [address-pr-review](./address-pr-review/SKILL.md): verify and answer review feedback in at most two rounds, or bring the branch up to date with the base.
