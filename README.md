@@ -36,6 +36,7 @@ Model-invoked:
 - [create-ticket](skills/lifecycle/create-ticket/SKILL.md): audit the code and the tracker, then draft and create worktree-safe tickets after you approve a preview.
 - [start-ticket](skills/lifecycle/start-ticket/SKILL.md): investigate a ticket read-only in its worktree and return a plan for approval.
 - [work-ticket](skills/lifecycle/work-ticket/SKILL.md): implement the approved plan through atomic commits, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
+- [review-pr](skills/lifecycle/review-pr/SKILL.md): review a pull request independently at its exact head and post evidence-backed findings with a verdict.
 
 ### Engineering
 
