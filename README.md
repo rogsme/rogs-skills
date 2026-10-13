@@ -99,6 +99,7 @@ Model-invoked:
 
 Model-invoked:
 
+- [avoid-ai-tropes](skills/writing/avoid-ai-tropes/SKILL.md): write, proofread or deep-rewrite prose without the tells of machine-written text, keeping its meaning and the author's voice.
 - [chat-paste](skills/writing/chat-paste/SKILL.md): turn a message into a local preview page with buttons that copy it as Slack or Teams rich text.
 
 ## Credits
