@@ -49,6 +49,33 @@ A skill never links into another skill's folder. Material that two skills need l
 
 Skills say "the tracker" and "the forge" and take every concrete operation from the project's configuration. Only the built-in guides (`skills/lifecycle/setup-rogs/assets/tracker-*.md` and `assets/forge-*.md`) name a tracker, a forge, their CLIs or their MCP tools. `setup-rogs/SKILL.md` and `setup-rogs/references/explore.md` may name the built-in guides when offering them.
 
+## Configuration contract
+
+`skills/lifecycle/setup-rogs/references/contract.md` defines the files `setup-rogs` writes into a project and the headings each lifecycle skill reads. It is the source of truth.
+
+- A breaking change (a new required heading, a renamed heading, a heading whose meaning changes) bumps the version in the contract, in every seed's marker, in every skill's `rogs-skills/contract` metadata, and in each lifecycle skill's step 0.
+- When a skill starts needing a heading, add it to the contract's table and to that skill's step 0 list in the same commit.
+- Material that two or more lifecycle skills need lives in the project configuration, seeded from `setup-rogs/assets/`. Material that only one skill needs lives in that skill's `references/`.
+- The ADR rules exist twice on purpose: `setup-rogs/assets/domain.md` for configured projects and `engineering/grill-with-docs/ADR-FORMAT.md` for any repository. Change them together.
+
+## Status lines
+
+The lifecycle skills hand off through these lines. A skill restates the lines it emits; this table is the registry.
+
+| Line | Emitted by | Next |
+|---|---|---|
+| `Status: SETUP_REQUIRED` | any lifecycle skill | `/setup-rogs` |
+| `Status: CONFIGURED`, `Status: SETUP_OK`, `Status: SETUP_DRIFT` | setup-rogs | the lifecycle, or another setup run |
+| `Status: AWAITING_CREATE_APPROVAL`, `Status: TICKETS_CREATED` | create-ticket | the user |
+| `Status: AWAITING_APPROVAL` | start-ticket | the user approves, then work-ticket |
+| `Status: READY_FOR_REVIEW` | work-ticket, address-pr-review | review-pr in a fresh session |
+| `Status: AWAITING_POST_APPROVAL`, `Status: REVIEW_POSTED`, `Status: READY_FOR_HUMAN` | review-pr | address-pr-review, or the human verification |
+| `Verdict: CHANGES_REQUESTED`, `Verdict: READY_FOR_HUMAN`, with `Reviewed head:` and `Reviewed base:` lines | review-pr, inside the posted summary | address-pr-review, finish-ticket |
+| `Status: BLOCKED_FOR_SYNC` | review-pr, finish-ticket | address-pr-review (sync-only pass) |
+| `Status: HUMAN_QA_FAILED` | finish-ticket | address-pr-review |
+| `Status: BLOCKED_POST_MERGE`, `Status: DONE` | finish-ticket | the user |
+| `Status: BLOCKED`, followed by a `Reason:` line | any lifecycle skill | the user |
+
 ## Writing
 
 - Plain words, short sentences, present tense. State the behavior to follow; use a prohibition only as a guardrail, and pair it with the behavior to use instead.
