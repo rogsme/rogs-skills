@@ -197,11 +197,9 @@ An operation marked `Capability: Unsupported` still satisfies the heading check.
 
 ## Preflight (step 0 of every lifecycle skill)
 
-Each lifecycle skill runs this before any git, tracker or forge action, using its column of the table above:
+Each lifecycle skill runs this before any git, tracker or forge action. Its step 0 embeds a short `sh -c` check built from its column of the table above. For every file the skill needs, the check confirms that the file exists, that line 1 is the marker with version 1, that no `{{FILL:` text remains, and that every required heading exists as a whole line. Feature headings are checked only when `## Features` turns the feature on, and `pull-request.md` only when `## Pull requests` points at it. The check prints one line per problem and nothing when the configuration is complete. It is a script rather than an instruction to read the files, because a model reading prose can call an incomplete file complete.
 
-1. Find the repository root with `git rev-parse --show-toplevel` and read `docs/agents/issue-tracker.md`, `forge.md`, `workflow.md` and `domain.md`, plus `browser-pass.md` when `## Features` turns the browser pass on, and `pull-request.md` when `## Pull requests` points at it.
-2. For each file the skill needs: line 1 is the marker with version 1, every required heading exists, and no `{{FILL:` text remains.
-3. When any check fails, change nothing and reply with exactly:
+When the check prints anything, the skill changes nothing and replies with exactly:
 
 ```
 rogs-skills is not configured for <skill> in this repository.

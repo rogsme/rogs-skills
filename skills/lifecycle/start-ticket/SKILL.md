@@ -13,25 +13,44 @@ Load and investigate an existing ticket from its isolated worktree and return a 
 
 ## 0. Configuration preflight
 
-Read only, before any git, tracker or forge action.
+Read only, before any git, tracker or forge action. Run this check; it prints one line per problem, and nothing when the configuration is complete:
 
-1. From the repository root (`git rev-parse --show-toplevel`), read `docs/agents/issue-tracker.md`, `docs/agents/forge.md`, `docs/agents/workflow.md` and `docs/agents/domain.md`, plus `docs/agents/browser-pass.md` when `workflow.md` turns the browser pass on.
-2. Require each file's first line to be its `<!-- rogs-skills config v1: <id> -->` marker, no `{{FILL:` text anywhere, and these headings:
-   - `issue-tracker.md`: `## Tracker`, `## Operating rules`, `## States`, and under `## Operations`: `### resolve`, `### load`, `### list-in-flight`. Also `## Bundles` and `## Model routing` when those features are on.
-   - `forge.md`: `## Forge`.
-   - `workflow.md`: `## Features`, `## Worktrees`, `## Verification`, `## Project rules`, and `## Client notes` when that feature is on.
-   - `domain.md`: `## Glossary`, `## ADRs`, `## Consumer rules`, `## Recording decisions`.
-   - `browser-pass.md`, when on: `## When it applies`, `## Instances`, `## Procedure`, `## Captures`.
-3. When a check fails, change nothing and reply with exactly:
+```sh
+sh -c '
+cd "$(git rev-parse --show-toplevel)" || exit 1
+need() { f="docs/agents/$1"; id="$2"; shift 2
+  [ -f "$f" ] || { echo "$f: file missing"; return; }
+  case "$(head -n 1 "$f")" in
+    "<!-- rogs-skills config v1: $id -->") ;;
+    *"rogs-skills config v"*) echo "$f: version: $(head -n 1 "$f")" ;;
+    *) echo "$f: marker missing" ;;
+  esac
+  grep -qF "{{FILL:" "$f" && echo "$f: unfilled {{FILL: text"
+  for h in "$@"; do grep -qxF -- "$h" "$f" || echo "$f: $h"; done; }
+has() { f="docs/agents/$1"; shift; [ -f "$f" ] || return 0
+  for h in "$@"; do grep -qxF -- "$h" "$f" || echo "$f: $h"; done; }
+on() { grep -qiE "^[|] *$1 *[|] *on *[|]" docs/agents/workflow.md 2>/dev/null; }
+need issue-tracker.md issue-tracker "## Tracker" "## Operating rules" "## Operations" "### resolve" "### load" "### list-in-flight" "## States"
+need forge.md forge "## Forge"
+need workflow.md workflow "## Features" "## Worktrees" "## Verification" "## Project rules"
+need domain.md domain "## Glossary" "## ADRs" "## Consumer rules" "## Recording decisions"
+on Bundles && has issue-tracker.md "## Bundles"
+on "Model routing" && has issue-tracker.md "## Model routing"
+on "Client notes" && has workflow.md "## Client notes"
+on "Browser pass" && need browser-pass.md browser-pass "## When it applies" "## Instances" "## Procedure" "## Captures"
+true'
+```
 
-   ```
-   rogs-skills is not configured for start-ticket in this repository.
-   Missing: <file>: <heading>, ...
-   Run /setup-rogs here, then run /start-ticket again.
-   Status: SETUP_REQUIRED
-   ```
+When it prints nothing, read the files it checked and continue. When it prints anything, change nothing and reply with exactly:
 
-   When the files are missing here but exist in the main worktree (the first entry of `git worktree list --porcelain`), the second line says instead: "The configuration exists in <path> but not on this branch. Commit `docs/agents/` to the base branch, then merge the base into this branch." When the marker shows another version, it says: "The configuration is version <n>; this skill expects version 1.", followed by "Run /setup-rogs here to update it." for an older version or "Run `npx skills update` to update the installed skills." for a newer one.
+```
+rogs-skills is not configured for start-ticket in this repository.
+Missing: <every line the check printed, separated by commas>
+Run /setup-rogs here, then run /start-ticket again.
+Status: SETUP_REQUIRED
+```
+
+When the check reports files missing here that exist in the main worktree (the first entry of `git worktree list --porcelain`), the second line says instead: "The configuration exists in <path> but not on this branch. Commit `docs/agents/` to the base branch, then merge the base into this branch." When it reports a version, the second line says: "The configuration is version <n>; this skill expects version 1.", followed by "Run /setup-rogs here to update it." for an older version or "Run `npx skills update` to update the installed skills." for a newer one.
 
 From here on, "the tracker", "the forge" and every operation named in backticks (`load`, `list-in-flight`, ...) mean what those files define, under their operating rules. The tracker stays read-only for this whole skill. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`.
 
