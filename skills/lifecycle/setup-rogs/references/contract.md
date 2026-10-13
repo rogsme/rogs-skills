@@ -191,6 +191,8 @@ An operation marked `Capability: Unsupported` still satisfies the heading check.
 | Search cannot see archived tickets | Search what is visible and state the limit in the duplicate report. |
 | Threads cannot be resolved | List the threads that need resolving by hand. |
 | No inline review comments | Put each finding in the review summary as `path:line`. |
+| No threaded replies | Answer each thread with a conversation comment that quotes its `path:line` and links its first comment. |
+| Merges go through a queue or train | `finish-ticket` checks the packet, asks the user to merge through the queue or train, and completes the tickets on its next run, when it finds the pull request merged. |
 | No CI | Say so in the handoff and the review instead of linking checks. |
 
 ## Preflight (step 0 of every lifecycle skill)
