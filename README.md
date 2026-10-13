@@ -22,6 +22,49 @@ npx skills add https://git.rogs.me/rogs/rogs-skills.git --skill tdd
 
 Pull newer versions later with `npx skills update`.
 
+## Set up a repository
+
+The lifecycle skills are general: they learn where tickets live, how the forge is driven and how the code is checked from a few prose files in the repository. In each repository, run:
+
+```
+/setup-rogs
+```
+
+It explores the repository, asks one question at a time (the tracker and its connection, the forge, CI, pull requests, verification commands, domain docs, optional features), shows drafts, and writes `docs/agents/issue-tracker.md`, `forge.md`, `workflow.md` and `domain.md`, plus a short `## Ticket lifecycle` block in `AGENTS.md` or `CLAUDE.md`. It has built-in guides for Linear, Kaneo, GitHub Issues and local markdown tickets, and for GitHub, Gitea and GitLab; for anything else, it writes the guide from your description.
+
+Commit those files to the base branch before cutting ticket worktrees. Run `/setup-rogs` again whenever something changes, or ask it to check the setup for drift: it updates its own files in place and never deletes anything. A lifecycle skill that finds the configuration missing stops with `Status: SETUP_REQUIRED` and points back to it.
+
+## The ticket lifecycle
+
+```
+create-ticket       audit the code, then draft and create tickets
+     |   you create a worktree: branch = directory name = lead ticket id
+start-ticket        read-only investigation and plan        Status: AWAITING_APPROVAL
+     |   you approve the plan
+work-ticket         implement, verify, pull request, exact-head CI, handoff
+                                                            Status: READY_FOR_REVIEW
+     |   a fresh session, never the implementer
+review-pr           findings pinned to the exact head
+                                    Verdict: CHANGES_REQUESTED | READY_FOR_HUMAN
+     |   when changes were requested or the base moved
+address-pr-review   verify, fix or push back, reply; at most two rounds
+                                                            Status: READY_FOR_REVIEW
+     |   you run the human verification steps
+finish-ticket       merge, verify, complete the tickets     Status: DONE
+```
+
+- The skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge.
+- The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
+- Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base.
+- Branches take the base by merging it; nothing rebases or force-pushes a published branch.
+- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, and read-only client notes.
+
+## Requirements
+
+- `git`.
+- The tracker's MCP server or CLI, connected in your agent. `/setup-rogs` checks the connection but never edits your agent's configuration.
+- The forge's CLI, signed in: `gh` 2.99 or newer, `tea`, or `glab`.
+
 ## Skills
 
 ### Lifecycle
@@ -33,6 +76,7 @@ User-invoked:
 - [setup-rogs](skills/lifecycle/setup-rogs/SKILL.md): set up, update or check this repository's configuration for the lifecycle.
 
 Model-invoked:
+
 - [create-ticket](skills/lifecycle/create-ticket/SKILL.md): audit the code and the tracker, then draft and create worktree-safe tickets after you approve a preview.
 - [start-ticket](skills/lifecycle/start-ticket/SKILL.md): investigate a ticket read-only in its worktree and return a plan for approval.
 - [work-ticket](skills/lifecycle/work-ticket/SKILL.md): implement the approved plan through atomic commits, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
