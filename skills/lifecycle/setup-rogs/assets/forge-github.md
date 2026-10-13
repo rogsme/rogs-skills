@@ -63,7 +63,7 @@ Capability: Supported
    gh pr create --repo <host>/<repo> --base <base> --head <branch> --title "<title>" --body-file <body file>
    ```
 
-   A head in a fork is `--head <fork owner>:<branch>`. Add `--attach <file>` for each capture the body references (see `attach`). The assignee comes from `assign`.
+   A head in a fork is `--head <fork owner>:<branch>`. gh refuses an organization as `<fork owner>` (gh 2.100); open that pull request through the API instead, `gh api --hostname <host> -X POST repos/<repo>/pulls -f base=<base> -f head=<fork owner>:<branch> -f head_repo=<fork name> -f title="<title>" -F body=@<body file>`, which prints the new pull request as JSON. Add `--attach <file>` for each capture the body references (see `attach`). The assignee comes from `assign`.
 3. gh can print the new URL and still fail a later step, and it reports an existing pull request as an error that carries that one's URL. Whatever the exit status, run `find-pr` and `read-pr`: exactly one pull request for this head and base, with the title and body sent and `isDraft` false. Repair that one with `edit-pr`; never open a second. When the call timed out without a URL, run `find-pr` before any retry.
 
 Capability: Supported
