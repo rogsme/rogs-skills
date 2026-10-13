@@ -139,4 +139,4 @@ Required before declaring done:
 - [ ] Regression test passes (or absence of seam is documented)
 - [ ] All `[DEBUG-...]` instrumentation removed (`grep` the prefix)
 - [ ] Throwaway prototypes deleted (or moved to a clearly-marked debug location)
-- [ ] The fix is committed by calling the Skill tool with "commit", and the commit message states the hypothesis that turned out correct, so the next debugger learns
+- [ ] The hypothesis that turned out correct is stated in the commit message, so the next debugger learns; when the fix is committed, that happens by calling the Skill tool with "commit"
