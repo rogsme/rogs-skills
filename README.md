@@ -30,6 +30,7 @@ Model-invoked:
 
 - [tdd](skills/engineering/tdd/SKILL.md): test-driven development in vertical red-green slices, testing behavior at agreed seams.
 - [writing-for-agents](skills/engineering/writing-for-agents/SKILL.md): how to write skills, `AGENTS.md`/`CLAUDE.md` and any other document an agent reads.
+- [resolving-merge-conflicts](skills/engineering/resolving-merge-conflicts/SKILL.md): resolve an in-progress merge or rebase conflict hunk by hunk, by tracing each side's intent to its source.
 
 ## Credits
 
@@ -39,6 +40,7 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 |---|---|---|
 | `tdd` | `skills/engineering/tdd/` | `49dd158` |
 | `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
+| `resolving-merge-conflicts` | `skills/engineering/resolving-merge-conflicts/` (deleted upstream in `daa01d8`) | `3216582` |
 
 ## License
 

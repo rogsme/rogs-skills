@@ -67,6 +67,7 @@ The repository is MIT. Text derived from mattpocock/skills (MIT, Copyright (c) 2
 |---|---|---|
 | `tdd` | `skills/engineering/tdd/` | `49dd158` |
 | `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
+| `resolving-merge-conflicts` | `skills/engineering/resolving-merge-conflicts/` | `3216582` (frozen: upstream deleted the skill in `daa01d8`) |
 
 To sync a fork, download the upstream files at the pinned commit and at the new one into a scratch directory outside this checkout, diff the two, port the changes that fit this repository's conventions, then update the pinned commit here and in the "Credits" table of `README.md`.
 
