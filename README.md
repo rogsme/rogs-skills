@@ -1,6 +1,6 @@
 # rogs-skills
 
-Agent skills that carry a ticket from creation to a merged pull request, plus the engineering skills that workflow leans on. They use the [Agent Skills](https://agentskills.io/specification) format and install with the [skills](https://skills.sh) CLI, so they work in Claude Code, OpenCode and the other agents that CLI supports.
+Agent skills that carry a ticket from creation to a merged pull request, plus the engineering and writing skills that workflow leans on and that stand on their own. They use the [Agent Skills](https://agentskills.io/specification) format and install with the [skills](https://skills.sh) CLI, so they work in Claude Code, OpenCode and the other agents that CLI supports.
 
 ## Install
 
@@ -95,6 +95,12 @@ Model-invoked:
 - [commit](skills/engineering/commit/SKILL.md): turn the worktree, or a scope another skill hands over, into atomic commits that follow the repository's conventions.
 - [wiki](skills/engineering/wiki/SKILL.md): generate and maintain a codebase wiki in `docs/wiki/`, kept accurate by incremental, audit and full runs.
 
+### Writing
+
+Model-invoked:
+
+- [chat-paste](skills/writing/chat-paste/SKILL.md): turn a message into a local preview page with buttons that copy it as Slack or Teams rich text.
+
 ## Credits
 
 Several skills are adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c) 2026 Matt Pocock). Each folder below carries his license notice.
@@ -107,6 +113,12 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 | `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/productivity/grilling/`, `skills/engineering/domain-modeling/` | `49dd158` |
 | `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `49dd158` |
 | `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `49dd158` |
+
+Other bundled work:
+
+| Skill | Source | License |
+|---|---|---|
+| `chat-paste` | [marked](https://github.com/markedjs/marked) 18.1.0, vendored in `assets/vendor/` with its license | MIT |
 
 ## License
 

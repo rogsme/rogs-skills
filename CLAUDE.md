@@ -8,8 +8,9 @@ Skills live in bucket folders under `skills/`:
 
 - `lifecycle/`: `setup-rogs` and the ticket skills that read the configuration it writes.
 - `engineering/`: skills that stand on their own, including the ones the lifecycle calls.
+- `writing/`: skills for prose meant for people: style, controlled English, chat formatting.
 
-A skill is a folder whose name equals its `name`, holding a `SKILL.md` and, when needed, `references/`, `assets/`, `scripts/` or `evals/`. Each bucket has a `README.md` listing its skills (name linked to `SKILL.md`, one-line description) under **User-invoked** and **Model-invoked**. The top-level `README.md` lists every skill the same way. A commit that adds, renames or removes a skill updates both.
+A skill is a folder whose name equals its `name`, holding a `SKILL.md` and, when needed, `references/`, `assets/`, `scripts/`, `tests/` or `evals/`. Each bucket has a `README.md` listing its skills (name linked to `SKILL.md`, one-line description) under **User-invoked** and **Model-invoked**. The top-level `README.md` lists every skill the same way. A commit that adds, renames or removes a skill updates both.
 
 The repository ships skills and nothing else. Subagent definitions, harness commands, CI workflows, harness config files (`.mcp.json`, `opencode.json`), plugin manifests and `agents/openai.yaml` stay out.
 
@@ -80,7 +81,7 @@ The lifecycle skills hand off through these lines. A skill restates the lines it
 
 - Plain words, short sentences, present tense. State the behavior to follow; use a prohibition only as a guardrail, and pair it with the behavior to use instead.
 - No em dashes or en dashes. Rewrite the sentence with a comma, colon, period, parentheses or a conjunction instead of swapping the character.
-- No bold-label bullets (`- **Label**: text`), arrows or other characters a keyboard cannot type. Box-drawing characters inside directory-tree code blocks are fine.
+- No bold-label bullets (`- **Label**: text`), arrows or other characters a keyboard cannot type. Box-drawing characters inside directory-tree code blocks are fine. Code and test fixtures may contain the characters their behavior needs (a formatter's emoji, a checker's dash pattern); write them as escapes when the language allows, and in prose name a character by its code point, such as "(U+2014)".
 - No client, employer or personal data. Examples use `Acme`, team key `ACM`, tickets like `ACM-123`, and hosts like `git.example.com`.
 - Call the Skill tool with "writing-for-agents" before creating or editing a skill or this file.
 
