@@ -1,0 +1,6 @@
+# A local test install (`npx skills add` into this checkout) must never be
+# committed, and the skills CLI would discover it as a second copy of every skill.
+.agents/
+.claude/
+.opencode/
+skills-lock.json

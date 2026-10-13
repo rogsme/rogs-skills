@@ -1,0 +1,143 @@
+# Maintaining rogs-skills
+
+Agent Skills for a ticket-to-merge workflow, published at https://git.rogs.me/rogs/rogs-skills and installed with `npx skills add`. This file is for whoever edits the skills, agent or person.
+
+## Layout
+
+Skills live in bucket folders under `skills/`:
+
+- `lifecycle/`: `setup-rogs` and the ticket skills that read the configuration it writes.
+- `engineering/`: skills that stand on their own, including the ones the lifecycle calls.
+
+A skill is a folder whose name equals its `name`, holding a `SKILL.md` and, when needed, `references/`, `assets/`, `scripts/` or `evals/`. Each bucket has a `README.md` listing its skills (name linked to `SKILL.md`, one-line description) under **User-invoked** and **Model-invoked**. The top-level `README.md` lists every skill the same way. A commit that adds, renames or removes a skill updates both.
+
+The repository ships skills and nothing else. Subagent definitions, harness commands, CI workflows, harness config files (`.mcp.json`, `opencode.json`), plugin manifests and `agents/openai.yaml` stay out.
+
+Never install skills into this checkout. `.gitignore` keeps a test install out of git, but the skills CLI would still discover it as a second copy of every skill.
+
+## Frontmatter
+
+Every `SKILL.md` opens with these keys, in this order:
+
+```yaml
+---
+name: work-ticket
+description: "One quoted line of at most 1024 characters."
+license: MIT
+metadata:
+  rogs-skills/contract: "1"
+  opencode/slash: "true"
+---
+```
+
+- `name` equals the folder name and matches `^[a-z0-9]+(-[a-z0-9]+)*$`.
+- The description stays on one quoted line. When the YAML fails to parse, Claude Code silently drops every field, including the ones that keep a skill user-invoked.
+- Metadata values are strings. `rogs-skills/contract` is the configuration contract version the skill expects; `opencode/slash` exposes the skill as a `/name` command in OpenCode.
+- `compatibility` is optional and used only for real environment requirements.
+
+## Invocation
+
+Skills are model-invoked by default. Their description is written for the model: what the skill does first, then each distinct trigger once.
+
+A user-invoked skill sets `disable-model-invocation: true` (Claude Code) and `opencode/autoinvoke: "false"` under `metadata` (OpenCode), always as a pair. Its description is a one-line summary for a person browsing slash commands. `setup-rogs` is the only user-invoked skill.
+
+A step that runs another skill says so as an instruction to call the Skill tool, one skill per call: `Call the Skill tool with "commit"`. Only model-invoked skills can be reached that way; for a user-invoked skill, the step tells the user to run it. The lifecycle skills never call one another: each ends with a status line, and the human starts the next stage.
+
+A skill never links into another skill's folder. Material that two skills need lives in a model-invoked skill they both call, or in the project configuration that `setup-rogs` writes.
+
+## Agnosticism
+
+Skills say "the tracker" and "the forge" and take every concrete operation from the project's configuration. Only the built-in guides (`skills/lifecycle/setup-rogs/assets/tracker-*.md` and `assets/forge-*.md`) name a tracker, a forge, their CLIs or their MCP tools. `setup-rogs/SKILL.md` and `setup-rogs/references/explore.md` may name the built-in guides when offering them.
+
+## Writing
+
+- Plain words, short sentences, present tense. State the behavior to follow; use a prohibition only as a guardrail, and pair it with the behavior to use instead.
+- No em dashes or en dashes. Rewrite the sentence with a comma, colon, period, parentheses or a conjunction instead of swapping the character.
+- No bold-label bullets (`- **Label**: text`), arrows or other characters a keyboard cannot type. Box-drawing characters inside directory-tree code blocks are fine.
+- No client, employer or personal data. Examples use `Acme`, team key `ACM`, tickets like `ACM-123`, and hosts like `git.example.com`.
+- Call the Skill tool with "writing-for-agents" before creating or editing a skill or this file.
+
+## Licensing
+
+The repository is MIT. Text derived from mattpocock/skills (MIT, Copyright (c) 2026 Matt Pocock) keeps his notice: each skill folder that contains it carries a `LICENSE` with both notices, so the notice travels with installed copies, and the "Credits" section of `README.md` records the upstream path and commit of every derived file.
+
+## Verification
+
+Run these from the repository root before pushing.
+
+Frontmatter, size and links:
+
+```bash
+uv run --quiet --with pyyaml python3 - <<'PY'
+import pathlib, re, sys
+import yaml
+
+ALLOWED = {"name", "description", "license", "compatibility", "metadata",
+           "allowed-tools", "disable-model-invocation"}
+NAME = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+LINK = re.compile(r"\]\(([^)\s]+)\)")
+errors = []
+skills = sorted(pathlib.Path("skills").glob("*/*/SKILL.md"))
+for md in skills:
+    text = md.read_text()
+    head, sep, _ = text.removeprefix("---\n").partition("\n---\n")
+    if not text.startswith("---\n") or not sep:
+        errors.append(f"{md}: no frontmatter")
+        continue
+    try:
+        fm = yaml.safe_load(head)
+    except yaml.YAMLError as error:
+        errors.append(f"{md}: invalid YAML: {error}")
+        continue
+    meta = fm.get("metadata") or {}
+    description = fm.get("description")
+    checks = {
+        "unexpected keys " + ", ".join(sorted(set(fm) - ALLOWED)): not set(fm) - ALLOWED,
+        "name must equal the folder name": fm.get("name") == md.parent.name
+        and bool(NAME.fullmatch(str(fm.get("name")))),
+        "description must be one line of 1 to 1024 characters": isinstance(description, str)
+        and 1 <= len(description) <= 1024 and "\n" not in description,
+        "license must be MIT": fm.get("license") == "MIT",
+        "metadata values must be strings": all(isinstance(v, str) for v in meta.values()),
+        "metadata needs rogs-skills/contract and opencode/slash": "rogs-skills/contract" in meta
+        and meta.get("opencode/slash") == "true",
+        "invocation keys must pair up": (fm.get("disable-model-invocation") is True)
+        == (meta.get("opencode/autoinvoke") == "false"),
+        "SKILL.md must stay under 500 lines": text.count("\n") < 500,
+    }
+    errors += [f"{md}: {message}" for message, ok in checks.items() if not ok]
+for md in sorted(pathlib.Path("skills").rglob("*.md")):
+    text = re.sub(r"`[^`\n]*`", "", re.sub(r"```.*?```", "", md.read_text(), flags=re.S))
+    root = next((p for p in (md.parent, *md.parents) if (p / "SKILL.md").exists()), None)
+    for target in LINK.findall(text):
+        if re.match(r"[a-z]+:", target) or target.startswith("#"):
+            continue
+        path = (md.parent / target.split("#")[0]).resolve()
+        if not path.exists():
+            errors.append(f"{md}: broken link {target}")
+        elif root and root.resolve() not in (path, *path.parents):
+            errors.append(f"{md}: link leaves its skill folder: {target}")
+print("\n".join(errors) or f"OK: {len(skills)} skills")
+sys.exit(1 if errors else 0)
+PY
+```
+
+Dashes (prints nothing when clean):
+
+```bash
+grep -rnP '[\x{2013}\x{2014}]' --exclude-dir=.git .
+```
+
+Agnosticism (prints only the built-in guides and the two allowed setup files; tool names are matched as proper nouns so ordinary words like "linear" pass):
+
+```bash
+grep -rlE '\bLinear\b|\bKaneo\b|GitHub|Gitea|GitLab|\bgh |\btea |\bglab |mcp__' skills
+```
+
+Discovery (lists every skill exactly once):
+
+```bash
+npx skills@latest add "$PWD" --list
+```
+
+Before pushing, also search the whole tree for the names of any client, employer or private project you work with. Keep that list of names outside this repository.
