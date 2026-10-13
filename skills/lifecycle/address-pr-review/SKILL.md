@@ -99,7 +99,7 @@ Ask the user only when a decision needs unresolved product policy or unavailable
 
 ## 5. Implement the accepted fixes
 
-Fix each accepted issue at its shared root cause, with the smallest regression test; in the test-first areas `## Verification` lists, call the Skill tool with "tdd" for it. Preserve unrelated work, and follow `AGENTS.md` (or `CLAUDE.md`) and the rule files `## Project rules` lists for the touched areas.
+Fix each accepted issue at its shared root cause, with the smallest regression test; in the test-first areas `## Verification` lists, call the Skill tool with "tdd" for it. When an accepted bug's root cause is not evident from the comment and the code, as with a failed human verification step, call the Skill tool with "diagnosing-bugs" first. Preserve unrelated work, and follow `AGENTS.md` (or `CLAUDE.md`) and the rule files `## Project rules` lists for the touched areas.
 
 Commit each fix with its test as one unit: state the exact paths, the constraints (never amend; no AI attribution and no co-author trailers unless `## Commits` says otherwise; never bypass a hook; leave every other path untouched) and the intent, then call the Skill tool with "commit" and confirm the commit with `git log`. Create no commit for a rejected or no-code-change comment.
 

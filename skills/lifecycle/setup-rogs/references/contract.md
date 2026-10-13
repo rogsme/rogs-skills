@@ -213,4 +213,4 @@ Two cases get a different second line:
 - The files are missing here but present in the main worktree (the first entry of `git worktree list --porcelain`): "The configuration exists in <main worktree path> but not on this branch. Commit `docs/agents/` to the base branch, then merge the base into this branch."
 - The marker version differs: "The configuration is version <n>; this skill expects version 1." Then, for an older configuration, "Run /setup-rogs here to update it."; for a newer one, "Run `npx skills update` to update the installed skills."
 
-The engineering skills (`tdd`, `grill-with-docs`, `resolving-merge-conflicts`, `commit`, `wiki`) read these files when present and never refuse without them.
+The engineering skills (`tdd`, `diagnosing-bugs`, `grill-with-docs`, `resolving-merge-conflicts`, `commit`, `wiki`) read these files when present and never refuse without them.

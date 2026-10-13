@@ -76,6 +76,8 @@ Follow the approved plan, `AGENTS.md` (or `CLAUDE.md`), the rule files `## Proje
 
 In the test-first areas `## Verification` lists, call the Skill tool with "tdd" and work in red-green slices at the seams the approved plan names. The approved plan is the seam agreement: add a seam only when the plan's intent needs it, and record each added seam in the pull request's summary. A public interface the plan did not cover is a plan change: stop and ask.
 
+When the ticket is a bug whose cause the approved plan leaves open, call the Skill tool with "diagnosing-bugs" and find the cause with a loop that goes red before you write the fix.
+
 Ask when a material unknown appears; never turn an unresolved product decision or external behavior into an implementation assumption. Don't interrupt for ordinary implementation choices the plan covers; record minor assumptions in the pull request. Stop only for unresolved product behavior, missing access, destructive operations, unsafe git divergence, newly discovered blockers, or evidence that the ticket itself is wrong.
 
 Prefer the smallest complete change. Add the smallest test that proves each non-trivial fix, and run the focused checks from `## Verification` while working. Verification is discovered, not assumed: report a command marked `not configured` as such, and when an acceptance criterion needs verification no configured command can provide, report that gap in the handoff instead of claiming it passed.
@@ -131,7 +133,7 @@ Apply `## CI gate`. When the diff touches none of its path filters, no checks is
 
 Otherwise record the pull request's head SHA and wait with `ci`. Refresh the pull request afterwards and require the successful gate checks to belong to that exact SHA. Fetch the base, record its SHA, and require it to be an ancestor of the head, so the checks cover the current base plus the change.
 
-- Fix deterministic failures yourself: reproduce with the smallest relevant local command, commit the fix through "commit", push, and wait again for the new head.
+- Fix deterministic failures yourself: reproduce with the smallest relevant local command, commit the fix through "commit", push, and wait again for the new head. When the failing output does not show the cause, call the Skill tool with "diagnosing-bugs" before you change code.
 - Report infrastructure, permission, quota or unavailable-service failures with `Status: BLOCKED`, the check URL and the exact partial state. Never ask the user to diagnose ordinary code failures.
 - Require the pull request to be mergeable before the handoff. When the base advanced or the pull request conflicts, sync as in step 4 without force-pushing, rerun the verification, push, and wait for the new head's checks.
 
