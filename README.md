@@ -24,6 +24,14 @@ Pull newer versions later with `npx skills update`.
 
 ## Skills
 
+### Lifecycle
+
+Run `/setup-rogs` in a repository before the others; they refuse to run without its configuration.
+
+User-invoked:
+
+- [setup-rogs](skills/lifecycle/setup-rogs/SKILL.md): set up, update or check this repository's configuration for the lifecycle.
+
 ### Engineering
 
 Model-invoked:
