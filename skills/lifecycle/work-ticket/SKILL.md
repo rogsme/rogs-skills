@@ -11,7 +11,7 @@ metadata:
 
 Implement the approved plan through a verified pull request and a tracker handoff. The work is complete only when the pull request exists, its exact head passes the CI gate, and every ticket reads `in-review`; a local commit without the pull request is a partial state, not a finish.
 
-This skill grants permission to create the commits and push the branch the workflow needs. Its only tracker writes are the ones listed here: the plan comment with the `in-progress` transition, the capture attachments, and the handoff comment with the `in-review` transition. The user's approval of the plan lifts any earlier instruction that kept the tracker read-only for these writes; make them without asking again.
+This skill grants permission to create the commits, push the branch and open the pull request the workflow needs. Its only tracker writes are the ones listed here: the plan comment with the `in-progress` transition, the capture attachments, and the handoff comment with the `in-review` transition. The user's approval of the plan lifts any earlier instruction that kept the tracker read-only for these writes; make them without asking again.
 
 When bundles are on, every rule that names "the ticket" applies to each member: the full comments go on the lead, each rider gets a pointer comment naming the lead and the pull request, and every member makes each transition together.
 
@@ -113,7 +113,7 @@ Upload every capture to the lead ticket with the tracker's `attach` and to the f
 
 ## 6. Create or reuse the pull request
 
-Follow [references/open-pr.md](references/open-pr.md). It finds an existing pull request before anything else, publishes at most once, fills the body format `## Pull requests` names, assigns the configured assignee or nobody, and verifies every field afterwards.
+Follow [references/open-pr.md](references/open-pr.md): write the body in the format `## Pull requests` names, call the Skill tool with "create-pr" with the handover it lists, then verify every field with `read-pr`. The create-pr skill finds an existing pull request before anything else, publishes at most once, and assigns the configured assignee or nobody.
 
 Write the body from the final diff and the actual verification results:
 

@@ -53,7 +53,7 @@ address-pr-review   verify, fix or push back, reply; at most two rounds
 finish-ticket       merge, verify, complete the tickets     Status: DONE
 ```
 
-- The skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge.
+- The skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `tdd` and `resolving-merge-conflicts` where they apply.
 - The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
 - Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base.
 - Branches take the base by merging it; nothing rebases or force-pushes a published branch.
