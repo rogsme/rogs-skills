@@ -28,7 +28,7 @@ The lifecycle skills are general: they learn where tickets live, how the forge i
 /setup-rogs
 ```
 
-It explores the repository, asks one question at a time (the tracker and its connection, the forge, CI, pull requests, verification commands, domain docs, optional features), shows drafts, and writes `docs/agents/issue-tracker.md`, `forge.md`, `workflow.md` and `domain.md`, plus a short `## Ticket lifecycle` block in `AGENTS.md` or `CLAUDE.md`. It has built-in guides for Linear, Kaneo, GitHub Issues and local markdown tickets, and for GitHub, Gitea and GitLab; for anything else, it writes the guide from your description.
+It explores the repository, asks one question at a time (the tracker and its connection, the forge, CI, pull requests, verification commands, domain docs, optional features), shows drafts, and writes `docs/agents/issue-tracker.md`, `forge.md`, `workflow.md` and `domain.md`, plus a short `## Ticket lifecycle` block in `AGENTS.md` or `CLAUDE.md`. It has built-in guides for Linear, Kaneo, GitHub Issues and local markdown tickets, for GitHub, Gitea and GitLab, and for plan reviewers run through Claude Code or OpenCode; for any other tracker or forge, it writes the guide from your description.
 
 Commit those files to the base branch before cutting ticket worktrees. Run `/setup-rogs` again whenever something changes, or ask it to check the setup for drift: it updates its own files in place and never deletes anything. A lifecycle skill that finds the configuration missing stops with `Status: SETUP_REQUIRED` and points back to it.
 
@@ -51,17 +51,18 @@ address-pr-review   verify, fix or push back, reply; at most two rounds
 finish-ticket       merge, verify, complete the tickets     Status: DONE
 ```
 
-- The skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `tdd`, `diagnosing-bugs` and `resolving-merge-conflicts` where they apply.
+- The skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `review-plan` to have the plan reviewed before you see it, `tdd`, `diagnosing-bugs` and `resolving-merge-conflicts` where they apply.
 - The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
 - Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base.
 - Branches take the base by merging it; nothing rebases or force-pushes a published branch.
-- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, and read-only client notes.
+- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, and plan review, where a model from another vendor reviews each plan before you see it.
 
 ## Requirements
 
 - `git`.
 - The tracker's MCP server or CLI, connected in your agent. `/setup-rogs` checks the connection but never edits your agent's configuration.
 - The forge's CLI, signed in: `gh` 2.99 or newer, `tea`, or `glab`.
+- For plan review, the reviewer's agent CLI, signed in: `claude`, or `opencode` with the read-only agent that `/setup-rogs` describes.
 
 ## Skills
 
