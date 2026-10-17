@@ -4,10 +4,9 @@ import { createWriteStream } from "node:fs";
 import { lstat } from "node:fs/promises";
 import http from "node:http";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
-import { VERSIONS, atomicWrite, externalDirectory, inspectRuntime, inside, loadSession, makePrivateDirectory, readJSON, safePath } from "./common.mjs";
+import { VERSIONS, atomicWrite, externalDirectory, inspectRuntime, inside, invokedDirectly, loadSession, makePrivateDirectory, readJSON, safePath } from "./common.mjs";
 
 const loopback = new Set(["127.0.0.1", "localhost", "::1"]);
 const execute = promisify(execFile);
@@ -165,7 +164,7 @@ function argumentsFor(argv) {
   return options;
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (invokedDirectly(import.meta.url)) {
   if (process.argv.includes("--help")) {
     console.log("node lavish.mjs check --runtime <renderer-runtime> [--state-dir <directory>] [--port <port>]\nnode lavish.mjs <open|poll|reply|end> --session <owned-review-directory> [--no-open] [--reopen] [--reply-file <file-in-review-directory>]\nLavish runs through pinned npx, not a local install. Read the complete raw output named by the receipt. A completed command is never plan approval.");
   } else {

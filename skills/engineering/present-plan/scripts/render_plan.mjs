@@ -1,8 +1,8 @@
 import { cp, lstat, mkdtemp, open, readFile, unlink } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { pathToFileURL } from "node:url";
 
-import { SCHEMA, atomicWrite, digest, escapeHTML, externalDirectory, identityOf, inspectProject, inspectRuntime, inside, loadSession, makePrivateDirectory, safePath } from "./common.mjs";
+import { SCHEMA, atomicWrite, digest, escapeHTML, externalDirectory, identityOf, inspectProject, inspectRuntime, inside, invokedDirectly, loadSession, makePrivateDirectory, safePath } from "./common.mjs";
 
 const assets = new URL("../assets/", import.meta.url);
 
@@ -172,7 +172,7 @@ export function parseArguments(argv) {
   return result;
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (invokedDirectly(import.meta.url)) {
   if (process.argv.includes("--help")) {
     console.log("node render_plan.mjs --source <plan.md> --repository <main-checkout> --worktree <checkout> --ticket <id> --artifacts <external-root> --runtime <tool-cache> [--rider <id>] [--session <owned-directory>] [--state-dir <external-directory>] [--port <port>] [--title <title>]");
   } else {

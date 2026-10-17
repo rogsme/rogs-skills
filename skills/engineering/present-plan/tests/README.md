@@ -12,7 +12,7 @@ From the repository root:
 node --test skills/engineering/present-plan/tests/*.test.mjs
 ```
 
-The rendering tests need the prepared renderer and fail clearly when it is missing. They exercise the real pinned Markdown lexer. Diagram tests require a local classic bundle with no dynamic module imports, because ES modules fail CORS in Lavish's opaque-origin iframe. Protocol tests use disposable HTTP services and npx stubs, including a runtime with no local Lavish package. Their success does not prove real browser interaction.
+The rendering tests need the prepared renderer and fail clearly when it is missing. They exercise the real pinned Markdown lexer. Diagram tests require a local classic bundle with no dynamic module imports, because ES modules fail CORS in Lavish's opaque-origin iframe. Protocol tests use disposable HTTP services and npx stubs, including a runtime with no local Lavish package. Their success does not prove real browser interaction. The CLI test runs both scripts through a symlink to the skill folder, the layout a symlinked install creates, and needs no renderer.
 
 ## Browser integration
 

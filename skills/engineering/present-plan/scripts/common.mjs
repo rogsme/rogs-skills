@@ -1,8 +1,10 @@
 import { execFileSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
+import { realpathSync } from "node:fs";
 import { lstat, mkdir, open, readFile, realpath, rename, unlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 export const SCHEMA = "rogs-skills/present-plan/1";
 export const RENDERER_VERSIONS = Object.freeze({ marked: "18.1.0", mermaid: "11.12.1" });
@@ -12,6 +14,12 @@ export const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) =>
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 })[char]);
 export const inside = (parent, child) => child === parent || child.startsWith(parent + path.sep);
+
+// Node resolves symlinks in the entry module's URL, not in process.argv[1].
+export function invokedDirectly(moduleURL) {
+  try { return realpathSync(process.argv[1]) === realpathSync(fileURLToPath(moduleURL)); }
+  catch { return false; }
+}
 
 export async function safePath(value) {
   if (!value || !path.isAbsolute(value)) throw new Error("Use an absolute filesystem path.");
