@@ -53,6 +53,7 @@ Read only. Run every command from the repository root (`git rev-parse --show-top
 - Model routing: `## Model routing` sections in existing tickets, or routing notes in the agent docs.
 - Bundles: `Delivers with:` lines in existing tickets.
 - Plan review: which agent CLIs answer `--version` (`claude`, `opencode`), whether `opencode debug agents` lists a `plan-review` agent, the models plans are written with here, and data boundaries or client terms in the agent docs that limit which vendors may see the code. The guides are `../assets/reviewer-claude-code.md` and `../assets/reviewer-opencode.md`.
+- Plan presentation: an existing `## Plan presentation` section, a separately prepared runtime, an external artifact root allowed by the planning agent, and the state directory/port of any existing presentation service. A missing feature row means off. Call the Skill tool with "present-plan" for a check-only runtime probe when paths are known; it owns the concrete commands and setup notes. Do not install packages, open a review, stop a shared server or change global agent settings during exploration.
 
 ## Installed skills
 

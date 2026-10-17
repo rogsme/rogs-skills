@@ -51,11 +51,19 @@ address-pr-review   verify, fix or push back, reply; at most two rounds
 finish-ticket       merge, verify, complete the tickets     Status: DONE
 ```
 
-- The skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `review-plan` to have the plan reviewed before you see it, `tdd`, `diagnosing-bugs` and `resolving-merge-conflicts` where they apply.
+- The lifecycle skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `review-plan` to have the plan reviewed before you see it, `present-plan` for optional browser presentation, `tdd`, `diagnosing-bugs` and `resolving-merge-conflicts` where they apply.
 - The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
 - Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base.
 - Branches take the base by merging it; nothing rebases or force-pushes a published branch.
-- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, and plan review, where a model from another vendor reviews each plan before you see it.
+- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, plan review by another vendor, and local browser plan presentation after review.
+
+### Browser plan review
+
+Enable `Plan presentation` through `/setup-rogs` after preparing the runtime that `present-plan` describes. It needs Node.js 22+ and pinned Lavish, Marked and Mermaid packages in a private tool cache outside the checkout. No separate upstream Lavish skill, MCP server or global hook is required. Setup checks the runtime but never installs it or changes agent settings.
+
+`start-ticket` presents the full canonical plan, diagrams and adversarial findings in Lavish. The agent saves feedback with its polled source revision and checks delayed comments against earlier snapshots. Substantial human-requested revisions receive another single adversarial round when plan review is on. Plan approval stays in the agent conversation, and implementation still starts through `work-ticket`. Closing a browser or seeing a delivery receipt never authorizes work.
+
+Presentation is independent of plan review and optional under configuration v1. A missing feature row means off. Missing dependencies or browser failures return the full report in the terminal with an explanation, including any review-failure warning. Artifacts stay outside worktrees, telemetry is disabled, assets load locally, and the wrapper rejects non-loopback or other-owner services. To revert, turn presentation off; preserve other sessions and saved artifacts.
 
 ## Requirements
 
@@ -63,6 +71,7 @@ finish-ticket       merge, verify, complete the tickets     Status: DONE
 - The tracker's MCP server or CLI, connected in your agent. `/setup-rogs` checks the connection but never edits your agent's configuration.
 - The forge's CLI, signed in: `gh` 2.99 or newer, `tea`, or `glab`.
 - For plan review, the reviewer's agent CLI, signed in: `claude`, or `opencode` with the read-only agent that `/setup-rogs` describes.
+- For plan presentation, the `present-plan` skill and its separately prepared Node.js runtime, plus a local browser. Its own setup reference holds the checked package versions and installation procedure.
 
 ## Skills
 
@@ -95,6 +104,7 @@ Model-invoked:
 - [commit](skills/engineering/commit/SKILL.md): turn the worktree, or a scope another skill hands over, into atomic commits that follow the repository's conventions.
 - [create-pr](skills/engineering/create-pr/SKILL.md): open one pull request on any forge from the repository's template, with every field verified after publishing; work-ticket publishes through it.
 - [review-plan](skills/engineering/review-plan/SKILL.md): have a model from another vendor review a finished plan before you see it, then settle every finding against the code; start-ticket calls it when plan review is on.
+- [present-plan](skills/engineering/present-plan/SKILL.md): present the canonical plan and its review findings in a local Lavish browser session, with saved source revisions and approval kept in the conversation.
 - [git-archaeology](skills/engineering/git-archaeology/SKILL.md): report what a repository's history says about churn, ownership concentration, fix hotspots and momentum, as indicators to investigate.
 - [wiki](skills/engineering/wiki/SKILL.md): generate and maintain a codebase wiki in `docs/wiki/`, kept accurate by incremental, audit and full runs.
 
