@@ -21,13 +21,13 @@ For lifecycle use, read `docs/agents/workflow.md` `## Plan presentation`. A miss
 
 Settings name the external Marked/Mermaid renderer runtime, external artifact root, private server state directory and local port. Lavish needs no installation path. The artifact root must be permitted by this planning agent and outside every checkout. Use the caller's allowed path; in OpenCode Plan mode that may be under `~/.opencode/plan/`. Keep plans, feedback and credentials out of command arguments.
 
-For a check-only request, run only the runtime check in the reference. It probes Lavish's version through the pinned npx command, which may populate npm's cache, but opens no browser, creates no review artifact and installs nothing locally. Return its result or missing prerequisite, then stop. Leave renderer dependencies and agent settings unchanged.
+For a check-only request, run only the runtime check in the reference. It probes Lavish's version through the pinned npx command, which may populate npm's cache, but opens no browser, creates no review artifact and installs nothing locally. The check passes only when it exits 0 and prints a JSON result with `"status": "ready"`; any other outcome, including no output, fails it. Return the result, or the failure and any missing prerequisite, then stop. Leave renderer dependencies and agent settings unchanged.
 
 ## 2. Render the canonical report
 
 Save supplied text to a private external Markdown file if it is not already a file. Preserve its wording, acceptance criteria, diagrams, tests, review rows and unresolved questions. The caller writes the decision brief before adversarial review; this presenter adds no summary or design claim.
 
-Run `scripts/render_plan.mjs` as the reference describes. Require exit code 0 and read back its source snapshot and `session.json`. Confirm project, worktree, bundle, branch/commit, revision and source digest. Keep that returned session directory for every subsequent call; never select a session by basename alone.
+Run `scripts/render_plan.mjs` as the reference describes. Require exit code 0 and a JSON result, then read back the source snapshot and `session.json` it names. Confirm project, worktree, bundle, branch/commit, revision and source digest. Keep that returned session directory for every subsequent call; never select a session by basename alone.
 
 The script makes one browser page from the complete Markdown. All review rows stay visible; `REVISE` stays `REVISE`, and a failed review stays marked `Not reviewed:`. Raw HTML and remote images display as text. Local-only Mermaid fences render with local assets and become editable whiteboards in Lavish; diagrams with network references or configuration directives keep their source and a warning instead. Do not add diagrams after review or reinterpret a diagram as a product decision.
 
@@ -57,4 +57,4 @@ Hand back the current source path, HTML path, URL when known, revision/digest, f
 
 ## Fallback
 
-On a missing renderer, failed npx resolution, unavailable browser, failed assets, unsafe server, corrupt session, or a tool/permission limit, preserve the source and artifacts. Return `Not presented: <specific failure>` and the complete canonical report, including the review section or `Not reviewed:` line. The caller can deliver it in the terminal and still ask for approval. Keep Lavish on its pinned npx path; never install it locally or globally to bypass a failure. Leave renderer dependencies and agent permissions unchanged. Use local assets with no CDN fallback, keep the server local, and preserve every review finding and report detail.
+On a missing renderer, failed npx resolution, a script run with no JSON result (even with exit code 0), unavailable browser, failed assets, unsafe server, corrupt session, or a tool/permission limit, preserve the source and artifacts. Return `Not presented: <specific failure>` and the complete canonical report, including the review section or `Not reviewed:` line. The caller can deliver it in the terminal and still ask for approval. Keep Lavish on its pinned npx path; never install it locally or globally to bypass a failure. Leave renderer dependencies and agent permissions unchanged. Use local assets with no CDN fallback, keep the server local, and preserve every review finding and report detail.

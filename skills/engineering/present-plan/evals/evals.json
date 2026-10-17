@@ -85,6 +85,17 @@
         "Uses neither a local/global Lavish executable nor an installation command after the npx failure.",
         "Leaves existing packages, network permissions and the separate approval boundary unchanged."
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "setup-rogs requests a check-only presentation probe. The check command exits 0 but prints nothing. Report whether presentation can be turned on.",
+      "expected_output": "Treat the empty output as a failed check, because it has no JSON result with status ready. Report the failure and keep presentation off, without installing anything or opening a review.",
+      "files": [],
+      "expectations": [
+        "Treats exit code 0 with no output as a failed check, not a pass.",
+        "Keeps presentation off and reports that the check printed no result.",
+        "Installs nothing and opens no browser or review."
+      ]
     }
   ]
 }
