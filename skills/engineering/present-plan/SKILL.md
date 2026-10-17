@@ -2,7 +2,7 @@
 name: present-plan
 description: "Present a finished implementation plan in a local Lavish browser review, preserving its canonical text and adversarial findings, and return feedback with source-revision context. Use when start-ticket hands over a plan for presentation, when the user asks to review an existing plan in the browser, or when setup-rogs requests a check-only runtime probe."
 license: MIT
-compatibility: Node.js 22+ and a separately prepared, pinned Lavish/Marked/Mermaid runtime; a local browser for interactive review.
+compatibility: Node.js 22+, npm/npx, a pinned Marked/Mermaid renderer runtime, and a local browser; Lavish runs through npx.
 metadata:
   rogs-skills/contract: "1"
 ---
@@ -11,7 +11,7 @@ metadata:
 
 Show a finished plan through Lavish and return the human's feedback. The canonical Markdown is authoritative. Approval stays in the agent conversation, and the caller owns revisions and implementation. This skill makes no tracker writes and changes no application files.
 
-`<skill-dir>` is the directory containing this file. Read [references/lavish.md](references/lavish.md) for runtime preparation, the CLI, polling and recovery. Use the bundled scripts rather than running a global CLI against an unknown shared server.
+`<skill-dir>` is the directory containing this file. Read [references/lavish.md](references/lavish.md) for pinned npx execution, renderer preparation, polling and recovery. The bundled wrapper runs Lavish through `npx`; it never requires a local or global Lavish installation.
 
 ## 1. Resolve the handover
 
@@ -19,9 +19,9 @@ Accept the complete plan/report, its unchanged adversarial-review section or `No
 
 For lifecycle use, read `docs/agents/workflow.md` `## Plan presentation`. A missing feature row means off: hand the report back for terminal delivery. A direct user request can supply settings without lifecycle configuration.
 
-Settings name the external runtime, external artifact root, private server state directory and local port. The artifact root must be permitted by this planning agent and outside every checkout. Use the caller's allowed path; in OpenCode Plan mode that may be under `~/.opencode/plan/`. Keep plans, feedback and credentials out of command arguments.
+Settings name the external Marked/Mermaid renderer runtime, external artifact root, private server state directory and local port. Lavish needs no installation path. The artifact root must be permitted by this planning agent and outside every checkout. Use the caller's allowed path; in OpenCode Plan mode that may be under `~/.opencode/plan/`. Keep plans, feedback and credentials out of command arguments.
 
-For a check-only request, run only the runtime check in the reference. Return its result or the missing prerequisite and setup notes, then stop. Open no browser, create no review artifact, install nothing and change no agent settings.
+For a check-only request, run only the runtime check in the reference. It probes Lavish's version through the pinned npx command, which may populate npm's cache, but opens no browser, creates no review artifact and installs nothing locally. Return its result or missing prerequisite, then stop. Leave renderer dependencies and agent settings unchanged.
 
 ## 2. Render the canonical report
 
@@ -57,4 +57,4 @@ Hand back the current source path, HTML path, URL when known, revision/digest, f
 
 ## Fallback
 
-On missing runtime, unavailable browser, failed assets, unsafe server, corrupt session, or a tool/permission limit, preserve the source and artifacts. Return `Not presented: <specific failure>` and the complete canonical report, including the review section or `Not reviewed:` line. The caller can deliver it in the terminal and still ask for approval. Do not install dependencies, change the agent's permissions, expose the server, load a CDN, suppress review findings, or drop details to make presentation succeed.
+On a missing renderer, failed npx resolution, unavailable browser, failed assets, unsafe server, corrupt session, or a tool/permission limit, preserve the source and artifacts. Return `Not presented: <specific failure>` and the complete canonical report, including the review section or `Not reviewed:` line. The caller can deliver it in the terminal and still ask for approval. Keep Lavish on its pinned npx path; never install it locally or globally to bypass a failure. Leave renderer dependencies and agent permissions unchanged. Use local assets with no CDN fallback, keep the server local, and preserve every review finding and report detail.

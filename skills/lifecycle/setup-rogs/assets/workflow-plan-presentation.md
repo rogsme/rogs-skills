@@ -2,8 +2,8 @@
 
 When plan presentation is on, start-ticket calls `present-plan` after optional plan review to display the complete settled report in a local browser. Plan review and presentation are independent features. A missing `Plan presentation` feature row means off.
 
-- Presenter: `present-plan`, using its checked Lavish runtime. No upstream skill or global hook is required.
-- Runtime: {{FILL: absolute private runtime directory outside every checkout, containing the pinned packages present-plan checks}}.
+- Presenter: `present-plan`, invoking pinned Lavish through `npx`. No local or global Lavish installation, upstream skill or global hook is required. Initial resolution may populate npm's cache.
+- Runtime: {{FILL: absolute private Marked/Mermaid renderer directory outside every checkout, containing the pinned renderer dependencies present-plan checks; no Lavish installation is needed}}.
 - Artifact root: {{FILL: absolute external directory allowed by the planning agent; in OpenCode Plan mode this may be under ~/.opencode/plan/}}.
 - Server state: {{FILL: absolute private external state directory, usually <runtime>/lavish-state}}.
 - Port: {{FILL: stable unprivileged local port, such as 4388 when free}}.

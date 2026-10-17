@@ -1,14 +1,23 @@
-import { spawn } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { createWriteStream } from "node:fs";
-import { lstat, stat } from "node:fs/promises";
+import { lstat } from "node:fs/promises";
 import http from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 
 import { VERSIONS, atomicWrite, externalDirectory, inspectRuntime, inside, loadSession, makePrivateDirectory, readJSON, safePath } from "./common.mjs";
 
 const loopback = new Set(["127.0.0.1", "localhost", "::1"]);
+const execute = promisify(execFile);
+
+export function lavishCommand(args = []) {
+  return {
+    command: "npx",
+    args: ["--yes", "--ignore-scripts", `--package=lavish-axi@${VERSIONS["lavish-axi"]}`, "--", "lavish-axi", ...args],
+  };
+}
 
 export function localEnvironment(session, base = process.env) {
   return {
@@ -52,16 +61,29 @@ export async function checkRuntime({ runtime, stateDir = path.join(runtime, "lav
   stateDir = await externalDirectory(stateDir, []);
   port = Number(port);
   if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error("Use an unprivileged local port.");
-  const cli = path.join(runtime, "node_modules", "lavish-axi", "dist", "cli.mjs");
-  await safePath(cli);
-  if (!(await stat(cli)).isFile()) throw new Error("The Lavish CLI is missing from the runtime.");
-  const state = await lstat(stateDir).catch((error) => { if (error.code === "ENOENT") return null; throw error; });
-  if (state && (!state.isDirectory() || (state.mode & 0o077) !== 0)) throw new Error("Server state must be a private directory (mode 0700); leave existing permissions untouched and choose a private path.");
+  await checkPrivateState(stateDir);
   await checkServer({ stateDir, port });
-  return { runtime, stateDir, port, cli, versions: VERSIONS, status: "ready", browserOpened: false };
+  const { command, args } = lavishCommand(["--version"]);
+  let version;
+  try {
+    const result = await execute(command, args, {
+      cwd: path.dirname(runtime), env: localEnvironment({ stateDir, port }),
+      timeout: 60_000, maxBuffer: 65_536,
+    });
+    version = result.stdout.trim();
+  } catch (error) {
+    throw new Error(`Cannot run pinned Lavish through npx (${error.code || "probe failed"}). Check npx availability and npm cache/network access; no local install is used.`);
+  }
+  if (version !== VERSIONS["lavish-axi"]) throw new Error(`Unexpected Lavish version from npx: expected ${VERSIONS["lavish-axi"]}, received ${version || "no version"}.`);
+  return { runtime, stateDir, port, cli: command, args: lavishCommand().args, versions: VERSIONS, status: "ready", browserOpened: false };
 }
 
-export async function captureCommand({ command, args, session, action, env, onStderr = () => {}, onStdout = () => {} }) {
+async function checkPrivateState(stateDir) {
+  const state = await lstat(stateDir).catch((error) => { if (error.code === "ENOENT") return null; throw error; });
+  if (state && (!state.isDirectory() || (state.mode & 0o077) !== 0)) throw new Error("Server state must be a private directory (mode 0700); leave existing permissions untouched and choose a private path.");
+}
+
+export async function captureCommand({ command, args, session, action, env, onStderr = () => {}, onStdout = () => {}, processGroup = false }) {
   const token = randomUUID();
   const raw = path.join(session.session, `${action}-${token}.txt`);
   const receipt = path.join(session.session, `${action}-${token}.json`);
@@ -70,16 +92,22 @@ export async function captureCommand({ command, args, session, action, env, onSt
   let child;
   let interruptedBy = null;
   const signalHandlers = {};
+  const grouped = processGroup && process.platform !== "win32";
+  function signalChild(signal) {
+    if (!child?.pid) return;
+    try { if (grouped) process.kill(-child.pid, signal); else child.kill(signal); }
+    catch (error) { if (error.code !== "ESRCH") throw error; }
+  }
   const exit = await new Promise((resolve, reject) => {
-    child = spawn(command, args, { cwd: session.session, env, stdio: ["ignore", "pipe", "pipe"] });
+    child = spawn(command, args, { cwd: session.session, env, detached: grouped, stdio: ["ignore", "pipe", "pipe"] });
     for (const signal of ["SIGINT", "SIGTERM"]) {
-      signalHandlers[signal] = () => { interruptedBy = signal; child.kill(signal); };
+      signalHandlers[signal] = () => { interruptedBy = signal; signalChild(signal); };
       process.on(signal, signalHandlers[signal]);
     }
     child.stdout.pipe(output);
     child.stdout.on("data", onStdout);
     child.stderr.on("data", onStderr);
-    output.on("error", (error) => { child.kill("SIGTERM"); reject(error); });
+    output.on("error", (error) => { signalChild("SIGTERM"); reject(error); });
     child.on("error", (error) => { output.end(); reject(error); });
     child.on("close", (code, signal) => resolve({ code, signal }));
   }).finally(() => {
@@ -105,8 +133,8 @@ export async function runLavish(action, options) {
   const session = await loadSession(options.session);
   const runtime = await checkRuntime(session);
   await makePrivateDirectory(session.stateDir);
-  await checkRuntime(session);
-  const args = [runtime.cli];
+  await checkPrivateState(session.stateDir);
+  const args = [...runtime.args];
   if (action !== "open") args.push(action);
   args.push(path.join(session.session, "plan.html"));
   if (options.noOpen && action === "open") args.push("--no-open");
@@ -118,7 +146,7 @@ export async function runLavish(action, options) {
     args.push("--agent-reply-file", reply);
   }
   const result = await captureCommand({
-    command: process.execPath, args, session, action,
+    command: runtime.cli, args, session, action, processGroup: true,
     env: localEnvironment(session), onStderr: (chunk) => process.stderr.write(chunk),
   });
   if (result.complete) await checkServer(session);
@@ -139,7 +167,7 @@ function argumentsFor(argv) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   if (process.argv.includes("--help")) {
-    console.log("node lavish.mjs check --runtime <tool-cache> [--state-dir <directory>] [--port <port>]\nnode lavish.mjs <open|poll|reply|end> --session <owned-review-directory> [--no-open] [--reopen] [--reply-file <file-in-review-directory>]\nRead the complete raw output named by the receipt. A completed command is never plan approval.");
+    console.log("node lavish.mjs check --runtime <renderer-runtime> [--state-dir <directory>] [--port <port>]\nnode lavish.mjs <open|poll|reply|end> --session <owned-review-directory> [--no-open] [--reopen] [--reply-file <file-in-review-directory>]\nLavish runs through pinned npx, not a local install. Read the complete raw output named by the receipt. A completed command is never plan approval.");
   } else {
     try {
       const [action, ...args] = process.argv.slice(2);

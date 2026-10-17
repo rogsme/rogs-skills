@@ -1,10 +1,10 @@
 # Presenter verification
 
-Tests use synthetic plans and disposable repositories outside this checkout. They never use a real tracker or forge. The runtime is a separate private directory; no skill is installed into this checkout.
+Tests use synthetic plans and disposable repositories outside this checkout. They never use a real tracker or forge. The renderer runtime is a separate private directory; Lavish runs through pinned `npx`, and no skill or Lavish package is installed into this checkout.
 
 ## Runtime
 
-With explicit permission to install test dependencies, use the command in `references/lavish.md` to prepare a runtime. Set `PRESENT_PLAN_RUNTIME` to its absolute path. Set `TMPDIR` to an approved scratch directory when the default is not appropriate.
+With explicit permission to install renderer test dependencies, use the Marked/Mermaid command in `references/lavish.md`. Set `PRESENT_PLAN_RUNTIME` to that runtime's absolute path. Do not install Lavish there: browser tests invoke it through pinned `npx`, which may download to npm's cache on first use. Offline execution needs that cached package. Set `TMPDIR` to an approved scratch directory when the default is not appropriate.
 
 From the repository root:
 
@@ -12,11 +12,11 @@ From the repository root:
 node --test skills/engineering/present-plan/tests/*.test.mjs
 ```
 
-The rendering tests need the prepared runtime and fail clearly when it is missing. They exercise the real pinned Markdown lexer. Diagram tests require a local classic bundle with no dynamic module imports, because ES modules fail CORS in Lavish's opaque-origin iframe. Protocol tests use disposable HTTP services and command stubs; their success does not prove real browser interaction.
+The rendering tests need the prepared renderer and fail clearly when it is missing. They exercise the real pinned Markdown lexer. Diagram tests require a local classic bundle with no dynamic module imports, because ES modules fail CORS in Lavish's opaque-origin iframe. Protocol tests use disposable HTTP services and npx stubs, including a runtime with no local Lavish package. Their success does not prove real browser interaction.
 
 ## Browser integration
 
-With the same runtime and the `playwright-cli` command available:
+With the same renderer runtime, `npx` and `playwright-cli` available:
 
 ```sh
 node skills/engineering/present-plan/tests/browser.mjs

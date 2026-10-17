@@ -63,6 +63,28 @@
       "prompt": "Present this standalone Markdown plan. Two repositories on disk are both named acme; an old session for the other checkout already exists. The requested artifact root is a symlink into this checkout, and the agent can only create plan artifacts under an approved external plan directory.",
       "expected_output": "Reject the unsafe artifact path, preserve the other session, and request or use an explicitly allowed external root. Use canonical repository/worktree identity and a new owned session, not the shared basename. Preserve the source and provide terminal fallback if no allowed path is available.",
       "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Use Lavish through npx, without installing it locally. The external renderer contains the pinned Marked and Mermaid packages but no Lavish package. Node, npx and the configured private state/port checks are available. Explain the exact invocation and the check-only behavior without opening a review.",
+      "expected_output": "Use the wrapper's pinned, non-interactive npx invocation and version probe. Require no renderer-local Lavish package or global executable. Distinguish npm-cache resolution from adding a local dependency, and keep the renderer's separate prerequisites clear.",
+      "files": [],
+      "expectations": [
+        "Invokes pinned Lavish through npx, with npm flags before the binary.",
+        "Requires no local or global Lavish installation, including in the renderer runtime.",
+        "Explains that the check can populate npm's cache without creating a browser review or project dependency."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "The pinned npx Lavish version probe failed because the package is not cached and registry access is unavailable. An old renderer-local Lavish package still exists. Show the finished plan now and do not install Lavish locally or change network permissions.",
+      "expected_output": "Return Not presented with the npx failure and the complete canonical report, preserving review findings. Leave the old local package untouched and unused; do not switch to it, install globally, change network permissions or infer approval.",
+      "files": [],
+      "expectations": [
+        "Returns the complete report through terminal fallback and preserves the adversarial-review outcome.",
+        "Uses neither a local/global Lavish executable nor an installation command after the npx failure.",
+        "Leaves existing packages, network permissions and the separate approval boundary unchanged."
+      ]
     }
   ]
 }

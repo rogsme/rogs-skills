@@ -6,6 +6,7 @@ import path from "node:path";
 import test from "node:test";
 
 import { captureCommand, checkRuntime, checkServer, localEnvironment } from "../scripts/lavish.mjs";
+import { VERSIONS } from "../scripts/common.mjs";
 
 async function server(t, response) {
   const app = http.createServer((_request, res) => {
@@ -50,6 +51,49 @@ async function sessionFixture(t) {
   await writeFile(path.join(directory, "session.json"), JSON.stringify(session));
   return session;
 }
+
+async function npxFixture(t, version = VERSIONS["lavish-axi"], exitCode = 0) {
+  const session = await sessionFixture(t);
+  const runtime = path.join(session.session, "renderer");
+  for (const name of ["marked", "mermaid"]) {
+    const directory = path.join(runtime, "node_modules", name);
+    await mkdir(directory, { recursive: true });
+    await writeFile(path.join(directory, "package.json"), JSON.stringify({ name, version: VERSIONS[name] }));
+  }
+  const bin = path.join(session.session, "bin");
+  await mkdir(bin);
+  const log = path.join(session.session, "npx-arguments.json");
+  await writeFile(path.join(bin, "npx"), `#!/usr/bin/env node
+require('node:fs').writeFileSync(${JSON.stringify(log)}, JSON.stringify({ args: process.argv.slice(2), telemetry: process.env.LAVISH_AXI_TELEMETRY, host: process.env.LAVISH_AXI_HOST, cwd: process.cwd() }));
+console.log(${JSON.stringify(version)});process.exitCode = ${exitCode};\n`, { mode: 0o700 });
+  const previous = process.env.PATH;
+  process.env.PATH = bin + path.delimiter + previous;
+  t.after(() => { process.env.PATH = previous; });
+  return { runtime, stateDir: path.join(session.session, "state"), log };
+}
+
+test("checks pinned Lavish through npx without a local Lavish package", async (t) => {
+  const fixture = await npxFixture(t);
+  const result = await checkRuntime(fixture);
+  const probe = JSON.parse(await readFile(fixture.log, "utf8"));
+  assert.deepEqual(probe.args, ["--yes", "--ignore-scripts", `--package=lavish-axi@${VERSIONS["lavish-axi"]}`, "--", "lavish-axi", "--version"]);
+  assert.equal(result.cli, "npx");
+  assert.equal(probe.telemetry, "0");
+  assert.equal(probe.host, "127.0.0.1");
+  assert.equal(probe.cwd, path.dirname(fixture.runtime));
+  assert.deepEqual((await readdir(path.join(fixture.runtime, "node_modules"))).sort(), ["marked", "mermaid"]);
+});
+
+test("rejects a different Lavish version returned by npx", async (t) => {
+  const fixture = await npxFixture(t, "0.0.0");
+  await assert.rejects(checkRuntime(fixture), /npx.*version|version.*npx/i);
+});
+
+test("a failed npx resolution does not install or run a local Lavish copy", async (t) => {
+  const fixture = await npxFixture(t, "", 1);
+  await assert.rejects(checkRuntime(fixture), /Cannot run pinned Lavish through npx/);
+  assert.deepEqual((await readdir(path.join(fixture.runtime, "node_modules"))).sort(), ["marked", "mermaid"]);
+});
 
 test("persists the entire raw response and never promotes it to approval", async (t) => {
   const session = await sessionFixture(t);
@@ -113,4 +157,26 @@ console.log(JSON.stringify(await captureCommand({ command: process.execPath,
   assert.equal(result.complete, false);
   assert.equal(result.interrupted, true);
   assert.equal(result.approval, false);
+});
+
+test("interruption reaches descendants of the npx process group", { skip: process.platform === "win32" }, async (t) => {
+  const session = await sessionFixture(t);
+  const marker = path.join(session.session, "descendant-stopped.txt");
+  const descendant = `process.on('SIGTERM', () => {require('node:fs').writeFileSync(${JSON.stringify(marker)}, 'stopped');process.exit(0)});console.log('ready');setTimeout(()=>process.exit(0),2500);`;
+  const parent = `process.on('SIGTERM',()=>{});require('node:child_process').spawn(process.execPath,['-e',${JSON.stringify(descendant)}],{stdio:['ignore','inherit','inherit']});`;
+  const wrapper = path.join(session.session, "grouped.mjs");
+  await writeFile(wrapper, `import {captureCommand} from ${JSON.stringify(new URL("../scripts/lavish.mjs", import.meta.url).href)};
+console.log(JSON.stringify(await captureCommand({ command: process.execPath,
+  args: ['-e', ${JSON.stringify(parent)}], session: ${JSON.stringify(session)},
+  action: 'poll', env: process.env, processGroup: true,
+  onStdout: () => process.kill(process.pid, 'SIGTERM'),
+})));\n`);
+  const { execFile } = await import("node:child_process");
+  const result = await new Promise((resolve, reject) => execFile(process.execPath, [wrapper], { timeout: 5000 }, (error, stdout) => {
+    if (error) return reject(error);
+    try { resolve(JSON.parse(stdout)); } catch (parseError) { reject(parseError); }
+  }));
+  assert.equal(await readFile(marker, "utf8"), "stopped");
+  assert.equal(result.complete, false);
+  assert.equal(result.interrupted, true);
 });

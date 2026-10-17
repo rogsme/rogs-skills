@@ -66,7 +66,11 @@ test("lifecycle keeps review before presentation and approval outside browser st
   assert.match(work, /Post the approved content.*never a temporary local link/);
 });
 
-test("installation recipe matches checked dependency pins", async () => {
+test("recipes pin npx Lavish separately from the renderer packages", async () => {
   const reference = await readFile(new URL("../references/lavish.md", import.meta.url), "utf8");
   for (const [name, version] of Object.entries(VERSIONS)) assert.ok(reference.includes(`${name}@${version}`));
+  const install = reference.match(/^npm install .+$/m)?.[0];
+  assert.ok(install?.includes(`marked@${VERSIONS.marked}`));
+  assert.doesNotMatch(install, /lavish-axi/);
+  assert.match(reference, /npx --yes --ignore-scripts --package=lavish-axi@0\.1\.89 -- lavish-axi/);
 });

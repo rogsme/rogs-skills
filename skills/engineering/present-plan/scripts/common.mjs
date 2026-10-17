@@ -5,7 +5,8 @@ import os from "node:os";
 import path from "node:path";
 
 export const SCHEMA = "rogs-skills/present-plan/1";
-export const VERSIONS = Object.freeze({ "lavish-axi": "0.1.89", marked: "18.1.0", mermaid: "11.12.1" });
+export const RENDERER_VERSIONS = Object.freeze({ marked: "18.1.0", mermaid: "11.12.1" });
+export const VERSIONS = Object.freeze({ "lavish-axi": "0.1.89", ...RENDERER_VERSIONS });
 export const digest = (value) => createHash("sha256").update(value).digest("hex");
 export const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
@@ -52,7 +53,7 @@ export async function atomicWrite(file, content, { exclusive = false } = {}) {
 export async function inspectRuntime(directory) {
   if (Number(process.versions.node.split(".")[0]) < 22) throw new Error("The presenter needs Node.js 22 or newer.");
   const runtime = await safePath(directory);
-  for (const [name, version] of Object.entries(VERSIONS)) {
+  for (const [name, version] of Object.entries(RENDERER_VERSIONS)) {
     const file = path.join(runtime, "node_modules", name, "package.json");
     await safePath(file);
     const pkg = await readJSON(file).catch((error) => { throw new Error(`Runtime package ${name} is unavailable: ${error.message}`); });

@@ -59,7 +59,7 @@ finish-ticket       merge, verify, complete the tickets     Status: DONE
 
 ### Browser plan review
 
-Enable `Plan presentation` through `/setup-rogs` after preparing the runtime that `present-plan` describes. It needs Node.js 22+ and pinned Lavish, Marked and Mermaid packages in a private tool cache outside the checkout. No separate upstream Lavish skill, MCP server or global hook is required. Setup checks the runtime but never installs it or changes agent settings.
+Enable `Plan presentation` through `/setup-rogs` after preparing the renderer that `present-plan` describes. It needs Node.js 22+ and npm/npx. Lavish runs through pinned `npx` execution, with no local or global installation; npm may download it to its cache on first use. Only Marked and Mermaid need the separate renderer directory outside the checkout. No upstream Lavish skill, MCP server or global hook is required. Setup checks these prerequisites without local installation or agent-setting changes.
 
 `start-ticket` presents the full canonical plan, diagrams and adversarial findings in Lavish. The agent saves feedback with its polled source revision and checks delayed comments against earlier snapshots. Substantial human-requested revisions receive another single adversarial round when plan review is on. Plan approval stays in the agent conversation, and implementation still starts through `work-ticket`. Closing a browser or seeing a delivery receipt never authorizes work.
 
@@ -71,7 +71,7 @@ Presentation is independent of plan review and optional under configuration v1. 
 - The tracker's MCP server or CLI, connected in your agent. `/setup-rogs` checks the connection but never edits your agent's configuration.
 - The forge's CLI, signed in: `gh` 2.99 or newer, `tea`, or `glab`.
 - For plan review, the reviewer's agent CLI, signed in: `claude`, or `opencode` with the read-only agent that `/setup-rogs` describes.
-- For plan presentation, the `present-plan` skill and its separately prepared Node.js runtime, plus a local browser. Its own setup reference holds the checked package versions and installation procedure.
+- For plan presentation, the `present-plan` skill, Node.js 22+, npm/npx, its Marked/Mermaid renderer dependencies, and a local browser. Its setup reference holds the pinned npx command and renderer preparation procedure.
 
 ## Skills
 
