@@ -84,7 +84,7 @@ test("keeps network-capable Mermaid source as text without giving it to Lavish",
   ]) {
     const result = await renderMarkdown("```mermaid\n" + diagram + "\n```\n", runtime);
     assert.equal(result.diagrams, 0);
-    assert.doesNotMatch(result.html, /class="mermaid"/);
+    assert.doesNotMatch(result.html, /class="diagram"/);
     assert.match(result.html, /local-only/);
     assert.match(result.html, /<pre><code>/);
   }
@@ -154,7 +154,8 @@ test("copies a local classic Mermaid bundle for Lavish's opaque-origin sandbox",
   await writeFile(options.source, "# Architecture\n\n```mermaid\nflowchart LR\n  api[API] --> store[(Store)]\n```\n");
   const result = await renderPlan(options);
   const html = await readFile(result.html, "utf8");
-  assert.match(html, /class="mermaid"/);
+  assert.match(html, /class="diagram"/);
+  assert.doesNotMatch(html, /class="mermaid"/);
   assert.match(html, /api\[API\] --&gt; store/);
   assert.match(html, /src="assets\/diagrams\.js"/);
   assert.match(html, /src="assets\/mermaid\/mermaid\.min\.js"/);
@@ -187,6 +188,76 @@ test("rendering leaves the checkout and its index unchanged", async (t) => {
   assert.deepEqual(execFileSync("git", ["status", "--porcelain=v1", "-z"], { cwd: options.repository }), before);
   assert.deepEqual(execFileSync("git", ["write-tree"], { cwd: options.repository }), index);
   assert.equal(await readFile(path.join(options.repository, "pending.txt"), "utf8"), "More user work\n");
+});
+
+const overviewPlan = "# ACM-123: Pagination\n\nBundle of one: ACM-123.\n\n" +
+  "## Overview\nLong lists load one page at a time.\n\n```mermaid\nflowchart LR\n  today[All rows] --> after[One page]\n```\n\n" +
+  "## Implementation\n1. Validate the cursor in `api/list.py:12`.\n\n" +
+  "## Plan review\nPlan review: reviewer (another vendor), verdict REVISE\n\n" +
+  "| # | Severity | Finding | Decision | Why | Plan change |\n|---|---|---|---|---|---|\n" +
+  "| 1 | blocker | Missing empty-page test | Accept | It fails today | Add it |\n| 2 | nit | Wording | Reject | Clear already | None |\n";
+
+const panelOf = (html, name) => html.match(new RegExp(`<section id="panel-${name}"[^>]*>([\\s\\S]*?)</section>`))[1];
+
+test("splits a plan with an overview into an Overview tab and a Full plan tab", async () => {
+  const result = await renderMarkdown(overviewPlan, runtime);
+  assert.equal(result.tabs, true);
+  assert.match(result.html, /role="tablist"/);
+  const overview = panelOf(result.html, "overview");
+  const full = panelOf(result.html, "full");
+  assert.match(overview, /Long lists load one page at a time/);
+  assert.match(overview, /class="diagram"/);
+  assert.match(overview, /verdict REVISE/);
+  assert.match(overview, /Missing empty-page test/);
+  assert.doesNotMatch(full, /Long lists load one page at a time/);
+  assert.match(full, /Bundle of one/);
+  assert.match(full, /api\/list\.py:12/);
+  assert.match(full, /Missing empty-page test/);
+  assert.equal(result.html.match(/<h1 /g).length, 1);
+  assert.doesNotMatch(overview + full, /<h1 /);
+  const ids = [...result.html.matchAll(/ id="([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(new Set(ids).size, ids.length);
+  assert.match(result.toc, /data-panel="overview"[\s\S]*data-panel="full"/);
+});
+
+test("keeps a single page when the plan has no overview", async () => {
+  const result = await renderMarkdown("# ACM-123\n\n## Decision brief\nKeep the format.\n", runtime);
+  assert.equal(result.tabs, false);
+  assert.doesNotMatch(result.html, /role="tab|data-panel/);
+});
+
+test("shows a Not reviewed warning on the Overview tab wherever the planner put it", async () => {
+  const result = await renderMarkdown("# ACM-123\n\nNot reviewed: reviewer timed out.\n\n## Overview\nShort.\n\n## Steps\n1. Do it.\n", runtime);
+  assert.match(panelOf(result.html, "overview"), /class="review-warning">Not reviewed: reviewer timed out/);
+  assert.match(panelOf(result.html, "full"), /Not reviewed: reviewer timed out/);
+});
+
+test("styles review severities, decisions and the verdict without changing their text", async () => {
+  const result = await renderMarkdown(overviewPlan, runtime);
+  assert.match(result.html, /<p class="verdict verdict-revise">Plan review: reviewer \(another vendor\), verdict REVISE<\/p>/);
+  assert.match(result.html, /<span class="badge sev-blocker">blocker<\/span>/);
+  assert.match(result.html, /<span class="badge sev-nit">nit<\/span>/);
+  assert.match(result.html, /<span class="badge dec-accept">Accept<\/span>/);
+  assert.match(result.html, /<span class="badge dec-reject">Reject<\/span>/);
+  assert.match(result.html, /<td>It fails today<\/td>/);
+  const other = await renderMarkdown("| Name | Decision |\n|---|---|\n| Old | Maybe |\n", runtime);
+  assert.doesNotMatch(other.html, /badge/);
+});
+
+test("renders a light page and copies the tab script once per session", async (t) => {
+  const options = await fixture(t);
+  await writeFile(options.source, overviewPlan);
+  const first = await renderPlan(options);
+  const html = await readFile(first.html, "utf8");
+  assert.match(html, /color-scheme: light;/);
+  assert.doesNotMatch(html, /prefers-color-scheme/);
+  assert.match(html, /<script src="assets\/tabs\.js"><\/script>\n  <script src="assets\/mermaid\/mermaid\.min\.js">/);
+  assert.match(await readFile(path.join(first.session, "assets", "diagrams.js"), "utf8"), /theme: "default"/);
+  assert.match(await readFile(path.join(first.session, "assets", "tabs.js"), "utf8"), /plan-tab-shown/);
+  await writeFile(options.source, overviewPlan + "\n## Verification\nRun the tests.\n");
+  const second = await renderPlan({ ...options, session: first.session });
+  assert.equal(second.revision, 2);
+  assert.equal(JSON.parse(await readFile(path.join(first.session, "session.json"), "utf8")).tabAssets, true);
 });
 
 test("defaults the artifact root to /tmp/lavish and refuses one others can write", async (t) => {

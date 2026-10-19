@@ -46,9 +46,11 @@ Add `--artifacts "<artifact-root>"` when the root is not the default. Repeat `--
 
 The renderer returns JSON with `session`, `html`, `source`, `revision` and `sourceDigest`. Revisions of this review pass `--session "<returned-directory>"` with the same identity and runtime settings. New source content creates an immutable Markdown snapshot; the current page stays at `plan.html`. Unchanged content keeps its revision. Never replace an unrelated file or remove a render lock: an interrupted render needs inspection, not an assumed successful retry.
 
-The renderer loads Marked from the prepared runtime and only emits its own safe HTML elements. Images are references, not loads. Mermaid's self-contained classic browser bundle and license are copied beside the page, so no CDN is needed. Use classic scripts: Lavish's iframe has an opaque origin, and its local asset routes do not supply the CORS headers that ES modules need. Keep the sandbox intact. Raw source, review history and feedback may contain private code: treat the whole artifact directory as sensitive and retain it until the user requests cleanup.
+The renderer loads Marked from the prepared runtime and only emits its own safe HTML elements. Images are references, not loads. Mermaid's self-contained classic browser bundle and license are copied beside the page, so no CDN is needed. Use classic scripts: Lavish's iframe has an opaque origin, and its local asset routes do not supply the CORS headers that ES modules need. Keep the sandbox intact. Diagrams sit in a `.diagram` container rather than `.mermaid`: Lavish replaces a Mermaid diagram inside `.mermaid` with an Excalidraw whiteboard, whose boxes cannot take notes, while it anchors notes to the boxes of any other rendered Mermaid SVG. A plan with `## Overview` also gets `assets/tabs.js`, which switches the Overview and Full plan tabs; diagrams in the hidden tab render when it is shown.
 
-The page adds a local-only content policy. Mermaid sources that contain network references, image/icon resources or configuration directives stay escaped as source with a warning, rather than entering either the renderer or Lavish's separate whiteboard importer. This conservative boundary can also flag a URL used only as a label; preserve it as text for review.
+The page is light only. Lavish's own frame around it stays dark in this version and has no setting. Raw source, review history and feedback may contain private code: treat the whole artifact directory as sensitive and retain it until the user requests cleanup.
+
+The page adds a local-only content policy. Mermaid sources that contain network references, image/icon resources or configuration directives stay escaped as source with a warning, rather than entering the renderer. This conservative boundary can also flag a URL used only as a label; preserve it as text for review.
 
 ## Open, poll, reply, end
 
@@ -83,6 +85,6 @@ Checked against Lavish `0.1.89` on 2026-10-17:
 
 - [CLI, feedback, privacy and sharing](https://github.com/kunchenguid/lavish-axi/blob/lavish-axi-v0.1.89/README.md)
 - [Feedback data encoding](https://github.com/kunchenguid/lavish-axi/blob/lavish-axi-v0.1.89/src/artifact-sdk.js)
-- [Local server and whiteboard invariants](https://github.com/kunchenguid/lavish-axi/blob/lavish-axi-v0.1.89/docs/invariants.md)
+- [Local server invariants](https://github.com/kunchenguid/lavish-axi/blob/lavish-axi-v0.1.89/docs/invariants.md)
 - [Marked token and renderer documentation](https://marked.js.org/using_pro)
 - [npx package selection and npm-cache execution](https://docs.npmjs.com/cli/v11/commands/npx)

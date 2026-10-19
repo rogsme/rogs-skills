@@ -22,7 +22,7 @@ With the same renderer runtime, `npx` and `playwright-cli` available:
 node skills/engineering/present-plan/tests/browser.mjs
 ```
 
-The integration test creates its own private state, free local port, scratch repository, review artifacts and named browser session. It opens no personal browser profile. It verifies rendered sections and safety, blocks non-local browser requests, sends anchored feedback and a whiteboard edit through a real Lavish poll, checks live revision reload, and ends only its own sessions. Test-generated files stay in its scratch directory. A failed browser or missing dependency is a failure, never an inferred pass.
+The integration test creates its own private state, free local port, scratch repository, review artifacts and named browser session. It opens no personal browser profile. It verifies rendered sections and safety, the Overview and Full plan tabs, blocks non-local browser requests, sends anchored feedback and a note on a diagram box through a real Lavish poll, checks live revision reload, and ends only its own sessions. Test-generated files stay in its scratch directory. A failed browser or missing dependency is a failure, never an inferred pass.
 
 ## Agent scenarios and human acceptance
 

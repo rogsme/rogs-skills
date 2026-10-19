@@ -14,11 +14,16 @@ function decodeEntities(text) {
   });
 }
 
+const SEVERITIES = new Set(["blocker", "risk", "nit"]);
+const DECISIONS = new Set(["accept", "refine", "reject"]);
+const VERDICT = /^\s*Plan review:.*\bverdict (SOUND|REVISE|RETHINK)\b/;
+
 export async function renderMarkdown(markdown, runtime) {
   await inspectRuntime(runtime);
   const entry = await safePath(path.join(runtime, "node_modules", "marked", "lib", "marked.esm.js"));
   const { marked } = await import(pathToFileURL(entry).href);
-  const toc = [];
+  let toc = [];
+  let prefix = "section";
   let diagrams = 0;
   const text = (value) => escapeHTML(value).replace(/&amp;((?:#(?:x[0-9a-f]+|\d+)|[a-z][a-z0-9]*);)/gi, "&$1");
   function inline(tokens = []) {
@@ -34,7 +39,7 @@ export async function renderMarkdown(markdown, runtime) {
         case "html": return escapeHTML(token.raw);
         case "link": {
           const url = decodeEntities(token.href);
-          const safe = /^(https?:\/\/|mailto:|#[a-z0-9_-]+$)/i.test(url) && !/[\u0000-\u0020\u007f]/.test(url);
+          const safe = /^(https?:\/\/|mailto:|#[a-z0-9_-]+$)/i.test(url) && !/[\u0000- \u007f]/.test(url);
           return safe ? `<a href="${escapeHTML(url)}" rel="noreferrer noopener">${inline(token.tokens)}</a>` : `${inline(token.tokens)} (${text(token.href)})`;
         }
         case "image": return `<span class="image-reference">Image: ${text(token.text)} (${text(token.href)})</span>`;
@@ -42,19 +47,28 @@ export async function renderMarkdown(markdown, runtime) {
       }
     }).join("");
   }
+  // Severity and decision cells of the review table become badges; their text stays as written.
+  function badge(item, column) {
+    const content = inline(item.tokens);
+    const value = item.text.trim().toLowerCase();
+    if (column === "severity" && SEVERITIES.has(value)) return `<span class="badge sev-${value}">${content}</span>`;
+    if (column === "decision" && DECISIONS.has(value)) return `<span class="badge dec-${value}">${content}</span>`;
+    return content;
+  }
   function blocks(tokens) {
     return tokens.map((token) => {
       switch (token.type) {
         case "space": case "def": return "";
         case "heading": {
-          const id = `section-${toc.length + 1}`;
+          const id = `${prefix}-${toc.length + 1}`;
           const content = inline(token.tokens);
           toc.push({ id, content, depth: token.depth });
           return `<h${token.depth} id="${id}">${content}</h${token.depth}>`;
         }
         case "paragraph": case "text": {
-          const warning = /^\s*Not reviewed:/.test(token.text) ? ' class="review-warning"' : "";
-          return `<p${warning}>${token.tokens ? inline(token.tokens) : text(token.text)}</p>`;
+          const verdict = token.text.match(VERDICT);
+          const style = /^\s*Not reviewed:/.test(token.text) ? ' class="review-warning"' : verdict ? ` class="verdict verdict-${verdict[1].toLowerCase()}"` : "";
+          return `<p${style}>${token.tokens ? inline(token.tokens) : text(token.text)}</p>`;
         }
         case "blockquote": return `<blockquote>${blocks(token.tokens)}</blockquote>`;
         case "list": {
@@ -64,16 +78,18 @@ export async function renderMarkdown(markdown, runtime) {
         }
         case "checkbox": return `<input type="checkbox" disabled${token.checked ? " checked" : ""} aria-label="Plan checklist item">`;
         case "table": {
-          const cell = (item, tag) => `<${tag}>${inline(item.tokens)}</${tag}>`;
-          return `<div class="table-scroll"><table><thead><tr>${token.header.map((item) => cell(item, "th")).join("")}</tr></thead><tbody>${token.rows.map((row) => `<tr>${row.map((item) => cell(item, "td")).join("")}</tr>`).join("")}</tbody></table></div>`;
+          const columns = token.header.map((item) => item.text.trim().toLowerCase());
+          const cell = (item, tag, index) => `<${tag}>${tag === "td" ? badge(item, columns[index]) : inline(item.tokens)}</${tag}>`;
+          return `<div class="table-scroll"><table><thead><tr>${token.header.map((item, index) => cell(item, "th", index)).join("")}</tr></thead><tbody>${token.rows.map((row) => `<tr>${row.map((item, index) => cell(item, "td", index)).join("")}</tr>`).join("")}</tbody></table></div>`;
         }
         case "code":
           if ((token.lang || "").trim().toLowerCase() === "mermaid") {
-            // The same source reaches Lavish's whiteboard importer, outside this page's CSP.
+            // Network references stay out of the Mermaid renderer, whatever this page's CSP allows.
             const unsafe = /%%\{|^\s*---|(?:https?|ftp|data|blob|file|javascript):|\/\/|@import|url\s*\(|(?:img|image|icon|href|src)\s*:|<(?:img|image|iframe|script|style|link|object|embed|foreignObject)\b|&(?:#|lt;|amp;)/im;
             if (unsafe.test(token.text)) return `<p class="review-warning">This diagram needs local-only source. Network resources and configuration directives stay as text for review.</p><pre><code>${escapeHTML(token.text)}</code></pre>`;
             diagrams++;
-            return `<figure><div class="mermaid">${escapeHTML(token.text)}</div><figcaption>Diagram ${diagrams}. Edit the whiteboard in Lavish or annotate its source.</figcaption></figure>`;
+            // Lavish turns diagrams in a .mermaid container into whiteboards; any other container keeps the SVG, whose boxes take notes.
+            return `<figure><div class="diagram">${escapeHTML(token.text)}</div><figcaption>Diagram ${diagrams}. Click a box to comment on it.</figcaption></figure>`;
           }
           return `<pre><code>${escapeHTML(token.text)}</code></pre>`;
         case "hr": return "<hr>";
@@ -82,8 +98,45 @@ export async function renderMarkdown(markdown, runtime) {
       }
     }).join("\n");
   }
-  const html = blocks(marked.lexer(markdown, { gfm: true, breaks: false }));
-  return { html, diagrams, toc: toc.map(({ id, content, depth }) => `<a class="depth-${depth}" href="#${id}">${content.replace(/<[^>]*>/g, "")}</a>`).join("\n") };
+  function panel(name, tokens) {
+    toc = [];
+    prefix = name;
+    const html = blocks(tokens);
+    const links = toc.map(({ id, content, depth }) => `<a class="depth-${depth}" href="#${id}">${content.replace(/<[^>]*>/g, "")}</a>`).join("\n");
+    return { html, links };
+  }
+  const tokens = marked.lexer(markdown, { gfm: true, breaks: false });
+  const sections = splitSections(tokens);
+  const overview = sections.find((section) => section.title === "Overview");
+  if (!overview) {
+    const { html, links } = panel("section", tokens);
+    return { html, diagrams, toc: links, tabs: false };
+  }
+  // The planner writes the overview for people; the full plan keeps every other line of the source.
+  const title = tokens.find((token) => token.type !== "space");
+  const shared = title?.type === "heading" && title.depth === 1 ? [title] : [];
+  const review = sections.filter((section) => section !== overview && section.title === "Plan review");
+  const warnings = sections.filter((section) => section !== overview && !review.includes(section))
+    .flatMap((section) => section.tokens.filter((token) => token.type === "paragraph" && /^\s*Not reviewed:/.test(token.text)));
+  const top = panel("title", shared);
+  const human = panel("overview", [...overview.tokens, ...review.flatMap((section) => section.tokens), ...warnings]);
+  const full = panel("section", tokens.filter((token) => !shared.includes(token) && !overview.tokens.includes(token)));
+  const html = `${top.html}
+<div class="tabs" role="tablist" aria-label="Plan views"><button type="button" role="tab" id="tab-overview" aria-controls="panel-overview" data-panel="overview" aria-selected="true">Overview</button><button type="button" role="tab" id="tab-full" aria-controls="panel-full" data-panel="full" aria-selected="false">Full plan</button></div>
+<section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" data-panel="overview">${human.html}</section>
+<section id="panel-full" role="tabpanel" aria-labelledby="tab-full" data-panel="full">${full.html}</section>`;
+  const navigation = `<div data-panel="overview">${human.links}</div>\n<div data-panel="full">${full.links}</div>`;
+  return { html, diagrams, toc: navigation, tabs: true };
+}
+
+// Top-level sections start at each level 1 or 2 heading; tokens before the first one form an untitled section.
+function splitSections(tokens) {
+  const sections = [{ title: null, tokens: [] }];
+  for (const token of tokens) {
+    if (token.type === "heading" && token.depth <= 2) sections.push({ title: token.depth === 2 ? token.text.trim() : null, tokens: [] });
+    sections.at(-1).tokens.push(token);
+  }
+  return sections;
 }
 
 export async function renderPlan(options) {
@@ -131,11 +184,16 @@ export async function renderPlan(options) {
         await cp(new URL("diagrams.js", assets), path.join(session, "assets", "diagrams.js"), { force: false, errorOnExist: true });
       }
     }
+    if (rendered.tabs && !previous?.tabAssets) {
+      await makePrivateDirectory(path.join(session, "assets"));
+      await cp(new URL("tabs.js", assets), path.join(session, "assets", "tabs.js"), { force: false, errorOnExist: true });
+    }
     const metadata = {
       schema: SCHEMA, session, artifactRoot, identity, runtime, stateDir, port,
       branch: project.branch, commit: project.commit, revision, sourceDigest,
       createdAt: previous?.createdAt || new Date().toISOString(),
       diagramAssets: Boolean(rendered.diagrams || previous?.diagramAssets),
+      tabAssets: Boolean(rendered.tabs || previous?.tabAssets),
     };
     const title = options.title || identity.ticket;
     const values = {
@@ -143,7 +201,11 @@ export async function renderPlan(options) {
       TICKET: escapeHTML([identity.ticket, ...identity.riders].join(", ")), REVISION: String(revision),
       DIGEST: sourceDigest, SOURCE: sourceName,
       LOCATION: escapeHTML(`${project.worktree} | ${project.branch || "detached or unavailable"} | ${project.commit || "unborn or unavailable"}`),
-      DIAGRAM_SCRIPT: rendered.diagrams ? '<script src="assets/mermaid/mermaid.min.js"></script>\n  <script src="assets/diagrams.js"></script>' : "",
+      // tabs.js runs first so diagrams in the hidden tab wait until it is shown.
+      SCRIPTS: [
+        rendered.tabs && '<script src="assets/tabs.js"></script>',
+        rendered.diagrams && '<script src="assets/mermaid/mermaid.min.js"></script>\n  <script src="assets/diagrams.js"></script>',
+      ].filter(Boolean).join("\n  "),
     };
     const template = await readFile(new URL("plan.html", assets), "utf8");
     const html = template.replace(/\{\{([A-Z_]+)\}\}/g, (_, key) => values[key]);

@@ -49,11 +49,12 @@ try {
   await mkdir(repository);
   execFileSync("git", ["init", "-q", "--initial-branch=ACM-123"], { cwd: repository });
   const source = path.join(root, "plan.md");
-  const original = "# ACM-123: Pagination\n\n## Decision brief\nPreserve the current response format.\n\n" +
+  const original = "# ACM-123: Pagination\n\n## Overview\nPreserve the current response format.\n\n" +
+    "```mermaid\nflowchart LR\n  api[API] --> store[(Store)]\n```\n\n" +
     "Not reviewed: this is a synthetic browser fixture, not a real model review.\n\n" +
     "## Implementation\n1. Validate the cursor.\n2. Read one page.\n\n" +
-    "## Architecture\n```mermaid\nflowchart LR\n  api[API] --> store[(Store)]\n```\n\n" +
-    "## Plan review fixture\n| # | Finding | Decision |\n|---|---|---|\n| 1 | Empty page test | Accept |\n\n" +
+    "## Data flow\n```mermaid\nflowchart LR\n  cursor[Cursor] --> page[Page]\n```\n\n" +
+    "## Plan review\n| # | Severity | Finding | Decision |\n|---|---|---|---|\n| 1 | blocker | Empty page test | Accept |\n\n" +
     "## Safety fixture\n<script>globalThis.presenterPwned = true</script>\n\n![remote](https://example.com/private.png)\n";
   const networkDiagram = '\n## Network diagram fixture\n```mermaid\nflowchart LR\n  api@{ img: "https://example.com/tracker.png" }\n```\n';
   await writeFile(source, original + networkDiagram);
@@ -77,10 +78,8 @@ try {
   assert.equal(feedback.approval, false);
   const feedbackText = await readFile(feedback.raw, "utf8");
   assert.match(feedbackText, /Keep the response format stable/);
-  assert.match(feedbackText, /whiteboard/);
-  assert.match(feedbackText, /scenePath/);
-  assert.match(feedbackText, /previewPath/);
-  assert.match(feedbackText, /retry/);
+  assert.match(feedbackText, /Split the API box/);
+  assert.match(feedbackText, /mermaid-node/);
   const reply = path.join(plan.session, "reply.md");
   await writeFile(reply, "Recorded the compatibility constraint and diagram feedback. Waiting for approval in the conversation.\n");
   assert.equal((await runLavish("reply", { session: plan.session, replyFile: reply })).complete, true);
@@ -97,7 +96,7 @@ try {
   assert.equal(execFileSync("git", ["status", "--porcelain"], { cwd: repository, encoding: "utf8" }), "");
   console.log(checks);
   console.log(finalChecks);
-  console.log("PASS: real Lavish annotation, whiteboard edit, local assets, responsive layout, revision reload, and non-approval end; another session stayed available.");
+  console.log("PASS: real Lavish annotation, Overview and Full plan tabs, diagram box note, local assets, responsive layout, revision reload, and non-approval end; another session stayed available.");
   passed = true;
 } finally {
   if (browserOpened) await playwright(["close"]).catch((error) => console.error(`Browser cleanup: ${error.message}`));

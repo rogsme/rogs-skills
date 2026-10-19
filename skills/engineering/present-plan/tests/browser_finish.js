@@ -1,7 +1,7 @@
 async (page) => {
   const config = __CONFIG__;
   const frame = page.frameLocator("#artifact");
-  await frame.getByRole("heading", { name: "Revision check", exact: true }).waitFor({ timeout: 30_000 });
+  await frame.getByRole("heading", { name: "Revision check", exact: true, includeHidden: true }).waitFor({ state: "attached", timeout: 30_000 });
   const artifact = page.frames().find((candidate) => candidate.url().includes("/artifact/"));
   const revision = await artifact.evaluate(() => document.documentElement.dataset.planRevision);
   if (revision !== String(config.revision)) throw new Error(`Expected revision ${config.revision}, got ${revision}`);
