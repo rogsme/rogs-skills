@@ -118,7 +118,7 @@ Model-invoked:
 
 ## tkt
 
-[tkt](https://gitlab.com/rogs/tkt) runs the lifecycle's mechanical steps from a [herdr](https://herdr.dev) pane. It creates a ticket's worktree, opens a tab named after the ticket, starts Claude Code or OpenCode there and hands the agent its prompt, one command per step. `tkt ls` shows where every ticket stands and suggests the next step. Its README covers installing and using it.
+[tkt](https://gitlab.com/rogs/tkt) is a terminal tool that runs the lifecycle's mechanical steps for you, such as creating a ticket's worktree and starting the agent for each stage. Its README covers installing and using it.
 
 ## Credits
 
