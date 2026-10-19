@@ -44,6 +44,15 @@ test("does not reuse a tailnet listener or an unrelated service", async (t) => {
   await assert.rejects(checkServer({ port: unrelated, stateDir: "/private/state" }), /different owner/);
 });
 
+// A closed port, so a real presenter server on the default port cannot interfere.
+async function freePort() {
+  const probe = http.createServer();
+  await new Promise((resolve) => probe.listen(0, "127.0.0.1", resolve));
+  const { port } = probe.address();
+  await new Promise((resolve) => probe.close(resolve));
+  return port;
+}
+
 async function sessionFixture(t) {
   const directory = await mkdtemp(path.join(os.tmpdir(), "present-feedback-"));
   t.after(() => rm(directory, { recursive: true, force: true }));
@@ -69,7 +78,7 @@ console.log(${JSON.stringify(version)});process.exitCode = ${exitCode};\n`, { mo
   const previous = process.env.PATH;
   process.env.PATH = bin + path.delimiter + previous;
   t.after(() => { process.env.PATH = previous; });
-  return { runtime, stateDir: path.join(session.session, "state"), log };
+  return { runtime, stateDir: path.join(session.session, "state"), port: await freePort(), log };
 }
 
 test("checks pinned Lavish through npx without a local Lavish package", async (t) => {
