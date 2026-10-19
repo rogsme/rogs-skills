@@ -98,14 +98,21 @@ Distinguish verified facts from unresolved product behavior, and research curren
 
 Ask the user about every material uncertainty that the code, the tests, the ticket and approved references do not resolve. Never silently choose product policy, external behavior, data semantics or compatibility requirements.
 
-Finish the complete report described in step 4 before review, including a short decision brief and any diagram whose claims need review. Keep diagrams in the candidate plan; presentation adds no new design claims. Planning artifacts may be written only outside every checkout, in a location this planning agent allows.
+Finish the complete report described in step 4 before review, including the overview and its diagrams. Keep diagrams in the candidate plan; presentation adds no new design claims. Planning artifacts may be written only outside every checkout, in a location this planning agent allows.
 
 ## 4. Prepare the investigation report
 
-Report:
+Open the report with `## Overview`, written for a person who has not read the code:
 
-- A short decision brief: the intended behavior, scope, main risk and decisions the user still needs to make.
-- The title, current state, dependencies and acceptance criteria of the lead and of every rider, with the bundle stated on the first line.
+- What changes and why, in a few plain sentences, with no paths, line numbers or function names.
+- Mermaid diagrams wherever a picture explains the change faster than prose, as many as this ticket needs: none for a one-line fix, several for a change across many parts. Candidates are the behavior today next to the behavior after the change, the parts of the system the change touches and how they connect, a sequence or state change, and which plan step covers which acceptance criterion. Each diagram shows only what the plan below says. Prefer `flowchart`: the reviewer can comment on each of its boxes.
+- The main risk, and the decisions the user still needs to make, or "none".
+
+Keep diagrams local-only: no URLs, images, icons or `%%{` directives, or the presenter shows them as source text. Every claim in the overview restates a detail below it.
+
+After the overview, report:
+
+- The title, current state, dependencies and acceptance criteria of the lead and of every rider, naming the bundle first.
 - The cross-ticket scan: the tickets inspected as possible blockers, and whether this ticket is safe to start independently.
 - The current behavior and the root-cause findings, with code references.
 - Remaining questions, blockers and explicitly unverified surfaces.
