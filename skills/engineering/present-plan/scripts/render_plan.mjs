@@ -2,7 +2,7 @@ import { cp, lstat, mkdtemp, open, readFile, unlink } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-import { SCHEMA, atomicWrite, digest, escapeHTML, externalDirectory, identityOf, inspectProject, inspectRuntime, inside, invokedDirectly, loadSession, makePrivateDirectory, safePath } from "./common.mjs";
+import { SCHEMA, atomicWrite, checkOwnedDirectory, defaultArtifactRoot, digest, escapeHTML, externalDirectory, identityOf, inspectProject, inspectRuntime, inside, invokedDirectly, loadSession, makePrivateDirectory, safePath } from "./common.mjs";
 
 const assets = new URL("../assets/", import.meta.url);
 
@@ -89,7 +89,7 @@ export async function renderMarkdown(markdown, runtime) {
 export async function renderPlan(options) {
   const project = await inspectProject(options.repository, options.worktree);
   const runtime = await inspectRuntime(await externalDirectory(options.runtime, project.checkouts));
-  const artifactRoot = await externalDirectory(options.artifactRoot, project.checkouts);
+  const artifactRoot = await externalDirectory(options.artifactRoot || defaultArtifactRoot(), project.checkouts);
   const stateDir = await externalDirectory(options.stateDir || path.join(runtime, "lavish-state"), project.checkouts);
   if (inside(artifactRoot, runtime) || inside(runtime, artifactRoot) || inside(artifactRoot, stateDir)) throw new Error("Use separate directories for artifacts, runtime, and server state.");
   const port = options.port === undefined ? 4388 : Number(options.port);
@@ -100,6 +100,8 @@ export async function renderPlan(options) {
   if (!source.trim()) throw new Error("The plan is empty.");
   const identity = identityOf({ ...project, ticket: options.ticket, riders: options.riders });
   const rendered = await renderMarkdown(source, runtime);
+  await makePrivateDirectory(artifactRoot);
+  await checkOwnedDirectory(artifactRoot);
   let previous = null;
   let session;
   if (options.session) {
@@ -168,13 +170,13 @@ export function parseArguments(argv) {
     else if (flags[flag] && argv[i + 1]) result[flags[flag]] = argv[++i];
     else throw new Error(`Unknown or incomplete argument: ${flag}`);
   }
-  for (const name of ["source", "repository", "worktree", "ticket", "artifactRoot", "runtime"]) if (!result[name]) throw new Error(`Missing ${name}. See --help.`);
+  for (const name of ["source", "repository", "worktree", "ticket", "runtime"]) if (!result[name]) throw new Error(`Missing ${name}. See --help.`);
   return result;
 }
 
 if (invokedDirectly(import.meta.url)) {
   if (process.argv.includes("--help")) {
-    console.log("node render_plan.mjs --source <plan.md> --repository <main-checkout> --worktree <checkout> --ticket <id> --artifacts <external-root> --runtime <tool-cache> [--rider <id>] [--session <owned-directory>] [--state-dir <external-directory>] [--port <port>] [--title <title>]");
+    console.log("node render_plan.mjs --source <plan.md> --repository <main-checkout> --worktree <checkout> --ticket <id> --runtime <tool-cache> [--artifacts <external-root, default /tmp/lavish>] [--rider <id>] [--session <owned-directory>] [--state-dir <external-directory>] [--port <port>] [--title <title>]");
   } else {
     try { console.log(JSON.stringify(await renderPlan(parseArguments(process.argv.slice(2))), null, 2)); }
     catch (error) { console.error(error.message); process.exitCode = 1; }

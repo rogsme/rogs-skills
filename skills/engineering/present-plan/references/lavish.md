@@ -12,7 +12,9 @@ npx --yes --ignore-scripts --package=lavish-axi@0.1.89 -- lavish-axi --version
 
 `npx` resolves the pinned package through npm's cache and may download it on first use. It adds no dependency or lockfile to the project or renderer runtime. Offline use needs the package already cached; a cache/network failure uses the terminal fallback. Keep all npx flags before the binary, so they apply to npm rather than Lavish. Never run `npm install` for Lavish or fall back to a global executable.
 
-Marked and Mermaid are separate renderer dependencies. Choose an absolute private renderer runtime path outside every checkout, an allowed external artifact root, and a private state directory. An XDG cache directory is suitable for the renderer. A planning agent may have a narrower allowed artifact path: respect it.
+Marked and Mermaid are separate renderer dependencies. Choose an absolute private renderer runtime path outside every checkout and a private state directory. An XDG cache directory is suitable for the renderer.
+
+The artifact root defaults to `/tmp/lavish`, created with mode 0700. The renderer refuses a root that another user owns or can write, which matters in a shared `/tmp`. `/tmp` is cleared at reboot: a session stored there cannot resume afterward, so render a new one. OpenCode asks once for `external_directory` access to the root. A planning agent with a narrower allowed path passes `--artifacts` with that path.
 
 After explicit installation approval:
 
@@ -37,10 +39,10 @@ The check verifies Node, renderer versions, the pinned Lavish version through `n
 The input is the complete settled report, including all required investigation details, every ticket's criteria, diagrams already considered during review, and the review table or warning.
 
 ```sh
-node "<skill-dir>/scripts/render_plan.mjs" --source "<report.md>" --repository "<main-checkout>" --worktree "<ticket-checkout>" --ticket "ACM-123" --artifacts "<artifact-root>" --runtime "<runtime>" --state-dir "<state-dir>" --port 4388
+node "<skill-dir>/scripts/render_plan.mjs" --source "<report.md>" --repository "<main-checkout>" --worktree "<ticket-checkout>" --ticket "ACM-123" --runtime "<runtime>" --state-dir "<state-dir>" --port 4388
 ```
 
-Repeat `--rider "ACM-124"` for every rider. For a standalone document, use a short name instead of a ticket and the same root for repository/worktree outside Git. Use `--title` only for a display title, not a second summary.
+Add `--artifacts "<artifact-root>"` when the root is not the default. Repeat `--rider "ACM-124"` for every rider. For a standalone document, use a short name instead of a ticket and the same root for repository/worktree outside Git. Use `--title` only for a display title, not a second summary.
 
 The renderer returns JSON with `session`, `html`, `source`, `revision` and `sourceDigest`. Revisions of this review pass `--session "<returned-directory>"` with the same identity and runtime settings. New source content creates an immutable Markdown snapshot; the current page stays at `plan.html`. Unchanged content keeps its revision. Never replace an unrelated file or remove a render lock: an interrupted render needs inspection, not an assumed successful retry.
 

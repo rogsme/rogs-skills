@@ -19,7 +19,7 @@ Accept the complete plan/report, its unchanged adversarial-review section or `No
 
 For lifecycle use, read `docs/agents/workflow.md` `## Plan presentation`. A missing feature row means off: hand the report back for terminal delivery. A direct user request can supply settings without lifecycle configuration.
 
-Settings name the external Marked/Mermaid renderer runtime, external artifact root, private server state directory and local port. Lavish needs no installation path. The artifact root must be permitted by this planning agent and outside every checkout. Use the caller's allowed path; in OpenCode Plan mode that may be under `~/.opencode/plan/`. Keep plans, feedback and credentials out of command arguments.
+Settings name the external Marked/Mermaid renderer runtime, external artifact root, private server state directory and local port. Lavish needs no installation path. The artifact root defaults to `/tmp/lavish`. It must sit outside every checkout, belong to this user with no one else able to write it, and be a path this planning agent may use. Keep plans, feedback and credentials out of command arguments.
 
 For a check-only request, run only the runtime check in the reference. It probes Lavish's version through the pinned npx command, which may populate npm's cache, but opens no browser, creates no review artifact and installs nothing locally. The check passes only when it exits 0 and prints a JSON result with `"status": "ready"`; any other outcome, including no output, fails it. Return the result, or the failure and any missing prerequisite, then stop. Leave renderer dependencies and agent settings unchanged.
 

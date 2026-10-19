@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtemp, mkdir, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { chmod, mkdtemp, mkdir, readFile, readdir, rm, stat, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { renderMarkdown, renderPlan } from "../scripts/render_plan.mjs";
+import { defaultArtifactRoot } from "../scripts/common.mjs";
+import { parseArguments, renderMarkdown, renderPlan } from "../scripts/render_plan.mjs";
 
 const runtime = process.env.PRESENT_PLAN_RUNTIME;
 if (!runtime) throw new Error("Set PRESENT_PLAN_RUNTIME to the prepared runtime described in tests/README.md.");
@@ -186,4 +187,19 @@ test("rendering leaves the checkout and its index unchanged", async (t) => {
   assert.deepEqual(execFileSync("git", ["status", "--porcelain=v1", "-z"], { cwd: options.repository }), before);
   assert.deepEqual(execFileSync("git", ["write-tree"], { cwd: options.repository }), index);
   assert.equal(await readFile(path.join(options.repository, "pending.txt"), "utf8"), "More user work\n");
+});
+
+test("defaults the artifact root to /tmp/lavish and refuses one others can write", async (t) => {
+  assert.equal(path.basename(defaultArtifactRoot()), "lavish");
+  assert.equal(path.dirname(defaultArtifactRoot()), (await import("node:fs")).realpathSync("/tmp"));
+  const options = await fixture(t);
+  const { artifactRoot, ...rest } = options;
+  const args = Object.entries({ "--source": rest.source, "--repository": rest.repository, "--worktree": rest.worktree, "--ticket": rest.ticket, "--runtime": rest.runtime }).flat();
+  assert.equal(parseArguments(args).artifactRoot, undefined);
+  await mkdir(artifactRoot, { mode: 0o700 });
+  await chmod(artifactRoot, 0o770);
+  await assert.rejects(renderPlan(options), /no one else can write/);
+  await chmod(artifactRoot, 0o755);
+  const result = await renderPlan(options);
+  assert.equal((await stat(path.dirname(result.session))).mode & 0o777, 0o700);
 });

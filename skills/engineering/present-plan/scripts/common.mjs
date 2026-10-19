@@ -36,6 +36,19 @@ export async function safePath(value) {
   return normalized;
 }
 
+// /tmp is a symlink on macOS, and safePath refuses symlinks, so resolve it first.
+export function defaultArtifactRoot() {
+  try { return path.join(realpathSync("/tmp"), "lavish"); }
+  catch { return path.join(realpathSync(os.tmpdir()), "lavish"); }
+}
+
+// In a shared parent such as /tmp another user can create the root first; refuse one this user does not own.
+export async function checkOwnedDirectory(directory) {
+  const info = await lstat(directory);
+  const owner = typeof process.getuid === "function" ? process.getuid() : info.uid;
+  if (!info.isDirectory() || info.uid !== owner || (info.mode & 0o022) !== 0) throw new Error(`The artifact root ${directory} must be a directory you own that no one else can write; choose another artifact root.`);
+}
+
 export async function readJSON(file) {
   const info = await lstat(file);
   if (!info.isFile() || info.isSymbolicLink() || info.size > 1_048_576) throw new Error("Invalid or oversized manifest file.");
@@ -111,6 +124,7 @@ export async function loadSession(directory, { verifyContent = true } = {}) {
   const project = await inspectProject(manifest.identity.repository, manifest.identity.worktree);
   const root = await externalDirectory(manifest.artifactRoot, project.checkouts);
   if (!inside(root, session) || session === root) throw new Error("Session escapes its artifact root.");
+  await checkOwnedDirectory(root);
   await externalDirectory(manifest.runtime, project.checkouts);
   await externalDirectory(manifest.stateDir, project.checkouts);
   const expectedParent = path.join(root, digest(project.repository).slice(0, 16), digest(manifest.identity.ticket).slice(0, 16));
