@@ -1,6 +1,6 @@
 # Maintaining rogs-skills
 
-Agent Skills for a ticket-to-merge workflow, published at https://git.rogs.me/rogs/rogs-skills and installed with `npx skills add`. This file is for whoever edits the skills, agent or person.
+Agent Skills for a ticket-to-merge workflow, published at https://git.rogs.me/rogs/skills and installed with `npx skills add`. This file is for whoever edits the skills, agent or person.
 
 ## Layout
 
@@ -12,15 +12,20 @@ Skills live in bucket folders under `skills/`:
 
 A skill is a folder whose name equals its `name`, holding a `SKILL.md` and, when needed, `references/`, `assets/`, `scripts/`, `tests/` or `evals/`. Each bucket has a `README.md` listing its skills (name linked to `SKILL.md`, one-line description) under **User-invoked** and **Model-invoked**. The top-level `README.md` lists every skill the same way. `.claude-plugin/marketplace.json` lists every skill's path under the plugin named after its bucket; the skills CLI turns each plugin into a collapsible group in the `npx skills add` picker and puts unlisted skills under "Other". A commit that adds, renames or removes a skill updates all three.
 
-The repository ships skills, plus the terminal scripts in `bin/` that run the lifecycle's mechanical steps for a person (see "Scripts"). Subagent definitions, harness commands, CI workflows, harness config files (`.mcp.json`, `opencode.json`), `agents/openai.yaml` and plugin manifests other than that `marketplace.json` stay out.
+The repository ships skills only. Subagent definitions, harness commands, CI workflows, harness config files (`.mcp.json`, `opencode.json`), `agents/openai.yaml` and plugin manifests other than that `marketplace.json` stay out.
 
 Never install skills into this checkout. `.gitignore` keeps a test install out of git, but the skills CLI would still discover it as a second copy of every skill.
 
-## Scripts
+## tkt
 
-- `bin/` holds one executable file per script. Each file is self-contained, so a symlink to it from `PATH` runs it. `npx skills add` installs only `skills/`, so people install a script from a clone, as the README's "Scripts" section says.
-- A script reads project facts from the configuration `setup-rogs` writes and its own settings from `${XDG_CONFIG_HOME:-~/.config}/<script>/`, and writes neither. Skills never call a script.
-- Tests live in `bin/tests/`. Their fixtures use the Acme examples and plain ASCII.
+[tkt](https://gitlab.com/rogs/tkt), the terminal tool that runs the lifecycle's mechanical steps, lives in its own repository and reads no skill files. It depends on these lines from this one:
+
+- the configuration contract's markers, `- Ticket ids:` line and `## Forge` fields;
+- the status lines in the registry below;
+- review-pr's `Verdict:` and `Reviewed head:` lines;
+- the skill names in its built-in stage lines (`start-ticket`, `address-pr-review`, `review-pr`).
+
+Before changing any of them, check tkt's `internal/contract` package, which pins each one with a fixture, and update it in step. Skills never call tkt.
 
 ## Frontmatter
 
@@ -53,7 +58,7 @@ A skill never links into another skill's folder. Material that two skills need l
 
 ## Agnosticism
 
-Skills say "the tracker" and "the forge" and take every concrete operation from the project's configuration. The scripts in `bin/` drive concrete tools and name them; each one stops with a clear message on a tracker or forge kind that its README section does not list. Only the built-in guides (`skills/lifecycle/setup-rogs/assets/tracker-*.md` and `assets/forge-*.md`) name a tracker, a forge, their CLIs or their MCP tools. `setup-rogs/SKILL.md` and `setup-rogs/references/explore.md` may name the built-in guides when offering them, and a `## Sources` section may cite a vendor's documentation. The plan reviewer guides (`assets/reviewer-*.md`) are the only place that gives an agent CLI's flags; `review-plan` runs whatever command the project's `## Plan review` section holds.
+Skills say "the tracker" and "the forge" and take every concrete operation from the project's configuration. Only the built-in guides (`skills/lifecycle/setup-rogs/assets/tracker-*.md` and `assets/forge-*.md`) name a tracker, a forge, their CLIs or their MCP tools. `setup-rogs/SKILL.md` and `setup-rogs/references/explore.md` may name the built-in guides when offering them, and a `## Sources` section may cite a vendor's documentation. The plan reviewer guides (`assets/reviewer-*.md`) are the only place that gives an agent CLI's flags; `review-plan` runs whatever command the project's `## Plan review` section holds.
 
 ## Configuration contract
 
@@ -192,13 +197,6 @@ Discovery (lists every skill exactly once, under the headers Engineering, Lifecy
 
 ```bash
 npx skills@latest add "$PWD" --list
-```
-
-Scripts (shellcheck prints nothing when clean; the test runner prints one line per test and exits non-zero on a failure):
-
-```bash
-uv run --quiet --with shellcheck-py shellcheck -x bin/tkt bin/tests/run bin/tests/*.sh bin/tests/fakes/*
-bash bin/tests/run
 ```
 
 Before pushing, also search the whole tree for the names of any client, employer or private project you work with. Keep that list of names outside this repository.
