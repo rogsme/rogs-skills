@@ -118,7 +118,7 @@ Model-invoked:
 
 ## tkt
 
-[tkt](https://gitlab.com/rogs/tkt) is a terminal tool that runs the lifecycle's mechanical steps for you, such as creating a ticket's worktree and starting the agent for each stage. Its README covers installing and using it.
+[tkt](https://git.rogs.me/rogs/tkt) is a terminal tool that runs the lifecycle's mechanical steps for you, such as creating a ticket's worktree and starting the agent for each stage. Its README covers installing and using it.
 
 ## Credits
 

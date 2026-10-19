@@ -18,7 +18,7 @@ Never install skills into this checkout. `.gitignore` keeps a test install out o
 
 ## tkt
 
-[tkt](https://gitlab.com/rogs/tkt), the terminal tool that runs the lifecycle's mechanical steps, lives in its own repository and reads no skill files. It depends on these lines from this one:
+[tkt](https://git.rogs.me/rogs/tkt), the terminal tool that runs the lifecycle's mechanical steps, lives in its own repository and reads no skill files. It depends on these lines from this one:
 
 - the configuration contract's markers, `- Ticket ids:` line and `## Forge` fields;
 - the status lines in the registry below;
