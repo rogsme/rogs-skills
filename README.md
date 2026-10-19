@@ -116,6 +116,56 @@ Model-invoked:
 - [asd-ste100](skills/writing/asd-ste100/SKILL.md): write or rewrite technical documentation in ASD-STE100 Simplified Technical English (Issue 9).
 - [chat-paste](skills/writing/chat-paste/SKILL.md): turn a message into a local preview page with buttons that copy it as Slack or Teams rich text.
 
+## Scripts
+
+`bin/` holds terminal scripts for the person who runs the lifecycle. `npx skills add` installs only the skills, so install a script from a clone of this repository.
+
+### tkt
+
+`tkt` does the mechanical steps around the lifecycle skills: it creates the ticket's worktree, opens a [herdr](https://herdr.dev) tab named after the ticket, starts Claude Code or OpenCode in it, and hands the agent its prompt. Each command is one step you take. Nothing chains stages: you still approve plans, run the human verification steps and merge, and `tkt ls` only suggests the next command.
+
+Install it by linking it into your `PATH`:
+
+```bash
+ln -s "$PWD/bin/tkt" ~/.local/bin/tkt
+```
+
+It needs bash 4.4 or newer, git, jq and the coreutils; herdr 0.9.3 or newer, with tkt running inside a herdr pane; [worktrunk](https://worktrunk.dev) (`wt`) 0.68 or newer; Claude Code or OpenCode; and the configuration `/setup-rogs` writes. `tkt done` and `tkt ls` read pull requests through `gh` and support GitHub forges only.
+
+worktrunk must name each worktree directory after its branch, and setup that an agent needs (copying `.env` files and dependencies) belongs in a `pre-start` hook. worktrunk runs `post-start` hooks in the background, so an agent could start before they finish. For example:
+
+```toml
+worktree-path = "~/code/worktrees/{{ repo }}/{{ branch | sanitize_hash }}"
+
+[pre-start]
+copy = "wt step copy-ignored"
+```
+
+Commands:
+
+- `tkt start [ID] --prompt TEXT` creates or reuses the worktree, opens the tab, starts the agent in build mode (Claude Code with `--dangerously-skip-permissions`, OpenCode on its Build agent) and sends the prompt, typically the dispatcher's start-ticket block. Without an ID it takes the first ticket id in the prompt; with both, they must match. `--prompt -` reads the prompt from stdin, which keeps a long prompt out of your shell history: `xclip -selection clipboard -o | tkt start --prompt -` (or `wl-paste`, or `pbpaste`).
+- `tkt run ID STAGE` replaces the ticket's idle agent with a fresh session in the same pane and sends the stage line. The stages are `address`, `sync`, `verify` (the agent runs the pull request's human verification steps with Playwright and reports), `ci`, `review` and `start`. `--prompt TEXT` sends your own line instead. It refuses while the agent works, waits for an answer, or still waits for plan approval.
+- `tkt resume ID` relaunches the ticket's newest session in bypass mode when no agent runs for it.
+- `tkt done ID` closes the ticket's tabs and removes its worktree once its pull request is merged, the worktree is clean and no agent works in it. worktrunk deletes the branch when it is merged into the base. `--all` checks every ticket worktree.
+- `tkt ls` lists every ticket worktree with its agent, pull request, checks, review verdict at the head, commits behind the base, and the next command.
+
+`start`, `run`, `resume` and `done` take `--dry-run`, which prints the changes instead of making them. `tkt --help` lists every option.
+
+Presets choose the agent. Without a presets file, `claude` and `opencode` run with their default models. Write `~/.config/tkt/presets` to add your own, one per line: a name, the harness (`claude` or `opencode`), a model (`-` for the default) and the `Model:` values it serves (`*` for any):
+
+```
+# name  harness   model              serves
+claude  claude    -                  frontier
+big     opencode  acme/large#high    frontier
+fast    opencode  acme/small#max     small
+```
+
+A Claude model reads `model#effort`; an OpenCode model reads `provider/model#variant`. When a prompt carries a `Model:` line (the dispatcher copies it from the ticket's model routing), `tkt start` picks the first preset that serves it; `--as NAME` picks one yourself. Tabs for any preset but the first get the preset's name, such as `ACM-12 (fast)`.
+
+To change a stage line or add a stage, write `~/.config/tkt/stages`, one per line: the stage name, then the text. `{id}` becomes the ticket id.
+
+tkt keeps each ticket's state (preset, session, tab, pane) in the worktree's git directory, so it disappears with the worktree, and logs every command it runs to `~/.local/state/tkt/tkt.log` (prompts appear as their size and hash). Exit codes: 0 done, 1 a tool failed, 2 bad usage or input, 3 environment or configuration, 4 refused because of the current state, 5 uncertain outcome, so inspect the tab before you retry. Nothing prompts when stdin is not a terminal, so other programs can run tkt. [`bin/tests/README.md`](bin/tests/README.md) describes the tests.
+
 ## Credits
 
 Several skills are adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c) 2026 Matt Pocock). Each folder below carries his license notice.
