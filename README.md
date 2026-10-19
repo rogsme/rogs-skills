@@ -141,15 +141,58 @@ worktree-path = "~/code/worktrees/{{ repo }}/{{ branch | sanitize_hash }}"
 copy = "wt step copy-ignored"
 ```
 
-Commands:
+#### A ticket from start to merge
 
-- `tkt start [ID] --prompt TEXT` creates or reuses the worktree, opens the tab, starts the agent in build mode (Claude Code with `--dangerously-skip-permissions`, OpenCode on its Build agent) and sends the prompt, typically the dispatcher's start-ticket block. Without an ID it takes the first ticket id in the prompt; with both, they must match. `--prompt -` reads the prompt from stdin, which keeps a long prompt out of your shell history: `xclip -selection clipboard -o | tkt start --prompt -` (or `wl-paste`, or `pbpaste`).
-- `tkt run ID STAGE` replaces the ticket's idle agent with a fresh session in the same pane and sends the stage line. The stages are `address`, `sync`, `verify` (the agent runs the pull request's human verification steps with Playwright and reports), `ci`, `review` and `start`. `--prompt TEXT` sends your own line instead. It refuses while the agent works, waits for an answer, or still waits for plan approval.
-- `tkt resume ID` relaunches the ticket's newest session in bypass mode when no agent runs for it.
-- `tkt done ID` closes the ticket's tabs and removes its worktree once its pull request is merged, the worktree is clean and no agent works in it. worktrunk deletes the branch when it is merged into the base. `--all` checks every ticket worktree.
-- `tkt ls` lists every ticket worktree with its agent, pull request, checks, review verdict at the head, commits behind the base, and the next command.
+Each step is one command you run or one answer you give in the ticket's tab. `tkt ls` shows where every ticket stands and suggests the next step.
 
-`start`, `run`, `resume` and `done` take `--dry-run`, which prints the changes instead of making them. `tkt --help` lists every option.
+1. Start the ticket: `xclip -selection clipboard -o | tkt start --prompt -` with its start-ticket block on the clipboard, or `tkt start ACM-12` to send only the `start` stage line. The agent investigates and ends with `Status: AWAITING_APPROVAL`.
+2. Read the plan in the tab, then approve it there or ask for changes. The same session goes on to implement it with `work-ticket`, so answer in the tab instead of using `tkt run`, which would discard the plan.
+3. When the agent ends with `Status: READY_FOR_REVIEW`, run `tkt run ACM-12 review`. The reviewer must not be the session that wrote the change, and `tkt run` always starts a fresh one.
+4. Act on the verdict the review posts. On `CHANGES_REQUESTED`, run `tkt run ACM-12 address`. On `Status: BLOCKED_FOR_SYNC`, run `tkt run ACM-12 sync`. Both end with `Status: READY_FOR_REVIEW`, so go back to step 3. On `READY_FOR_HUMAN`, go on.
+5. Do the human verification steps listed in the review summary. `tkt run ACM-12 verify` has an agent run them in a browser and report each one, but you decide whether each step passed.
+6. In the tab, tell the agent to merge and which steps passed, such as "Merge the PR. Human verification steps 1 to 3 passed." No stage sends this, because `finish-ticket` merges only on your explicit instruction. When a step failed, say what you saw instead: the agent records it on the pull request and ends with `Status: HUMAN_QA_FAILED`, and you run `tkt run ACM-12 address`.
+7. After the merge, run `tkt done ACM-12` from another tab.
+
+When the checks fail on the pull request's head and no review is waiting to be addressed, run `tkt run ACM-12 ci`.
+
+#### Commands
+
+`tkt start [ID] --prompt TEXT` creates or reuses the worktree, opens the tab, starts the agent in build mode (Claude Code with `--dangerously-skip-permissions`, OpenCode on its Build agent) and sends the prompt, typically the dispatcher's start-ticket block. Without an ID it takes the first ticket id in the prompt; with both, they must match. Without `--prompt` it sends the `start` stage line. `--prompt -` reads the prompt from stdin, which keeps a long prompt out of your shell history (use `wl-paste` or `pbpaste` in place of `xclip`). It refuses when an agent already runs in the worktree; use `tkt run` or `tkt resume` then.
+
+`tkt run ID STAGE` closes the ticket's idle agent and starts a fresh session in the same pane, on the ticket's preset, then sends the stage's line. The new agent remembers nothing of the old conversation and does not need to: every stage reads what it needs from the branch, the pull request and the tracker. Use it to begin the next stage with a clean context.
+
+| Stage | What the fresh agent does | Run it when |
+|---|---|---|
+| `review` | Runs `review-pr` on the pull request at its head and posts the findings and a verdict. | The agent ends with `Status: READY_FOR_REVIEW`, after `work-ticket` or after `address-pr-review`. |
+| `address` | Runs `address-pr-review`: fixes the valid findings, answers the rest, pushes, waits for green CI and replies to every comment. | The review at the head asks for changes, you left comments on the pull request yourself, or the merge stopped with `Status: HUMAN_QA_FAILED`. |
+| `sync` | Runs `address-pr-review` to merge the base into the branch, with no review round. | The agent ends with `Status: BLOCKED_FOR_SYNC`, the review says the base moved, or the pull request conflicts with the base. |
+| `ci` | Finds why the checks fail at the head, fixes the cause and pushes once. It reruns the job when the failure is infrastructure, such as a quota error. | The checks fail and no review findings wait to be addressed. |
+| `verify` | Runs every step of the pull request's human verification section with the `playwright-cli` skill and reports each one as passed or failed. It changes no code and posts nothing. | The review at the head says `READY_FOR_HUMAN`, before you authorize the merge. |
+| `start` | Runs `start-ticket` and returns a new plan. | You want to plan the ticket again from scratch, such as after the ticket changed. |
+
+`tkt run` refuses while the agent works or waits for your answer; wait for it, or answer it in its tab. It also refuses while the ticket is still in planning (the last stage was `start`, the branch has no commits and the worktree is clean), because that agent may hold a plan waiting for your approval. `--force` replaces it anyway, and also replaces an agent in a state tkt does not recognize. `--as PRESET` runs the stage on another preset, for example a review by a different model than the one that wrote the code. `--pane PANE` picks the pane when several agents run in the worktree. `--prompt TEXT` sends your own line instead of a stage line, for a one-off task such as `tkt run ACM-12 --prompt "Check the flaky login test again."`.
+
+`tkt resume ID` brings back the ticket's last conversation when no agent runs for it: you closed the tab, the agent exited or crashed, herdr restarted, or the machine rebooted. It relaunches the newest session (the one tkt recorded, otherwise the newest Claude Code or OpenCode session in the worktree) in bypass mode, in the ticket's tab or a new one, and sends nothing, so the agent waits where it stopped. Use it instead of `tkt run` when the conversation matters, such as a plan waiting for approval. When an agent already runs, it says where and changes nothing; `--focus` switches to its tab. `--session ID` resumes an older session, and `--as PRESET` picks the preset, and with it the harness.
+
+`tkt done ID` closes the ticket's tabs and removes its worktree once its pull request is merged, the worktree is clean and no agent works in it. Run it from outside the ticket's tab and worktree. worktrunk deletes the branch when it is merged into the base. `--all` checks every ticket worktree and asks before removing them; add `--yes` when stdin is not a terminal.
+
+`tkt ls` lists every ticket worktree with its tab, agent state, the last `Status:` line on the agent's screen, pull request, checks, review verdict at the head, commits behind the base, and a NEXT column. NEXT applies these rules in order and shows the first that matches:
+
+- The pull request is merged: `tkt done ID`.
+- The agent works, or waits for an answer: wait, or answer it in its tab.
+- No pull request yet: `tkt resume ID` when no agent runs; otherwise approve the plan, read the agent's reason, or check the agent in its tab.
+- The checks are pending: wait for CI.
+- The review says the base moved, or the pull request conflicts: `tkt run ID sync`.
+- The review at the head has findings: `tkt run ID address`.
+- The checks fail: `tkt run ID ci`.
+- The review at the head is clear: `tkt run ID verify`.
+- Anything else: wait for review. When no automated reviewer runs on the forge, that means `tkt run ID review`.
+
+A verdict on an older head does not count, so after every push NEXT waits for a new review. `--no-fetch` skips the `git fetch` that refreshes the commits-behind count.
+
+`start`, `run`, `resume` and `done` take `--dry-run`, which prints the changes instead of making them. `-C DIR` runs tkt as if started in DIR, and `-v` prints every external command. `tkt --help` lists every option.
+
+#### Configuration and state
 
 Presets choose the agent. Without a presets file, `claude` and `opencode` run with their default models. Write `~/.config/tkt/presets` to add your own, one per line: a name, the harness (`claude` or `opencode`), a model (`-` for the default) and the `Model:` values it serves (`*` for any):
 
