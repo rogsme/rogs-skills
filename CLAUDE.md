@@ -22,8 +22,9 @@ Never install skills into this checkout. `.gitignore` keeps a test install out o
 
 - the configuration contract's markers, `- Ticket ids:` line and `## Forge` fields;
 - the status lines in the registry below;
-- review-pr's `Verdict:` and `Reviewed head:` lines;
-- the skill names in its built-in stage lines (`start-ticket`, `address-pr-review`, `review-pr`).
+- review-pr's `Verdict:` and `Reviewed head:` lines, and the numbered steps under `## Human verification` in its ready summary;
+- the skill names in its built-in stage lines (`start-ticket`, `address-pr-review`, `review-pr`) and in the approval line `tkt approve` sends (`work-ticket`);
+- start-ticket's [unattended runs](skills/lifecycle/start-ticket/SKILL.md#unattended-runs): `tkt auto --approve-plan` adds "This run is unattended" to its start line and approves the plan itself.
 
 Before changing any of them, check tkt's `internal/contract` package, which pins each one with a fixture, and update it in step. Skills never call tkt.
 
@@ -78,7 +79,7 @@ The lifecycle skills hand off through these lines. A skill restates the lines it
 | `Status: SETUP_REQUIRED` | any lifecycle skill | `/setup-rogs` |
 | `Status: CONFIGURED`, `Status: SETUP_OK`, `Status: SETUP_DRIFT` | setup-rogs | the lifecycle, or another setup run |
 | `Status: AWAITING_CREATE_APPROVAL`, `Status: TICKETS_CREATED` | create-ticket | the user |
-| `Status: AWAITING_APPROVAL` | start-ticket | the user approves, then work-ticket |
+| `Status: AWAITING_APPROVAL` | start-ticket | the user approves (in an unattended run, the runner that started it), then work-ticket |
 | `Status: READY_FOR_REVIEW` | work-ticket, address-pr-review | review-pr in a fresh session |
 | `Status: AWAITING_POST_APPROVAL`, `Status: REVIEW_POSTED`, `Status: READY_FOR_HUMAN` | review-pr | address-pr-review, or the human verification |
 | `Verdict: CHANGES_REQUESTED`, `Verdict: READY_FOR_HUMAN`, with `Reviewed head:` and `Reviewed base:` lines | review-pr, inside the posted summary | address-pr-review, finish-ticket |

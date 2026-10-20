@@ -63,7 +63,7 @@ Enable `Plan presentation` through `/setup-rogs` after preparing the renderer th
 
 `start-ticket` presents the full canonical plan, diagrams and adversarial findings in Lavish. The agent saves feedback with its polled source revision and checks delayed comments against earlier snapshots. Substantial human-requested revisions receive another single adversarial round when plan review is on. Plan approval stays in the agent conversation, and implementation still starts through `work-ticket`. Closing a browser or seeing a delivery receipt never authorizes work.
 
-Presentation is independent of plan review and optional under configuration v1. A missing feature row means off. Missing dependencies or browser failures return the full report in the terminal with an explanation, including any review-failure warning. Artifacts stay outside worktrees, telemetry is disabled, assets load locally, and the wrapper rejects non-loopback or other-owner services. To revert, turn presentation off; preserve other sessions and saved artifacts.
+Presentation is independent of plan review and optional under configuration v1. A missing feature row means off. An unattended run, whose request says so, skips it: a runner approves the plan, so `start-ticket` asks every open question through the agent's question tool and returns the full report in the terminal. Missing dependencies or browser failures return the full report in the terminal with an explanation, including any review-failure warning. Artifacts stay outside worktrees, telemetry is disabled, assets load locally, and the wrapper rejects non-loopback or other-owner services. To revert, turn presentation off; preserve other sessions and saved artifacts.
 
 ## Requirements
 
@@ -119,6 +119,8 @@ Model-invoked:
 ## tkt
 
 [tkt](https://git.rogs.me/rogs/tkt) is a terminal tool that runs the lifecycle's mechanical steps for you, such as creating a ticket's worktree and starting the agent for each stage. Its README covers installing and using it, and [its lifecycle guide](https://git.rogs.me/rogs/tkt/src/branch/master/docs/lifecycle.md) follows a ticket from the tracker to a merged pull request, with diagrams of how the skills, tkt and the other tools fit together.
+
+`tkt auto` can also drive a ticket on its own until the pull request is ready for human verification. With `--approve-plan` it starts the ticket as an unattended run and approves the plan itself; it stops and notifies you when an agent asks a question.
 
 ## Credits
 
