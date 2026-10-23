@@ -70,7 +70,7 @@ Skills say "the tracker" and "the forge" and take every concrete operation from 
 
 `skills/lifecycle/setup-rogs/references/contract.md` defines the files `setup-rogs` writes into a project and the headings each lifecycle skill reads. It is the source of truth.
 
-- A breaking change (a new required heading, a renamed heading, a heading whose meaning changes) bumps the version in the contract, in every seed's marker, in every skill's `rogs-skills/contract` metadata, and in each lifecycle skill's step 0.
+- A breaking change (a new required heading, a renamed heading, a heading whose meaning changes) bumps the version in the contract, in every seed's marker, in every skill's `rogs-skills/contract` metadata, and in each lifecycle skill's step 0. A heading that only a new skill requires stays in the current version, and the contract says so beside it.
 - When a skill starts needing a heading, add it to the contract's table and to the shell check in that skill's step 0 in the same commit. Every lifecycle skill's check shares its helper functions word for word with the others; change them together.
 - Material that two or more lifecycle skills need lives in the project configuration, seeded from `setup-rogs/assets/`. Material that only one skill needs lives in that skill's `references/`.
 - The ADR rules exist twice on purpose: `setup-rogs/assets/domain.md` for configured projects and `engineering/grill-with-docs/ADR-FORMAT.md` for any repository. Change them together.

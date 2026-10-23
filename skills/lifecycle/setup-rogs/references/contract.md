@@ -26,7 +26,7 @@ Line 1 of every file is a marker:
 
 The block sits between `<!-- rogs-skills:begin config v1 -->` and `<!-- rogs-skills:end -->`.
 
-The version is one integer for the whole contract. It changes only for a breaking change: a new required heading, a renamed heading, or a heading whose meaning changes. When a skill finds a lower version than it expects, it tells the user to run `/setup-rogs`; a higher one means the installed skills are older than the configuration, and it tells the user to run `npx skills update`.
+The version is one integer for the whole contract. It changes only for a breaking change: a new required heading, a renamed heading, or a heading whose meaning changes. A heading that only a skill new to the lifecycle requires is not one: older configurations still satisfy every other skill, and the new skill's preflight sends the user to `/setup-rogs`, as with `list-ready`. When a skill finds a lower version than it expects, it tells the user to run `/setup-rogs`; a higher one means the installed skills are older than the configuration, and it tells the user to run `npx skills update`.
 
 Seeds mark every value setup still has to fill as `{{FILL: what goes here}}`. A file that still contains `{{FILL:` is incomplete.
 
