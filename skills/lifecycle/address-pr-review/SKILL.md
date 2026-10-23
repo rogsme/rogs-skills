@@ -134,7 +134,7 @@ Reply directly to every previously unanswered comment: `reply` on the original c
 - Concise evidence and reasoning for a partial acceptance or a pushback, citing the decision record or contract when one decides it.
 - Any boundary intentionally left unverified, or follow-up evidence still needed.
 
-After each pushed round, update the pull request body in place with `edit-pr`: pin the `## Review brief` and its evidence to the new head, and update the `## Human verification` procedure when a fix changed its setup, navigation, actions, expected results, regression checks, cleanup or coverage.
+After each pushed round, update the pull request body in place with `edit-pr`: pin the `## Review brief` and its evidence to the new head, and update the `## Human verification` procedure when a fix changed its setup, navigation, actions, expected results, regression checks, cleanup or coverage. With the changelog on, update the `## Changelog` lines when a fix changed what users notice.
 
 Post one conversation comment only when the fixes require human verification again. It carries the new head SHA, the base SHA it contains, the CI result (or the path-filter note), the focused checks, the acceptance evidence the fixes affected, the current numbered procedure, and the hand-off to a fresh review. Post no generic summary comment otherwise.
 

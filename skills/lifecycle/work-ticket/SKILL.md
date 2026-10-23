@@ -130,6 +130,7 @@ Write the body from the final diff and the actual verification results:
 - `## Attribution` names the harness and model actually in use, never a placeholder or a copied example.
 - `## Human verification` holds one concrete procedure that meets the standard in `workflow.md` `## Human verification`, derived from the final behavior and the acceptance criteria automation cannot prove. The same procedure goes into the handoff.
 - With the browser pass on, `## Screenshots` links every capture by the criterion it proves, or gives the one-line reason the change has no visible surface.
+- With the changelog on, `## Changelog` holds one or two lines a user of the project would care about, written from the final behavior, or `None` when users cannot notice the change.
 
 Never claim that a command, surface or platform was tested when it was not, and never claim the human steps were performed.
 

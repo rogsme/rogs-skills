@@ -55,7 +55,7 @@ finish-ticket       merge, verify, complete the tickets     Status: DONE
 - The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
 - Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base.
 - Branches take the base by merging it; nothing rebases or force-pushes a published branch.
-- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, plan review by another vendor, local browser plan presentation after review, and a taste pass that `simplify-branch` runs before the pull request opens.
+- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, plan review by another vendor, local browser plan presentation after review, a taste pass that `simplify-branch` runs before the pull request opens, and a `## Changelog` section in every pull request body.
 
 ### Browser plan review
 

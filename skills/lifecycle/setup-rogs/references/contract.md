@@ -101,7 +101,7 @@ Forge operations:
 
 | Heading | Holds |
 |---|---|
-| `## Features` | A table turning each feature on or off: `Bundles`, `Browser pass`, `Model routing`, `Client notes`, `Plan review`, `Plan presentation`, `Taste pass`. An absent `Plan presentation` or `Taste pass` row in an older v1 configuration means off. |
+| `## Features` | A table turning each feature on or off: `Bundles`, `Browser pass`, `Model routing`, `Client notes`, `Plan review`, `Plan presentation`, `Taste pass`, `Changelog`. An absent `Plan presentation`, `Taste pass` or `Changelog` row in an older v1 configuration means off. |
 | `## Worktrees` | The rule (branch name equals the worktree directory name equals the lead ticket id), where worktrees usually live, and who creates them (the user, never a skill). |
 | `## Verification` | The format command, the full check, focused checks per area, the areas that are test-first, hook behavior, and any environment notes. A command the project lacks is written as `not configured`. |
 | `## Commits` | Paths never committed, commit rules beyond the defaults, and the attribution policy. |
@@ -135,7 +135,7 @@ Plan presentation is additive and optional under contract v1. It never changes t
 
 ## pull-request.md
 
-The body skeleton every pull request uses when the repository has no template: `## Review brief`, `## Summary`, `## Related work`, `## Attribution`, `## Validation`, `## Risks and rollout`, `## Human verification`, and `## Screenshots` when the browser pass is on. Instructions for each section live in HTML comments that the author replaces.
+The body skeleton every pull request uses when the repository has no template: `## Review brief`, `## Summary`, `## Related work`, `## Attribution`, `## Validation`, `## Risks and rollout`, `## Human verification`, `## Screenshots` when the browser pass is on, and `## Changelog` when the changelog is on. Instructions for each section live in HTML comments that the author replaces.
 
 When the repository has its own template, `forge.md` names it, and the lifecycle skills add any required heading the template lacks to the body they write. They never edit the template file.
 

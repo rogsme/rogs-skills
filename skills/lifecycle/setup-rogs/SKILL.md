@@ -74,6 +74,7 @@ K. Features, each on or off:
    - Plan review: the planner vendors that get a reviewer, each reviewer's model and its command from the reviewer guide, the time limit (at most 10 minutes, the longest a foreground shell call runs in Claude Code), and the vendors that may receive this project's code and plans. Run each chosen guide's check; when one fails, give the user its setup notes and keep the feature off until the check passes.
    - Plan presentation: local browser review through `present-plan`, or the existing terminal delivery. Lavish runs through pinned `npx`, with no local or global install. Resolve the external Marked/Mermaid renderer runtime, artifact root permitted by the planning agent, private server state directory and unprivileged port. Call the Skill tool with "present-plan" with a check-only request and those settings. Its version probe may populate npm's cache but opens no browser or review. Keep the feature off until checks pass; renderer preparation is a separate user action. Setup never installs local packages, upstream skills or global hooks. Approval remains in the agent conversation. Preserve existing choices; an absent row in an older configuration means off.
    - Taste pass: whether `work-ticket` hands the branch to `simplify-branch` after the last implementation commit, for cleanups that keep behavior. Keep the feature off until the `simplify-branch` skill is installed. An absent row in an older configuration means off.
+   - Changelog: whether every pull request body carries a `## Changelog` section, one or two lines a user would care about, for a later job to gather into the project's changelog. An absent row in an older configuration means off.
 
 ## 4. Compose the files
 
@@ -86,7 +87,7 @@ Build each file from its seed in `assets/`, keeping the marker on line 1 and fil
 | `docs/agents/workflow.md` | `assets/workflow.md`, with `assets/workflow-client-notes.md` appended when client notes are on, `assets/workflow-plan-review.md` when plan review is on, and `assets/workflow-plan-presentation.md` when plan presentation is on |
 | `docs/agents/domain.md` | `assets/domain.md` |
 | `docs/agents/browser-pass.md` | `assets/browser-pass.md`, only when the browser pass is on |
-| `docs/agents/pull-request.md` | `assets/pull-request.md`, only when the repository has no template; drop its `## Screenshots` section when the browser pass is off |
+| `docs/agents/pull-request.md` | `assets/pull-request.md`, only when the repository has no template; drop its `## Screenshots` section when the browser pass is off, and its `## Changelog` section when the changelog is off |
 | The `## Ticket lifecycle` block | `assets/agents-block.md` |
 
 A guide's `## Setup notes` stay in the guide. When a guide offers variants (states kept in labels or in a project field, for example), copy only the variant the user chose. For a tracker or forge with no guide, write the sections from the user's description using the custom guide's skeleton: every operation gets a described procedure or an honest `Capability: Unsupported` or `Capability: Fallback: ...` line, never a guess.
