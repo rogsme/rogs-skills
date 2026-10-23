@@ -29,7 +29,7 @@ Where this project's tickets live and how the lifecycle skills read and change t
 |---|---|
 | new | {{FILL: where new tickets land}} |
 | ready | {{FILL: another not-started state treated like new, or "none"}} |
-| in-progress | {{FILL: the state for active implementation}} |
+| in-progress | {{FILL: the state for a ticket being planned or implemented}} |
 | in-review | {{FILL: the state while a pull request is under review}} |
 | done | {{FILL: the completed state}} |
 | canceled | {{FILL: the canceled state}} |

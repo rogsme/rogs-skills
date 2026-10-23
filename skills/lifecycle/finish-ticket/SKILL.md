@@ -1,6 +1,6 @@
 ---
 name: finish-ticket
-description: "Merge the current branch's reviewed pull request and complete its ticket or bundle, only after explicit merge authorization and confirmed human verification: require exact-head CI, a final independent review verdict for the same head and base, and no open feedback; then verify the merge and post-merge CI and move every ticket to done. Use only when the user explicitly says \"merge the PR\", \"finish the ticket\" or \"ship this\"."
+description: "Merge the current branch's reviewed pull request and complete its ticket or bundle, only after explicit merge authorization and confirmed human verification: require exact-head CI, a final independent review verdict for the same head and base, and no open feedback; then verify the merge, move every ticket to done, and verify post-merge CI. Use only when the user explicitly says \"merge the PR\", \"finish the ticket\" or \"ship this\"."
 license: MIT
 metadata:
   rogs-skills/contract: "1"
@@ -84,7 +84,7 @@ When the pull request is already merged, this run is recovering from a partial e
 
 Merge with `merge`, using the style `## Forge` names. Never enable auto-merge, bypass protections, force-push, delete branches, or alter the active worktree.
 
-When `merge` is a fallback that hands the merge to a person (a merge queue or a merge train), stop here instead: tell the user to merge through the queue or train, and to run `/finish-ticket` again once the pull request shows as merged. That run takes the already-merged path above. A queue can merge onto a newer base than the reviewed one, so on that path step 4 below reports the merge commit's actual parents instead of requiring the reviewed base, and the post-merge CI in step 5 is required. When the forge rejects the merge because the base moved or the pull request became unmergeable, do not retry: end with `Status: BLOCKED_FOR_SYNC`.
+When `merge` is a fallback that hands the merge to a person (a merge queue or a merge train), stop here instead: tell the user to merge through the queue or train, and to run `/finish-ticket` again once the pull request shows as merged. That run takes the already-merged path above. A queue can merge onto a newer base than the reviewed one, so on that path step 4 below reports the merge commit's actual parents instead of requiring the reviewed base, and the post-merge CI in step 6 is required. When the forge rejects the merge because the base moved or the pull request became unmergeable, do not retry: end with `Status: BLOCKED_FOR_SYNC`.
 
 After the merge:
 
@@ -92,8 +92,9 @@ After the merge:
 2. Fetch the base and verify the merge commit is an ancestor of it.
 3. Verify the pull request's merged head equals the reviewed head SHA.
 4. Inspect the merge commit. With the `merge` style its parents are the reviewed base and the reviewed head; with `squash` its only parent is the reviewed base. Under either style its tree equals the reviewed head's tree (`git rev-parse <merge commit>^{tree}` against `<reviewed head>^{tree}`): the reviewed head already contained the reviewed base, so nothing else may differ. After a merge through a queue or train, require only that the merged head is the reviewed head, and record the actual parents in the completion comment.
-5. Post-merge CI: when the merged diff touches a path in the `## CI gate` filters, wait with `post-merge-ci` and require success for the merge commit; when it touches none, record that no post-merge run is expected; in the no-CI mode, record that.
-6. When the merge or the post-merge check is not proven, report the exact partial state and leave the tracker unchanged. A failed post-merge gate ends with `Status: BLOCKED_POST_MERGE`.
+5. Once items 1 to 4 prove the merge, `transition` every member from `in-review` to `done` and read each state back, before any wait: the change is merged, and the board shows it. When tracker automation already moved a member to `done` on the merge (`## States`), verify the state and skip that transition.
+6. Post-merge CI: when the merged diff touches a path in the `## CI gate` filters, wait with `post-merge-ci` and require success for the merge commit; when it touches none, record that no post-merge run is expected; in the no-CI mode, record that.
+7. When the merge is not proven, report the exact partial state and leave the tracker unchanged. When the post-merge check is not proven, report the exact partial state; the members stay `done`, since their change is merged. A failed post-merge gate ends with `Status: BLOCKED_POST_MERGE`.
 
 ## 4. Complete the tickets
 
@@ -115,7 +116,7 @@ Post this on the lead with `comment`, reusing an equivalent existing completion 
 - Observed limitations: {any limitation the user reported, or None}
 ```
 
-On each rider, post a `## Completion` comment with only the pull request URL, the merge commit, and a link to the lead's comment. Then `transition` every member from `in-review` to `done` and read each one back: the comment, the pull request link and the `done` state. When tracker automation already moved a member to `done` on the merge (`## States`), verify the state and skip that transition.
+On each rider, post a `## Completion` comment with only the pull request URL, the merge commit, and a link to the lead's comment. Read each comment back, with its pull request link.
 
 On a retry, accept an already merged pull request and already completed members, repair only the members still missing their comment or transition, and never attempt a duplicate merge or transition.
 

@@ -59,7 +59,7 @@ The batch size is the number the request names, or 3. A constraint the request a
 ## 2. Gather the candidates and the work in flight
 
 1. `list-ready` for the candidates. Leave out the tickets `## Ticket conventions` says to ignore.
-2. Fetch the remote `## Forge` names. A candidate with a worktree (`git worktree list --porcelain`), a local branch or a `<remote>/<id>` branch named after its id was started already, while its plan waits or before work-ticket moves it: it is work in flight, never a pick.
+2. Fetch the remote `## Forge` names. A candidate with a worktree (`git worktree list --porcelain`), a local branch or a `<remote>/<id>` branch named after its id was started already, even before start-ticket moves it: it is work in flight, never a pick.
 3. With bundles on, resolve each candidate's bundle as `## Bundles` defines. A bundle is one candidate, named by its lead, and it was started when any member was.
 4. `load` each candidate, and every member of a bundle: its description, priority, labels, relations with their states, and, with model routing on, its `## Model routing` section. With more than 30 candidates, load the 30 with the highest priority, and say so in the report.
 5. `list-in-flight` for the rest of the work in flight: the tickets in progress and in review.

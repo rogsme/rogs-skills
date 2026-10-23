@@ -10,7 +10,7 @@ Skills that carry a ticket from creation to a merged pull request. Run `/setup-r
 
 - [create-ticket](./create-ticket/SKILL.md): audit the code and the tracker, then draft and create worktree-safe tickets after you approve a preview.
 - [suggest-tickets](./suggest-tickets/SKILL.md): pick a batch of ready tickets that can run side by side, ranked by what each unblocks, without changing anything.
-- [start-ticket](./start-ticket/SKILL.md): investigate a ticket read-only, optionally review and present its plan in the browser, then wait for approval in the conversation.
+- [start-ticket](./start-ticket/SKILL.md): move a ticket to in-progress, investigate it, optionally review and present its plan in the browser, then wait for approval in the conversation.
 - [work-ticket](./work-ticket/SKILL.md): implement the approved plan through atomic commits, the optional taste pass, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
 - [review-pr](./review-pr/SKILL.md): review a pull request independently at its exact head and post evidence-backed findings with a verdict.
 - [address-pr-review](./address-pr-review/SKILL.md): bring the branch up to date with the base, then verify and answer review feedback in at most two rounds.

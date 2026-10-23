@@ -38,7 +38,7 @@ Commit those files to the base branch before cutting ticket worktrees. Run `/set
 create-ticket       audit the code, then draft and create tickets
 suggest-tickets     pick ready tickets that can run side by side
      |   you create a worktree: branch = directory name = lead ticket id
-start-ticket        read-only investigation and plan        Status: AWAITING_APPROVAL
+start-ticket        move to in-progress, investigate, plan  Status: AWAITING_APPROVAL
      |   you approve the plan
 work-ticket         implement, verify, pull request, exact-head CI, handoff
                                                             Status: READY_FOR_REVIEW
@@ -88,7 +88,7 @@ Model-invoked:
 
 - [create-ticket](skills/lifecycle/create-ticket/SKILL.md): audit the code and the tracker, then draft and create worktree-safe tickets after you approve a preview.
 - [suggest-tickets](skills/lifecycle/suggest-tickets/SKILL.md): pick a batch of ready tickets that can run side by side, ranked by what each unblocks, without changing anything.
-- [start-ticket](skills/lifecycle/start-ticket/SKILL.md): investigate a ticket read-only in its worktree and return a plan for approval.
+- [start-ticket](skills/lifecycle/start-ticket/SKILL.md): move a ticket to in-progress, investigate it in its worktree, and return a plan for approval.
 - [work-ticket](skills/lifecycle/work-ticket/SKILL.md): implement the approved plan through atomic commits, the optional taste pass, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
 - [review-pr](skills/lifecycle/review-pr/SKILL.md): review a pull request independently at its exact head and post evidence-backed findings with a verdict.
 - [address-pr-review](skills/lifecycle/address-pr-review/SKILL.md): bring the branch up to date with the base, then verify and answer review feedback in at most two rounds.

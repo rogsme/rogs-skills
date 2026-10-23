@@ -96,6 +96,10 @@ The lifecycle skills hand off through these lines. A skill restates the lines it
 | `Unblocked:` with the ticket ids, or `none` | finish-ticket, right before `Status: DONE` | the user starts the tickets it names |
 | `Status: BLOCKED`, followed by a `Reason:` line | any lifecycle skill | the user |
 
+## Ticket states
+
+A skill moves a ticket as soon as its new state is true, before the comments and waits that follow, so the board stays current. present-plan's `tests/lifecycle.test.mjs` checks that order in start-ticket, work-ticket and finish-ticket.
+
 ## Writing
 
 - Plain words, short sentences, present tense. State the behavior to follow; use a prohibition only as a guardrail, and pair it with the behavior to use instead.

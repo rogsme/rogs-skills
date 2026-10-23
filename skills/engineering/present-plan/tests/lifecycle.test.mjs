@@ -18,7 +18,7 @@ async function configuration(t, { review = false, presentation, heading = true }
   execFileSync("git", ["init", "-q"], { cwd: directory });
   await mkdir(path.join(directory, "docs/agents"), { recursive: true });
   const documents = {
-    "issue-tracker": "## Tracker\n## Operating rules\n## Operations\n### resolve\n### load\n### list-in-flight\n## States\n",
+    "issue-tracker": "## Tracker\n## Operating rules\n## Operations\n### resolve\n### load\n### list-in-flight\n### transition\n## States\n",
     forge: "## Forge\n",
     domain: "## Glossary\n## ADRs\n## Consumer rules\n## Recording decisions\n",
     workflow: "## Features\n| Feature | State |\n|---|---|\n" +
@@ -65,6 +65,18 @@ test("review-pr and finish-ticket define a clean merge of the base in the same w
     return text.slice(start, end).replace("; check each one yourself", "");
   };
   assert.equal(await definition("finish-ticket"), await definition("review-pr"));
+});
+
+test("each skill moves a ticket as soon as its new state is true", async () => {
+  const read = (name) => readFile(path.join(root, `lifecycle/${name}/SKILL.md`), "utf8");
+  const [work, finish] = await Promise.all([read("work-ticket"), read("finish-ticket")]);
+  const before = (text, first, then) => {
+    const a = text.indexOf(first), b = text.indexOf(then);
+    assert.ok(a >= 0 && b > a, `"${first}" must come before "${then}"`);
+  };
+  before(start.slice(start.indexOf("## 2. ")), "to `in-progress`", "## 3. ");
+  before(work, "`transition` every member from `in-progress` to `in-review`", "Post the handoff");
+  before(finish, "`transition` every member from `in-review` to `done`", "wait with `post-merge-ci`");
 });
 
 test("lifecycle keeps review before presentation and approval outside browser state", async () => {

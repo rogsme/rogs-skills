@@ -7,7 +7,7 @@ Tickets move through these skills, which hand off through status lines. None of 
 create-ticket       audit the code, then draft and create tickets
 suggest-tickets     pick ready tickets that can run side by side
      |   the user creates a worktree: branch = directory name = lead ticket id
-start-ticket        read-only investigation and plan        Status: AWAITING_APPROVAL
+start-ticket        move to in-progress, investigate, plan  Status: AWAITING_APPROVAL
      |   the user approves the plan
 work-ticket         implement, verify, pull request, exact-head CI, handoff
                                                             Status: READY_FOR_REVIEW

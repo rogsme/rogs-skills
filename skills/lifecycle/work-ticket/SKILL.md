@@ -1,6 +1,6 @@
 ---
 name: work-ticket
-description: "Execute the approved plan for the current ticket or bundle: post the plan and move to in-progress, implement test-first where configured, commit in atomic units, run the taste pass where configured, sync with the base, run the browser pass, open the pull request, get green CI on its exact head, hand off in the tracker and move to in-review. Use after start-ticket when the user approves the plan and says \"go\", \"do it\", \"execute the plan\", \"build this ticket\" or \"continue ACM-123\"."
+description: "Execute the approved plan for the current ticket or bundle: post the plan, implement test-first where configured, commit in atomic units, run the taste pass where configured, sync with the base, run the browser pass, open the pull request, get green CI on its exact head, move to in-review and hand off in the tracker. Use after start-ticket when the user approves the plan and says \"go\", \"do it\", \"execute the plan\", \"build this ticket\" or \"continue ACM-123\"."
 license: MIT
 metadata:
   rogs-skills/contract: "1"
@@ -10,7 +10,7 @@ metadata:
 
 Implement the approved plan through a verified pull request and a tracker handoff. The work is complete only when the pull request exists, its exact head passes the CI gate, and every ticket reads `in-review`; a local commit without the pull request is a partial state, not a finish.
 
-This skill grants permission to create the commits, push the branch and open the pull request the workflow needs. Its only tracker writes are the ones listed here: the plan comment with the `in-progress` transition, the capture attachments, and the handoff comment with the `in-review` transition. The user's approval of the plan lifts any earlier instruction that kept the tracker read-only for these writes; make them without asking again.
+This skill grants permission to create the commits, push the branch and open the pull request the workflow needs. Its only tracker writes are the ones listed here: the plan comment with the `in-progress` transition of any member still `new` or `ready`, the capture attachments, and the `in-review` transition with the handoff comment. The user's approval of the plan lifts any earlier instruction that kept the tracker read-only for these writes; make them without asking again.
 
 When bundles are on, every rule that names "the ticket" applies to each member: the full comments go on the lead, each rider gets a pointer comment naming the lead and the pull request, and every member makes each transition together.
 
@@ -68,7 +68,7 @@ Ask the user through the harness's structured question tool (`AskUserQuestion` i
 4. `resolve` and `load` the ticket with its relations and every comment, and verify the team or project. When bundles are on, resolve the bundle again and require the members the plan names; stop when the bundle changed.
 5. Refresh every declared blocker and run `list-in-flight`. Load more detail only for plausible conflicts with the approved scope or its coupled contracts. Stop when an unresolved prerequisite or an unsafe in-flight conflict exists. Ask before adding a blocked-by relation for a real blocker that is not recorded.
 6. When model routing is on and the plan's `Model:` line names a model other than the one this session runs on, ask before continuing.
-7. Before the first edit, persist the plan: post one `## Approved implementation plan` comment on the lead with `comment`, reusing an equivalent existing comment, holding the goal, non-goals, affected areas, acceptance criteria, test strategy (the agreed seams) and known risks. Then `transition` every member that is `new` or `ready` to `in-progress`. Read the comment and the states back before the first edit.
+7. Before the first edit, `transition` every member still `new` or `ready` to `in-progress`; start-ticket moves them when planning starts. Then persist the plan: post one `## Approved implementation plan` comment on the lead with `comment`, reusing an equivalent existing comment, holding the goal, non-goals, affected areas, acceptance criteria, test strategy (the agreed seams) and known risks. Read the states and the comment back before the first edit.
 8. Continue when the readback reports `in-progress`. Ask before reopening a ticket from any later or terminal state.
 9. Read `git status --short --branch`. Never revert, overwrite, stage or commit unrelated existing changes; ask when they overlap the planned work or would prevent a safe sync.
 
@@ -150,9 +150,11 @@ Once the gate passes, stop changing code. Review comments that arrive while CI r
 
 ## 9. Hand off in the tracker
 
+First `transition` every member from `in-progress` to `in-review` and read the states back, so the board shows the pull request ready for review as soon as its gate passes.
+
 Determine the agent product and the exact model from the session. Write `Unknown` when the harness does not expose one; never guess, and never interrupt the handoff over it.
 
-Post the handoff on the lead with `comment`, following [references/handoff.md](references/handoff.md) and reusing an equivalent existing comment, and a pointer comment on each rider. Then `transition` every member from `in-progress` to `in-review`, and read both the comments and the states back.
+Post the handoff on the lead with `comment`, following [references/handoff.md](references/handoff.md) and reusing an equivalent existing comment, and a pointer comment on each rider. Read the comments back.
 
 When `## States` names tracker automation that moves tickets on pull request events, check whether it moved any member before the gate passed, and report it if so.
 
