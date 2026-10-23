@@ -6,7 +6,7 @@ What a taste pass looks for, beyond the repository's own rules, which win where 
 
 - The smallest complete change: fewer lines, names and files, as long as the code reads as plainly.
 - A helper earns its place with a second caller, or with a name that explains what its body does not. Inline one that only renames its body.
-- An option, parameter or setting earns its place with a caller that sets it differently from the rest.
+- An option, parameter or setting earns its place with a caller that sets it differently from the rest. On a public surface it stays, since callers outside the change may set it.
 - An interface earns its place with a second implementation. A fake in a test counts only when the test cannot use the real thing.
 
 ## Fit
@@ -33,7 +33,7 @@ What a taste pass looks for, beyond the repository's own rules, which win where 
 
 ## Leftovers
 
-- Dead code, unused imports and exports, commented-out code, debug output, and TODOs the change resolved all go.
+- Dead code, unused imports, private names nothing uses, commented-out code, debug output, and TODOs the change resolved all go. An unused export stays: code outside the repository may use it.
 
 ## Efficiency
 

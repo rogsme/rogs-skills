@@ -41,7 +41,7 @@ Apply a candidate only when every one of these holds:
 
 - It keeps behavior: the same results, errors, side effects, and output other programs read.
 - It stays inside the change: the lines the branch added or changed, the code they touch, and existing code only where a copy of it gives way to a call.
-- It keeps every public surface: exported names, command-line flags, file and wire formats, configuration keys, and the seams the tests use.
+- It keeps every public surface: exported names and their signatures, command-line flags, file and wire formats, configuration keys, and the seams the tests use.
 - The existing tests prove it safe, with no new test.
 
 Drop what the formatter owns, naming preferences no rule backs, speculative architecture and refactors outside the change. A candidate that would change behavior is a finding: report it unapplied.
