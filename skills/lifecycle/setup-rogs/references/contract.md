@@ -1,6 +1,6 @@
 # The configuration contract (v1)
 
-The lifecycle skills are general. Everything they need to know about one project lives in prose files that `setup-rogs` writes into that project. This file defines those files: their paths, their required headings, what each heading holds, and which skill reads what. It is the single source of truth; the seeds in `../assets/` follow it, and so do the six lifecycle skills.
+The lifecycle skills are general. Everything they need to know about one project lives in prose files that `setup-rogs` writes into that project. This file defines those files: their paths, their required headings, what each heading holds, and which skill reads what. It is the single source of truth; the seeds in `../assets/` follow it, and so do the lifecycle skills.
 
 ## Files
 
@@ -67,6 +67,8 @@ Tracker operations:
 | `comment` | Find an existing comment by its first-line heading and reuse or edit it; otherwise create one; read it back. |
 | `transition` | Move a ticket to the state mapped to a role, then read the state back. |
 | `attach` | Upload a file to a ticket. The body says whether the returned URL is permanent; when it is not, the skills link the forge's permanent URL for the same file instead. |
+
+`list-ready` came after the first v1 configurations. A configuration without it still satisfies every skill but `suggest-tickets`, which asks for `/setup-rogs`; setup then adds it from the tracker's guide.
 
 ## forge.md
 
@@ -148,41 +150,42 @@ A `## Ticket lifecycle` section between the block markers, in the file both harn
 
 R is required. F is required only when the feature it belongs to is on. A dash means the skill does not read it.
 
-| Section | create-ticket | start-ticket | work-ticket | review-pr | address-pr-review | finish-ticket |
-|---|---|---|---|---|---|---|
-| issue-tracker `## Tracker`, `## Operating rules`, `## States` | R | R | R | R | R | R |
-| issue-tracker `resolve`, `load` | R | R | R | R | R | R |
-| issue-tracker `search` | R | - | - | - | - | R |
-| issue-tracker `metadata`, `create`, `update`, `relate` | R | - | - | - | - | - |
-| issue-tracker `## Labels and priority`, `## Ticket conventions` | R | - | - | - | - | - |
-| issue-tracker `list-in-flight` | - | R | R | - | - | - |
-| issue-tracker `comment`, `transition` | - | - | R | - | - | R |
-| issue-tracker `attach` | - | - | F | - | F | - |
-| issue-tracker `## Bundles` | F | F | F | F | F | F |
-| issue-tracker `## Model routing` | F | F | F | - | - | - |
-| forge `## Forge` | - | R | R | R | R | R |
-| forge `find-pr`, `read-pr`, `ci`, `feedback`, `## CI gate`, `## Pull requests` | - | - | R | R | R | R |
-| forge `push`, `edit-pr` | - | - | R | - | R | - |
-| forge `create-pr`, `assign` | - | - | R | - | - | - |
-| forge `post-review`, `resolve-thread` | - | - | - | R | - | - |
-| forge `reply` | - | - | - | R | R | - |
-| forge `comment` | - | - | - | R | R | R |
-| forge `merge`, `post-merge-ci` | - | - | - | - | - | R |
-| forge `## Identity limits` | - | - | - | R | - | R |
-| forge `attach` | - | - | F | - | F | - |
-| workflow `## Features` | R | R | R | R | R | R |
-| workflow `## Worktrees` | - | R | R | - | R | R |
-| workflow `## Verification` | - | R | R | - | R | - |
-| workflow `## Commits`, `## Sync` | - | - | R | - | R | - |
-| workflow `## Project rules` | R | R | R | R | R | - |
-| workflow `## Review` | - | - | - | R | - | - |
-| workflow `## Human verification` | - | - | R | R | R | R |
-| workflow `## Client notes` | F | F | - | - | - | - |
-| workflow `## Plan review` | - | F | - | - | - | - |
-| workflow `## Plan presentation` | - | F | - | - | - | - |
-| domain (all four headings) | R | R | R | R | R | - |
-| browser-pass (all four headings) | - | F | F | F | F | F |
-| pull-request (when `## Pull requests` points at it) | - | - | R | R | R | - |
+| Section | create-ticket | suggest-tickets | start-ticket | work-ticket | review-pr | address-pr-review | finish-ticket |
+|---|---|---|---|---|---|---|---|
+| issue-tracker `## Tracker`, `## Operating rules`, `## States` | R | R | R | R | R | R | R |
+| issue-tracker `resolve`, `load` | R | R | R | R | R | R | R |
+| issue-tracker `search` | R | - | - | - | - | - | R |
+| issue-tracker `metadata`, `create`, `update`, `relate` | R | - | - | - | - | - | - |
+| issue-tracker `## Labels and priority`, `## Ticket conventions` | R | R | - | - | - | - | - |
+| issue-tracker `list-in-flight` | - | R | R | R | - | - | - |
+| issue-tracker `list-ready` | - | R | - | - | - | - | - |
+| issue-tracker `comment`, `transition` | - | - | - | R | - | - | R |
+| issue-tracker `attach` | - | - | - | F | - | F | - |
+| issue-tracker `## Bundles` | F | F | F | F | F | F | F |
+| issue-tracker `## Model routing` | F | F | F | F | - | - | - |
+| forge `## Forge` | - | R | R | R | R | R | R |
+| forge `find-pr`, `read-pr`, `ci`, `feedback`, `## CI gate`, `## Pull requests` | - | - | - | R | R | R | R |
+| forge `push`, `edit-pr` | - | - | - | R | - | R | - |
+| forge `create-pr`, `assign` | - | - | - | R | - | - | - |
+| forge `post-review`, `resolve-thread` | - | - | - | - | R | - | - |
+| forge `reply` | - | - | - | - | R | R | - |
+| forge `comment` | - | - | - | - | R | R | R |
+| forge `merge`, `post-merge-ci` | - | - | - | - | - | - | R |
+| forge `## Identity limits` | - | - | - | - | R | - | R |
+| forge `attach` | - | - | - | F | - | F | - |
+| workflow `## Features` | R | R | R | R | R | R | R |
+| workflow `## Worktrees` | - | R | R | R | - | R | R |
+| workflow `## Verification` | - | - | R | R | - | R | - |
+| workflow `## Commits`, `## Sync` | - | - | - | R | - | R | - |
+| workflow `## Project rules` | R | - | R | R | R | R | - |
+| workflow `## Review` | - | - | - | - | R | - | - |
+| workflow `## Human verification` | - | - | - | R | R | R | R |
+| workflow `## Client notes` | F | - | F | - | - | - | - |
+| workflow `## Plan review` | - | - | F | - | - | - | - |
+| workflow `## Plan presentation` | - | - | F | - | - | - | - |
+| domain (all four headings) | R | - | R | R | R | R | - |
+| browser-pass (all four headings) | - | - | F | F | F | F | F |
+| pull-request (when `## Pull requests` points at it) | - | - | - | R | R | R | - |
 
 An operation marked `Capability: Unsupported` still satisfies the heading check. The skill then follows the gap rules below, and stops with `Status: BLOCKED` when a required operation has no way forward.
 

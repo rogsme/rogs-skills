@@ -36,6 +36,7 @@ Commit those files to the base branch before cutting ticket worktrees. Run `/set
 
 ```
 create-ticket       audit the code, then draft and create tickets
+suggest-tickets     pick ready tickets that can run side by side
      |   you create a worktree: branch = directory name = lead ticket id
 start-ticket        read-only investigation and plan        Status: AWAITING_APPROVAL
      |   you approve the plan
@@ -86,6 +87,7 @@ User-invoked:
 Model-invoked:
 
 - [create-ticket](skills/lifecycle/create-ticket/SKILL.md): audit the code and the tracker, then draft and create worktree-safe tickets after you approve a preview.
+- [suggest-tickets](skills/lifecycle/suggest-tickets/SKILL.md): pick a batch of ready tickets that can run side by side, ranked by what each unblocks, without changing anything.
 - [start-ticket](skills/lifecycle/start-ticket/SKILL.md): investigate a ticket read-only in its worktree and return a plan for approval.
 - [work-ticket](skills/lifecycle/work-ticket/SKILL.md): implement the approved plan through atomic commits, the optional taste pass, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
 - [review-pr](skills/lifecycle/review-pr/SKILL.md): review a pull request independently at its exact head and post evidence-backed findings with a verdict.
@@ -121,7 +123,7 @@ Model-invoked:
 
 [tkt](https://git.rogs.me/rogs/tkt) is a terminal tool that runs the lifecycle's mechanical steps for you, such as creating a ticket's worktree and starting the agent for each stage. Its README covers installing and using it, and [its lifecycle guide](https://git.rogs.me/rogs/tkt/src/branch/master/docs/lifecycle.md) follows a ticket from the tracker to a merged pull request, with diagrams of how the skills, tkt and the other tools fit together.
 
-`tkt auto` can also drive a ticket on its own until the pull request is ready for human verification. With `--approve-plan` it starts the ticket as an unattended run and approves the plan itself; it stops and notifies you when an agent asks a question.
+`tkt suggest` runs suggest-tickets and offers to start its picks. `tkt auto` can also drive a ticket on its own until the pull request is ready for human verification. With `--approve-plan` it starts the ticket as an unattended run and approves the plan itself; it stops and notifies you when an agent asks a question.
 
 ## Credits
 

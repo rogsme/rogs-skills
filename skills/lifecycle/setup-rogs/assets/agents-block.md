@@ -1,10 +1,11 @@
 <!-- rogs-skills:begin config v1 -->
 ## Ticket lifecycle
 
-Tickets move through six skills that hand off through status lines. None of them calls another; a person starts each stage. Their configuration lives in `docs/agents/`: `issue-tracker.md` ({{FILL: tracker and project in a few words}}), `forge.md` ({{FILL: forge and repository in a few words}}), `workflow.md` (verification, worktrees, and the features that are on: {{FILL: the features that are on, or "none"}}) and `domain.md`.
+Tickets move through these skills, which hand off through status lines. None of them calls another; a person starts each stage. Their configuration lives in `docs/agents/`: `issue-tracker.md` ({{FILL: tracker and project in a few words}}), `forge.md` ({{FILL: forge and repository in a few words}}), `workflow.md` (verification, worktrees, and the features that are on: {{FILL: the features that are on, or "none"}}) and `domain.md`.
 
 ```
 create-ticket       audit the code, then draft and create tickets
+suggest-tickets     pick ready tickets that can run side by side
      |   the user creates a worktree: branch = directory name = lead ticket id
 start-ticket        read-only investigation and plan        Status: AWAITING_APPROVAL
      |   the user approves the plan

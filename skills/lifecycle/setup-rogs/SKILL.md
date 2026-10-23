@@ -10,7 +10,7 @@ metadata:
 
 # Set up rogs-skills
 
-Write the prose configuration the lifecycle skills (`create-ticket`, `start-ticket`, `work-ticket`, `review-pr`, `address-pr-review`, `finish-ticket`) read in this repository: where tickets live, how the forge is driven, how the code is verified, where the domain docs are, and which optional features are on. [references/contract.md](references/contract.md) defines every file and heading; the seeds and built-in guides in `assets/` follow it.
+Write the prose configuration the lifecycle skills (`create-ticket`, `suggest-tickets`, `start-ticket`, `work-ticket`, `review-pr`, `address-pr-review`, `finish-ticket`) read in this repository: where tickets live, how the forge is driven, how the code is verified, where the domain docs are, and which optional features are on. [references/contract.md](references/contract.md) defines every file and heading; the seeds and built-in guides in `assets/` follow it.
 
 This is a prompt-driven skill. Explore, record what the repository and the live checks settle, ask only the decisions they leave open, show a summary of the drafts, then write. Running it again is always safe: it updates its own files in place, never duplicates anything, never overwrites an edit without showing it, and never deletes a file.
 
