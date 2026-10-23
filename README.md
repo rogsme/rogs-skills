@@ -124,7 +124,7 @@ Model-invoked:
 
 [tkt](https://git.rogs.me/rogs/tkt) is a terminal tool that runs the lifecycle's mechanical steps for you, such as creating a ticket's worktree and starting the agent for each stage. Its README covers installing and using it, and [its lifecycle guide](https://git.rogs.me/rogs/tkt/src/branch/master/docs/lifecycle.md) follows a ticket from the tracker to a merged pull request, with diagrams of how the skills, tkt and the other tools fit together.
 
-`tkt suggest` runs suggest-tickets and offers to start its picks. `tkt auto` can also drive a ticket on its own until the pull request is ready for human verification. With `--approve-plan` it starts the ticket as an unattended run and approves the plan itself; it stops and notifies you when an agent asks a question.
+`tkt suggest` opens a tab where suggest-tickets runs, and you start the picks you want from its report. `tkt auto` can also drive a ticket on its own until the pull request is ready for human verification. With `--approve-plan` it starts the ticket as an unattended run and approves the plan itself; it stops and notifies you when an agent asks a question.
 
 ## Credits
 
