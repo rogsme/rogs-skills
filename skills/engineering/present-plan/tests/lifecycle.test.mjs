@@ -56,6 +56,17 @@ test("preflight helper functions remain identical across the lifecycle", async (
   for (const helper of helpers) assert.equal(helper, helpers[0]);
 });
 
+test("review-pr and finish-ticket define a clean merge of the base in the same words", async () => {
+  const definition = async (name) => {
+    const text = await readFile(path.join(root, `lifecycle/${name}/SKILL.md`), "utf8");
+    const start = text.indexOf("a merge commit whose second parent is an ancestor of the base");
+    const end = text.indexOf("through each merge's second parent.");
+    assert.ok(start >= 0 && end > start, `${name} no longer defines a clean merge`);
+    return text.slice(start, end).replace("; check each one yourself", "");
+  };
+  assert.equal(await definition("finish-ticket"), await definition("review-pr"));
+});
+
 test("lifecycle keeps review before presentation and approval outside browser state", async () => {
   const work = await readFile(path.join(root, "lifecycle/work-ticket/SKILL.md"), "utf8");
   assert.ok(start.indexOf('Skill tool with "review-plan"') < start.indexOf('Skill tool with "present-plan"'));

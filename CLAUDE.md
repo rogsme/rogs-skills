@@ -26,7 +26,7 @@ Never install skills into this checkout. `.gitignore` keeps a test install out o
 - the skill names in its built-in stage lines (`start-ticket`, `address-pr-review`, `review-pr`), in the approval line `tkt approve` sends (`work-ticket`), in the merge line `tkt merge` sends (`finish-ticket`), and in the line `tkt suggest` sends (`suggest-tickets`);
 - start-ticket's [unattended runs](skills/lifecycle/start-ticket/SKILL.md#unattended-runs): `tkt auto --approve-plan` adds "This run is unattended" to its start line and approves the plan itself;
 - review-pr's rule that a clean merge of the base keeps the review brief current: `tkt sync` makes such merges and pushes them itself, with no agent, and leaves the brief as it was;
-- finish-ticket's rule that a human verification confirmation carries over clean merges of the base: `tkt merge` names the head the steps passed on, and keeps a merge order across `tkt sync`. review-pr and finish-ticket define a clean merge in the same words; change them together;
+- finish-ticket's rule that a human verification confirmation carries over clean merges of the base: `tkt merge` names the head the steps passed on, and keeps a merge order across `tkt sync`;
 - finish-ticket's `Unblocked:` line, from which `tkt done` offers to start the tickets the merge unblocked;
 - suggest-tickets's `Suggested:` line, from which `tkt suggest` offers to start the picks, each on the preset that serves its `Model:` value;
 - the `resolving-merge-conflicts` skill, whose name tkt's resolve stage line asks for when a base merge conflicts.
@@ -74,6 +74,7 @@ Skills say "the tracker" and "the forge" and take every concrete operation from 
 - When a skill starts needing a heading, add it to the contract's table and to the shell check in that skill's step 0 in the same commit. Every lifecycle skill's check shares its helper functions word for word with the others; change them together.
 - Material that two or more lifecycle skills need lives in the project configuration, seeded from `setup-rogs/assets/`. Material that only one skill needs lives in that skill's `references/`.
 - The ADR rules exist twice on purpose: `setup-rogs/assets/domain.md` for configured projects and `engineering/grill-with-docs/ADR-FORMAT.md` for any repository. Change them together.
+- The definition of a clean merge of the base exists twice on purpose, word for word, in review-pr and finish-ticket: it is git's, the same in every project, so no project configuration holds it. present-plan's `tests/lifecycle.test.mjs` checks that the copies match; change them together.
 
 ## Status lines
 
