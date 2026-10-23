@@ -50,6 +50,12 @@ Capability: {{FILL: Supported, or Fallback: <what to do instead>, or Unsupported
 
 Capability: {{FILL: Supported, or Fallback: <what to do instead>, or Unsupported}}
 
+### list-ready
+
+{{FILL: the call that lists the tickets in the new and ready states, with its filter parameters and pagination}}
+
+Capability: {{FILL: Supported, or Fallback: <what to do instead>, or Unsupported}}
+
 ### metadata
 
 {{FILL: the calls that list states, labels, members and projects, each with its pagination}}

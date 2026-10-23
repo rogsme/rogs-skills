@@ -59,6 +59,7 @@ Tracker operations:
 | `load` | Description, state, labels, priority, assignee, relations (with each related ticket's state), attachments, and every comment, following pagination until it ends. |
 | `search` | Text search over open and closed tickets, archived ones included when the tracker keeps them, every page. |
 | `list-in-flight` | The tickets currently in the `in-progress` and `in-review` roles. |
+| `list-ready` | The tickets currently in the `new` and `ready` roles. |
 | `metadata` | States, labels, members and projects, read live at use time. |
 | `create` | Title, description, state, priority, labels, assignee and project; returns the new id and URL. |
 | `update` | Change a ticket's description or fields; states whether label writes replace the whole set. |
