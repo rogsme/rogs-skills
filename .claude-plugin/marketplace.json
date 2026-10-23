@@ -19,6 +19,7 @@
         "./skills/engineering/present-plan",
         "./skills/engineering/resolving-merge-conflicts",
         "./skills/engineering/review-plan",
+        "./skills/engineering/simplify-branch",
         "./skills/engineering/tdd",
         "./skills/engineering/wiki",
         "./skills/engineering/writing-for-agents"
@@ -35,6 +36,7 @@
         "./skills/lifecycle/review-pr",
         "./skills/lifecycle/setup-rogs",
         "./skills/lifecycle/start-ticket",
+        "./skills/lifecycle/suggest-tickets",
         "./skills/lifecycle/work-ticket"
       ]
     },

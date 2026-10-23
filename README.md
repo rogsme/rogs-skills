@@ -36,8 +36,9 @@ Commit those files to the base branch before cutting ticket worktrees. Run `/set
 
 ```
 create-ticket       audit the code, then draft and create tickets
+suggest-tickets     pick ready tickets that can run side by side
      |   you create a worktree: branch = directory name = lead ticket id
-start-ticket        read-only investigation and plan        Status: AWAITING_APPROVAL
+start-ticket        move to in-progress, investigate, plan  Status: AWAITING_APPROVAL
      |   you approve the plan
 work-ticket         implement, verify, pull request, exact-head CI, handoff
                                                             Status: READY_FOR_REVIEW
@@ -51,11 +52,12 @@ address-pr-review   verify, fix or push back, reply; at most two rounds
 finish-ticket       merge, verify, complete the tickets     Status: DONE
 ```
 
-- The lifecycle skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `review-plan` to have the plan reviewed before you see it, `present-plan` for optional browser presentation, `tdd`, `diagnosing-bugs` and `resolving-merge-conflicts` where they apply.
+- The lifecycle skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `simplify-branch` for the optional taste pass, `review-plan` to have the plan reviewed before you see it, `present-plan` for optional browser presentation, `tdd`, `diagnosing-bugs` and `resolving-merge-conflicts` where they apply.
 - The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
-- Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base.
+- Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base. Only a human verification step carries over to a later head, across clean merges of the base, as `finish-ticket` defines them.
+- A ticket that waits on a blocker sits in the tracker's blocked state, with a `## Blocked` comment that says why, until the merge or the run that clears its blockers moves it back with an `## Unblocked` comment.
 - Branches take the base by merging it; nothing rebases or force-pushes a published branch.
-- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, plan review by another vendor, and local browser plan presentation after review.
+- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, plan review by another vendor, local browser plan presentation after review, a taste pass that `simplify-branch` runs before the pull request opens, and a `## Changelog` section in every pull request body.
 
 ### Browser plan review
 
@@ -86,8 +88,9 @@ User-invoked:
 Model-invoked:
 
 - [create-ticket](skills/lifecycle/create-ticket/SKILL.md): audit the code and the tracker, then draft and create worktree-safe tickets after you approve a preview.
-- [start-ticket](skills/lifecycle/start-ticket/SKILL.md): investigate a ticket read-only in its worktree and return a plan for approval.
-- [work-ticket](skills/lifecycle/work-ticket/SKILL.md): implement the approved plan through atomic commits, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
+- [suggest-tickets](skills/lifecycle/suggest-tickets/SKILL.md): pick a batch of ready tickets that can run side by side, ranked by what each unblocks, without changing anything.
+- [start-ticket](skills/lifecycle/start-ticket/SKILL.md): move a ticket to in-progress, investigate it in its worktree, and return a plan for approval.
+- [work-ticket](skills/lifecycle/work-ticket/SKILL.md): implement the approved plan through atomic commits, the optional taste pass, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
 - [review-pr](skills/lifecycle/review-pr/SKILL.md): review a pull request independently at its exact head and post evidence-backed findings with a verdict.
 - [address-pr-review](skills/lifecycle/address-pr-review/SKILL.md): bring the branch up to date with the base, then verify and answer review feedback in at most two rounds.
 - [finish-ticket](skills/lifecycle/finish-ticket/SKILL.md): merge the reviewed pull request after human verification, verify the merge, and complete its tickets.
@@ -103,6 +106,7 @@ Model-invoked:
 - [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md): grill a plan or design in rounds until every decision is settled, recording glossary terms and ADRs as they land.
 - [commit](skills/engineering/commit/SKILL.md): turn the worktree, or a scope another skill hands over, into atomic commits that follow the repository's conventions.
 - [create-pr](skills/engineering/create-pr/SKILL.md): open one pull request on any forge from the repository's template, with every field verified after publishing; work-ticket publishes through it.
+- [simplify-branch](skills/engineering/simplify-branch/SKILL.md): run a taste pass over a branch's change, applying and committing only the cleanups that keep behavior; work-ticket runs it when the taste pass is on.
 - [review-plan](skills/engineering/review-plan/SKILL.md): have a model from another vendor review a finished plan before you see it, then settle every finding against the code; start-ticket calls it when plan review is on.
 - [present-plan](skills/engineering/present-plan/SKILL.md): present the canonical plan and its review findings in a local Lavish browser session, with saved source revisions and approval kept in the conversation.
 - [git-archaeology](skills/engineering/git-archaeology/SKILL.md): report what a repository's history says about churn, ownership concentration, fix hotspots and momentum, as indicators to investigate.
@@ -120,7 +124,7 @@ Model-invoked:
 
 [tkt](https://git.rogs.me/rogs/tkt) is a terminal tool that runs the lifecycle's mechanical steps for you, such as creating a ticket's worktree and starting the agent for each stage. Its README covers installing and using it, and [its lifecycle guide](https://git.rogs.me/rogs/tkt/src/branch/master/docs/lifecycle.md) follows a ticket from the tracker to a merged pull request, with diagrams of how the skills, tkt and the other tools fit together.
 
-`tkt auto` can also drive a ticket on its own until the pull request is ready for human verification. With `--approve-plan` it starts the ticket as an unattended run and approves the plan itself; it stops and notifies you when an agent asks a question.
+`tkt suggest` runs suggest-tickets and offers to start its picks. `tkt auto` can also drive a ticket on its own until the pull request is ready for human verification. With `--approve-plan` it starts the ticket as an unattended run and approves the plan itself; it stops and notifies you when an agent asks a question.
 
 ## Credits
 

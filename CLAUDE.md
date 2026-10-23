@@ -23,9 +23,12 @@ Never install skills into this checkout. `.gitignore` keeps a test install out o
 - the configuration contract's markers, `- Ticket ids:` line and `## Forge` fields;
 - the status lines in the registry below;
 - review-pr's `Verdict:` and `Reviewed head:` lines, and the numbered steps under `## Human verification` in its ready summary;
-- the skill names in its built-in stage lines (`start-ticket`, `address-pr-review`, `review-pr`) and in the approval line `tkt approve` sends (`work-ticket`);
+- the skill names in its built-in stage lines (`start-ticket`, `address-pr-review`, `review-pr`), in the approval line `tkt approve` sends (`work-ticket`), in the merge line `tkt merge` sends (`finish-ticket`), and in the line `tkt suggest` sends (`suggest-tickets`);
 - start-ticket's [unattended runs](skills/lifecycle/start-ticket/SKILL.md#unattended-runs): `tkt auto --approve-plan` adds "This run is unattended" to its start line and approves the plan itself;
 - review-pr's rule that a clean merge of the base keeps the review brief current: `tkt sync` makes such merges and pushes them itself, with no agent, and leaves the brief as it was;
+- finish-ticket's rule that a human verification confirmation carries over clean merges of the base: `tkt merge` names the head the steps passed on, and keeps a merge order across `tkt sync`;
+- finish-ticket's `Unblocked:` line, from which `tkt done` offers to start the tickets the merge unblocked;
+- suggest-tickets's `Suggested:` line, from which `tkt suggest` offers to start the picks, each on the preset that serves its `Model:` value;
 - the `resolving-merge-conflicts` skill, whose name tkt's resolve stage line asks for when a base merge conflicts.
 
 Before changing any of them, check tkt's `internal/contract` package, which pins each one with a fixture, and update it in step. Skills never call tkt.
@@ -67,10 +70,11 @@ Skills say "the tracker" and "the forge" and take every concrete operation from 
 
 `skills/lifecycle/setup-rogs/references/contract.md` defines the files `setup-rogs` writes into a project and the headings each lifecycle skill reads. It is the source of truth.
 
-- A breaking change (a new required heading, a renamed heading, a heading whose meaning changes) bumps the version in the contract, in every seed's marker, in every skill's `rogs-skills/contract` metadata, and in each lifecycle skill's step 0.
-- When a skill starts needing a heading, add it to the contract's table and to the shell check in that skill's step 0 in the same commit. The six checks share their helper functions word for word; change them together.
+- A breaking change (a new required heading, a renamed heading, a heading whose meaning changes) bumps the version in the contract, in every seed's marker, in every skill's `rogs-skills/contract` metadata, and in each lifecycle skill's step 0. A heading that only a new skill requires stays in the current version, and the contract says so beside it.
+- When a skill starts needing a heading, add it to the contract's table and to the shell check in that skill's step 0 in the same commit. Every lifecycle skill's check shares its helper functions word for word with the others; change them together.
 - Material that two or more lifecycle skills need lives in the project configuration, seeded from `setup-rogs/assets/`. Material that only one skill needs lives in that skill's `references/`.
 - The ADR rules exist twice on purpose: `setup-rogs/assets/domain.md` for configured projects and `engineering/grill-with-docs/ADR-FORMAT.md` for any repository. Change them together.
+- The definition of a clean merge of the base exists twice on purpose, word for word, in review-pr and finish-ticket: it is git's, the same in every project, so no project configuration holds it. present-plan's `tests/lifecycle.test.mjs` checks that the copies match; change them together.
 
 ## Status lines
 
@@ -81,6 +85,7 @@ The lifecycle skills hand off through these lines. A skill restates the lines it
 | `Status: SETUP_REQUIRED` | any lifecycle skill | `/setup-rogs` |
 | `Status: CONFIGURED`, `Status: SETUP_OK`, `Status: SETUP_DRIFT` | setup-rogs | the lifecycle, or another setup run |
 | `Status: AWAITING_CREATE_APPROVAL`, `Status: TICKETS_CREATED` | create-ticket | the user |
+| `Status: TICKETS_SUGGESTED`, after a `Suggested:` line with the picks | suggest-tickets | the user starts the picks with start-ticket |
 | `Status: AWAITING_APPROVAL` | start-ticket | the user approves (in an unattended run, the runner that started it), then work-ticket |
 | `Status: READY_FOR_REVIEW` | work-ticket, address-pr-review | review-pr in a fresh session |
 | `Status: AWAITING_POST_APPROVAL`, `Status: REVIEW_POSTED`, `Status: READY_FOR_HUMAN` | review-pr | address-pr-review, or the human verification |
@@ -88,7 +93,14 @@ The lifecycle skills hand off through these lines. A skill restates the lines it
 | `Status: BLOCKED_FOR_SYNC` | review-pr, finish-ticket | address-pr-review |
 | `Status: HUMAN_QA_FAILED` | finish-ticket | address-pr-review |
 | `Status: BLOCKED_POST_MERGE`, `Status: DONE` | finish-ticket | the user |
+| `Unblocked:` with the ticket ids, or `none` | finish-ticket, right before `Status: DONE` | the user starts the tickets it names |
 | `Status: BLOCKED`, followed by a `Reason:` line | any lifecycle skill | the user |
+
+## Ticket states
+
+A skill moves a ticket as soon as its new state is true, before the comments and waits that follow, so the board stays current. present-plan's `tests/lifecycle.test.mjs` checks that order in start-ticket, work-ticket and finish-ticket.
+
+A ticket that waits on a blocker sits in `blocked`, with a `## Blocked` comment that says why. create-ticket creates it there, start-ticket, work-ticket and address-pr-review move it there when they stop on a blocker, and the run that finds its blockers cleared, or finish-ticket when its merge clears the last one, moves it back with an `## Unblocked` comment. suggest-tickets and review-pr stay read-only. The `## Blocked tickets` section exists three times on purpose, word for word, in start-ticket, work-ticket and address-pr-review, and the same test checks that the copies match; change them together.
 
 ## Writing
 
