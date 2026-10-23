@@ -107,6 +107,8 @@ Validate the human verification procedure against `workflow.md` `## Human verifi
 
 Validate the pull request's `## Review brief` against the reviewed diff, the exact-head evidence and the current gates. Treat it as the author's claims, not proof. Missing or misleading evidence and next actions are handoff gaps; wording preferences are not findings. An older pull request without a brief still gets one in the review summary, without a formatting finding.
 
+A brief pinned to an earlier head stays current when every commit after that head is a clean merge of the base: a merge commit whose second parent is an ancestor of the base, and whose tree (`git rev-parse <merge>^{tree}`) equals the one `git merge-tree --write-tree <merge>^1 <merge>^2` prints. A runner makes such merges with no agent and leaves the brief as it was, so check each one yourself. A clean merge changes nothing the brief describes: judge the brief's evidence by this head's checks instead of its older pins. A merge whose tree differs carries a conflict resolution, which the brief covers like any other change.
+
 Never report style preferences, formatter output, naming preferences, speculative architecture, unrelated refactors, generic test requests or low-value nits as defects.
 
 ## 4. Validate findings
