@@ -1,6 +1,6 @@
 ---
 name: work-ticket
-description: "Execute the approved plan for the current ticket or bundle: post the plan and move to in-progress, implement test-first where configured, commit in atomic units, sync with the base, run the browser pass, open the pull request, get green CI on its exact head, hand off in the tracker and move to in-review. Use after start-ticket when the user approves the plan and says \"go\", \"do it\", \"execute the plan\", \"build this ticket\" or \"continue ACM-123\"."
+description: "Execute the approved plan for the current ticket or bundle: post the plan and move to in-progress, implement test-first where configured, commit in atomic units, run the taste pass where configured, sync with the base, run the browser pass, open the pull request, get green CI on its exact head, hand off in the tracker and move to in-review. Use after start-ticket when the user approves the plan and says \"go\", \"do it\", \"execute the plan\", \"build this ticket\" or \"continue ACM-123\"."
 license: MIT
 metadata:
   rogs-skills/contract: "1"
@@ -97,17 +97,21 @@ Commit each coherent unit as it becomes complete instead of accumulating one bul
 
 Keep coupled implementation and tests in one unit when splitting them would leave a broken commit, and separate independent features, harnesses, formatting and documentation. Never commit the paths `## Commits` excludes. Don't split one logical change merely to raise the commit count.
 
-## 4. Finalize the branch
+## 4. Run the taste pass
+
+When the taste pass is on, call the Skill tool with "simplify-branch" once the last implementation unit is committed. Hand over the remote and base from `## Forge`, and these constraints: keep behavior, the approved plan's interfaces and the agreed seams as they are; commit through "commit" under the constraints in step 3; push nothing. Its commits are part of this change, so the finalize step, the browser pass and the review cover them. A finding it leaves unapplied because it would change behavior is an implementation choice like any other: make it when the approved plan covers it, and ask when it would change the plan.
+
+## 5. Finalize the branch
 
 1. Run the format command, inspect what it changed, and commit those changes with their logical change.
 2. Run the full check.
 3. Confirm every intended change is committed and nothing unrelated is staged. Stop before syncing when the worktree is not safely clean.
 4. Sync per `## Sync`: merge the base. When the merge stops on conflicts, call the Skill tool with "resolving-merge-conflicts" and state the constraints: this is a merge and stays one; stage only resolved paths; ask the user about any hunk that decides product behavior. Once it reports back, conclude the merge with `git commit --no-edit` and confirm it in `git log`.
 5. When the sync changed the branch, rerun the complete verification.
-6. Immediately before pushing, fetch and require `<remote>/<base>` to be an ancestor of `HEAD`. When the base moved in the meantime (`## CI gate` names the automation that moves it), repeat step 4 first.
+6. Immediately before pushing, fetch and require `<remote>/<base>` to be an ancestor of `HEAD`. When the base moved in the meantime (`## CI gate` names the automation that moves it), repeat item 4 first.
 7. `push`. Never force-push.
 
-## 5. Verify in the browser
+## 6. Verify in the browser
 
 When the browser pass is on and the change has a user-visible surface per `browser-pass.md` `## When it applies`, call the Skill tool with "playwright-cli" and run the pass the approved plan names, exactly as `browser-pass.md` defines it, on the finalized and pushed head. The pass is done when every visible acceptance criterion of every member has a capture, the negative check passed, and every instance started for it is stopped. A change with no user-visible surface records its one-line reason instead.
 
@@ -115,7 +119,7 @@ A failure sends the work back to step 2. Captures from an older head are discard
 
 Upload every capture to the lead ticket with the tracker's `attach` and to the forge with its `attach`, titled with the criterion it proves, and link the forge's permanent URL from the pull request and the handoff. When one side cannot attach, follow its fallback.
 
-## 6. Create or reuse the pull request
+## 7. Create or reuse the pull request
 
 Follow [references/open-pr.md](references/open-pr.md): write the body in the format `## Pull requests` names, call the Skill tool with "create-pr" with the handover it lists, then verify every field with `read-pr`. The create-pr skill finds an existing pull request before anything else, publishes at most once, and assigns the configured assignee or nobody.
 
@@ -129,7 +133,7 @@ Write the body from the final diff and the actual verification results:
 
 Never claim that a command, surface or platform was tested when it was not, and never claim the human steps were performed.
 
-## 7. Pass the exact-head CI gate
+## 8. Pass the exact-head CI gate
 
 Apply `## CI gate`. When the diff touches none of its path filters, no checks is a pass: confirm it from the changed files and state it in the handoff instead of a CI link. In no-CI mode, say "no CI configured".
 
@@ -137,13 +141,13 @@ Otherwise record the pull request's head SHA and wait with `ci`. Refresh the pul
 
 - Fix deterministic failures yourself: reproduce with the smallest relevant local command, commit the fix through "commit", push, and wait again for the new head. When the failing output does not show the cause, call the Skill tool with "diagnosing-bugs" before you change code.
 - Report infrastructure, permission, quota or unavailable-service failures with `Status: BLOCKED`, the check URL and the exact partial state. Never ask the user to diagnose ordinary code failures.
-- Require the pull request to be mergeable before the handoff. When the base advanced or the pull request conflicts, sync as in step 4 without force-pushing, rerun the verification, push, and wait for the new head's checks.
+- Require the pull request to be mergeable before the handoff. When the base advanced or the pull request conflicts, sync as in step 5 without force-pushing, rerun the verification, push, and wait for the new head's checks.
 
 Never move a ticket to `in-review` while the current head's gate is pending, failing or stale.
 
 Once the gate passes, stop changing code. Review comments that arrive while CI runs are normal (an automated reviewer may comment on every push): list them in the handoff's limitations with their count and where to read them, and leave every fix and reply to `address-pr-review`, which runs only when the user asks. A green gate with unaddressed review comments is a complete, expected end state for this skill.
 
-## 8. Hand off in the tracker
+## 9. Hand off in the tracker
 
 Determine the agent product and the exact model from the session. Write `Unknown` when the harness does not expose one; never guess, and never interrupt the handoff over it.
 
@@ -153,6 +157,6 @@ When `## States` names tracker automation that moves tickets on pull request eve
 
 When a push, the pull request, a comment or a transition fails, report the exact partial state. On a retry, reuse every artifact that already exists instead of creating duplicate pull requests or comments.
 
-## 9. Completion report
+## 10. Completion report
 
 Return the commit subjects, the verification results, the browser-pass captures, the pull request URL, the tracker comment results, the final state of every member, the remaining limitations, and the review comments left for `address-pr-review`. End with `Status: READY_FOR_REVIEW`.
