@@ -23,7 +23,8 @@ Never install skills into this checkout. `.gitignore` keeps a test install out o
 - the configuration contract's markers, `- Ticket ids:` line and `## Forge` fields;
 - the status lines in the registry below;
 - review-pr's `Verdict:` and `Reviewed head:` lines, and the numbered steps under `## Human verification` in its ready summary;
-- the skill names in its built-in stage lines (`start-ticket`, `address-pr-review`, `review-pr`), in the approval line `tkt approve` sends (`work-ticket`), in the merge line `tkt merge` sends (`finish-ticket`), and in the line `tkt suggest` sends (`suggest-tickets`);
+- the skill names in its built-in stage lines (`start-ticket`, `address-pr-review`, `review-pr`), in the approval line `tkt approve` sends (`work-ticket`), in the merge line `tkt merge` sends (`finish-ticket`), and in the lines `tkt suggest` sends, for a count and for a request in the user's words (`suggest-tickets`);
+- suggest-tickets's [Read the request](skills/lifecycle/suggest-tickets/SKILL.md#1-read-the-request) step: `tkt suggest five tickets tagged feedback` hands those words over as the request, and relies on the skill to take its number and to narrow the candidates by the constraints it adds;
 - start-ticket's [unattended runs](skills/lifecycle/start-ticket/SKILL.md#unattended-runs): `tkt auto --approve-plan` adds "This run is unattended" to its start line and approves the plan itself;
 - review-pr's rule that a clean merge of the base keeps the review brief current: `tkt sync` makes such merges and pushes them itself, with no agent, and leaves the brief as it was;
 - finish-ticket's rule that a human verification confirmation carries over clean merges of the base: `tkt merge` names the head the steps passed on, and keeps a merge order across `tkt sync`;
