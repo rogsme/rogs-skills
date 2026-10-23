@@ -48,7 +48,7 @@ Settle section A's connection first, and stop when its check fails. Then ask the
 
 A. Tracker: which tracker, the connection (the exact MCP server name, the CLI and host, or the directory), and the identity (workspace, team or project, ticket key and id format). Then run the guide's connection check. When it fails, stop: write nothing, explain that setup records the connection but never edits the harness configuration, tell the user how to add it (the guide's setup notes say how), and ask them to run `/setup-rogs` again afterwards. End with `Status: BLOCKED` and a one-line `Reason:`; every other stop in this skill ends the same way.
 
-B. States: map each lifecycle role (`new`, `ready`, `in-progress`, `in-review`, `done`, `canceled`, `blocked`) to the live states, and ask whether the tracker moves tickets on its own, for example when a pull request opens or merges.
+B. States: map each lifecycle role (`new`, `ready`, `in-progress`, `in-review`, `done`, `canceled`, `blocked`) to the live states, and ask whether the tracker moves tickets on its own, for example when a pull request opens or merges. When the tracker has no blocked state, say that a ticket that waits on a blocker then keeps its state and shows the block only in its `## Blocked` comment, and that adding one makes the board show it.
 
 C. Labels and ticket conventions: the priority map, the label groups every ticket carries, the default state and assignee of new tickets, the title style, extra body lines, and tickets to ignore.
 

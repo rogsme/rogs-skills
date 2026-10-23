@@ -159,8 +159,8 @@ R is required. F is required only when the feature it belongs to is on. A dash m
 | issue-tracker `## Labels and priority`, `## Ticket conventions` | R | R | - | - | - | - | - |
 | issue-tracker `list-in-flight` | - | R | R | R | - | - | - |
 | issue-tracker `list-ready` | - | R | - | - | - | - | - |
-| issue-tracker `comment` | - | - | - | R | - | - | R |
-| issue-tracker `transition` | - | - | R | R | - | - | R |
+| issue-tracker `comment` | R | - | R | R | - | R | R |
+| issue-tracker `transition` | - | - | R | R | - | R | R |
 | issue-tracker `attach` | - | - | - | F | - | F | - |
 | issue-tracker `## Bundles` | F | F | F | F | F | F | F |
 | issue-tracker `## Model routing` | F | F | F | F | - | - | - |

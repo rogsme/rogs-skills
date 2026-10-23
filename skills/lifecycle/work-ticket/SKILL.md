@@ -10,7 +10,7 @@ metadata:
 
 Implement the approved plan through a verified pull request and a tracker handoff. The work is complete only when the pull request exists, its exact head passes the CI gate, and every ticket reads `in-review`; a local commit without the pull request is a partial state, not a finish.
 
-This skill grants permission to create the commits, push the branch and open the pull request the workflow needs. Its only tracker writes are the ones listed here: the plan comment with the `in-progress` transition of any member still `new` or `ready`, the capture attachments, and the `in-review` transition with the handoff comment. The user's approval of the plan lifts any earlier instruction that kept the tracker read-only for these writes; make them without asking again.
+This skill grants permission to create the commits, push the branch and open the pull request the workflow needs. Its only tracker writes are the ones listed here: the plan comment with the `in-progress` transition of any member not there yet, the capture attachments, the `in-review` transition with the handoff comment, and the moves into and out of `blocked` with their comments ([Blocked tickets](#blocked-tickets)). The user's approval of the plan lifts any earlier instruction that kept the tracker read-only for these writes; make them without asking again.
 
 When bundles are on, every rule that names "the ticket" applies to each member: the full comments go on the lead, each rider gets a pointer comment naming the lead and the pull request, and every member makes each transition together.
 
@@ -66,9 +66,9 @@ Ask the user through the harness's structured question tool (`AskUserQuestion` i
 2. Derive the lead id from the plan and require both the current branch and the checkout directory's basename to equal it exactly (`## Worktrees`).
 3. Confirm that `git worktree list --porcelain` lists this checkout. Stop rather than switching or creating a worktree when it is wrong.
 4. `resolve` and `load` the ticket with its relations and every comment, and verify the team or project. When bundles are on, resolve the bundle again and require the members the plan names; stop when the bundle changed.
-5. Refresh every declared blocker and run `list-in-flight`. Load more detail only for plausible conflicts with the approved scope or its coupled contracts. Stop when an unresolved prerequisite or an unsafe in-flight conflict exists. Ask before adding a blocked-by relation for a real blocker that is not recorded.
+5. Refresh every declared blocker and run `list-in-flight`. Load more detail only for plausible conflicts with the approved scope or its coupled contracts. When an unresolved prerequisite or an unsafe in-flight conflict exists, mark the ticket blocked as [Blocked tickets](#blocked-tickets) says. Ask before adding a blocked-by relation for a real blocker that is not recorded.
 6. When model routing is on and the plan's `Model:` line names a model other than the one this session runs on, ask before continuing.
-7. Before the first edit, `transition` every member still `new` or `ready` to `in-progress`; start-ticket moves them when planning starts. Then persist the plan: post one `## Approved implementation plan` comment on the lead with `comment`, reusing an equivalent existing comment, holding the goal, non-goals, affected areas, acceptance criteria, test strategy (the agreed seams) and known risks. Read the states and the comment back before the first edit.
+7. Before the first edit, `transition` every member still `new`, `ready` or `blocked` to `in-progress`; start-ticket moves them when planning starts, and [Blocked tickets](#blocked-tickets) says when a blocked one comes back. Then persist the plan: post one `## Approved implementation plan` comment on the lead with `comment`, reusing an equivalent existing comment, holding the goal, non-goals, affected areas, acceptance criteria, test strategy (the agreed seams) and known risks. Read the states and the comment back before the first edit.
 8. Continue when the readback reports `in-progress`. Ask before reopening a ticket from any later or terminal state.
 9. Read `git status --short --branch`. Never revert, overwrite, stage or commit unrelated existing changes; ask when they overlap the planned work or would prevent a safe sync.
 
@@ -80,7 +80,7 @@ In the test-first areas `## Verification` lists, call the Skill tool with "tdd" 
 
 When the ticket is a bug whose cause the approved plan leaves open, call the Skill tool with "diagnosing-bugs" and find the cause with a loop that goes red before you write the fix.
 
-Ask when a material unknown appears; never turn an unresolved product decision or external behavior into an implementation assumption. Don't interrupt for ordinary implementation choices the plan covers; record minor assumptions in the pull request. Stop only for unresolved product behavior, missing access, destructive operations, unsafe git divergence, newly discovered blockers, or evidence that the ticket itself is wrong.
+Ask when a material unknown appears; never turn an unresolved product decision or external behavior into an implementation assumption. Don't interrupt for ordinary implementation choices the plan covers; record minor assumptions in the pull request. Stop only for unresolved product behavior, missing access, destructive operations, unsafe git divergence, newly discovered blockers, or evidence that the ticket itself is wrong. A newly discovered blocker marks the ticket blocked, as [Blocked tickets](#blocked-tickets) says.
 
 Prefer the smallest complete change. Add the smallest test that proves each non-trivial fix, and run the focused checks from `## Verification` while working. Verification is discovered, not assumed: report a command marked `not configured` as such, and when an acceptance criterion needs verification no configured command can provide, report that gap in the handoff instead of claiming it passed.
 
@@ -163,3 +163,11 @@ When a push, the pull request, a comment or a transition fails, report the exact
 ## 10. Completion report
 
 Return the commit subjects, the verification results, the browser-pass captures, the pull request URL, the tracker comment results, the final state of every member, the remaining limitations, and the review comments left for `address-pr-review`. End with `Status: READY_FOR_REVIEW`.
+
+## Blocked tickets
+
+A ticket is blocked while something outside this session has to happen before its work can go on: another ticket landing, a decision being made, or work in flight that would conflict. A question the user can answer here, or a problem with the run itself, does not block the ticket.
+
+To mark the ticket blocked, `transition` every member to `blocked`, or keep the states when `## States` maps none, and post a `## Blocked` comment on the lead with `comment`, with a pointer naming the lead on each rider. The comment names each blocker with its evidence, what would clear it, and the state each member had. Then stop with `Status: BLOCKED` and a `Reason:` that names the blockers.
+
+A member in `blocked` comes back once every blocker its `## Blocked` comment names is cleared: `transition` it to the state this run works in (`in-progress` in start-ticket and work-ticket, `in-review` in address-pr-review), and post an `## Unblocked` comment beside the `## Blocked` one that says what cleared each blocker. When a blocker is still open, refresh the `## Blocked` comment and stop as above. Ask before working on a member in `blocked` that has no `## Blocked` comment.

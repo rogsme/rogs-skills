@@ -18,7 +18,7 @@ async function configuration(t, { review = false, presentation, heading = true }
   execFileSync("git", ["init", "-q"], { cwd: directory });
   await mkdir(path.join(directory, "docs/agents"), { recursive: true });
   const documents = {
-    "issue-tracker": "## Tracker\n## Operating rules\n## Operations\n### resolve\n### load\n### list-in-flight\n### transition\n## States\n",
+    "issue-tracker": "## Tracker\n## Operating rules\n## Operations\n### resolve\n### load\n### list-in-flight\n### comment\n### transition\n## States\n",
     forge: "## Forge\n",
     domain: "## Glossary\n## ADRs\n## Consumer rules\n## Recording decisions\n",
     workflow: "## Features\n| Feature | State |\n|---|---|\n" +
@@ -77,6 +77,18 @@ test("each skill moves a ticket as soon as its new state is true", async () => {
   before(start.slice(start.indexOf("## 2. ")), "to `in-progress`", "## 3. ");
   before(work, "`transition` every member from `in-progress` to `in-review`", "Post the handoff");
   before(finish, "`transition` every member from `in-review` to `done`", "wait with `post-merge-ci`");
+});
+
+test("start-ticket, work-ticket and address-pr-review share the blocked tickets section", async () => {
+  const section = async (name) => {
+    const text = await readFile(path.join(root, `lifecycle/${name}/SKILL.md`), "utf8");
+    const begin = text.indexOf("\n## Blocked tickets\n");
+    assert.ok(begin >= 0, `${name} has no blocked tickets section`);
+    const end = text.indexOf("\n## ", begin + 1);
+    return text.slice(begin, end < 0 ? undefined : end);
+  };
+  const [first, ...rest] = await Promise.all(["start-ticket", "work-ticket", "address-pr-review"].map(section));
+  for (const other of rest) assert.equal(other, first);
 });
 
 test("lifecycle keeps review before presentation and approval outside browser state", async () => {

@@ -100,6 +100,8 @@ The lifecycle skills hand off through these lines. A skill restates the lines it
 
 A skill moves a ticket as soon as its new state is true, before the comments and waits that follow, so the board stays current. present-plan's `tests/lifecycle.test.mjs` checks that order in start-ticket, work-ticket and finish-ticket.
 
+A ticket that waits on a blocker sits in `blocked`, with a `## Blocked` comment that says why. create-ticket creates it there, start-ticket, work-ticket and address-pr-review move it there when they stop on a blocker, and the run that finds its blockers cleared, or finish-ticket when its merge clears the last one, moves it back with an `## Unblocked` comment. suggest-tickets and review-pr stay read-only. The `## Blocked tickets` section exists three times on purpose, word for word, in start-ticket, work-ticket and address-pr-review, and the same test checks that the copies match; change them together.
+
 ## Writing
 
 - Plain words, short sentences, present tense. State the behavior to follow; use a prohibition only as a guardrail, and pair it with the behavior to use instead.

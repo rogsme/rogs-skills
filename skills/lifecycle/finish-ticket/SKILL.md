@@ -8,7 +8,7 @@ metadata:
 
 # Finish a reviewed ticket
 
-Close the lifecycle only after explicit merge authorization. This skill owns one merge and the matching tracker completion. It never implements fixes and never infers that manual testing happened. Its only writes are the merge, a conversation comment recording a failed human verification step, the completion comments, and the move of each member from `in-review` to `done`.
+Close the lifecycle only after explicit merge authorization. This skill owns one merge and the matching tracker completion. It never implements fixes and never infers that manual testing happened. Its only writes are the merge, a conversation comment recording a failed human verification step, the completion comments, the move of each member from `in-review` to `done`, and moving the tickets the merge unblocked out of `blocked`, with their `## Unblocked` comments.
 
 ## 0. Configuration preflight
 
@@ -121,6 +121,8 @@ On each rider, post a `## Completion` comment with only the pull request URL, th
 On a retry, accept an already merged pull request and already completed members, repair only the members still missing their comment or transition, and never attempt a duplicate merge or transition.
 
 Then find what the merge unblocked. Take the tickets each member blocks: from the relations `load` returns, and, where the tracker keeps blockers only as `Blocked by:` lines, from `search` for the lines that name the member. Leave out the members themselves, every ticket in a terminal state, and every ticket already in progress or in review. `load` each one left and read its blockers: it is unblocked when every one of them is now `done`, this merge's members included. A canceled blocker keeps it blocked, since start-ticket treats one as an open question. With bundles on, judge a ticket's whole bundle, resolved as `## Bundles` defines: it is unblocked when the blockers of all its members outside the bundle are, since a blocked-by relation between two members is build order, and it goes by its lead's id, the one start-ticket starts.
+
+A ticket the merge unblocked can sit in `blocked`. When every blocker its `## Blocked` comment names is a ticket that is now `done`, `transition` each of its members back to the state that comment records, and post an `## Unblocked` comment beside the `## Blocked` one naming this merge. Leave a ticket blocked for anything else as it is. The report names each ticket moved.
 
 ## 5. Report
 
