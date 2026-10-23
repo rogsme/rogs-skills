@@ -54,7 +54,7 @@ finish-ticket       merge, verify, complete the tickets     Status: DONE
 
 - The lifecycle skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `simplify-branch` for the optional taste pass, `review-plan` to have the plan reviewed before you see it, `present-plan` for optional browser presentation, `tdd`, `diagnosing-bugs` and `resolving-merge-conflicts` where they apply.
 - The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
-- Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base.
+- Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base. Only a human verification step carries over to a later head, across clean merges of the base, as `finish-ticket` defines them.
 - Branches take the base by merging it; nothing rebases or force-pushes a published branch.
 - Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, plan review by another vendor, local browser plan presentation after review, a taste pass that `simplify-branch` runs before the pull request opens, and a `## Changelog` section in every pull request body.
 
