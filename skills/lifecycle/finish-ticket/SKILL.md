@@ -29,7 +29,7 @@ need() { f="docs/agents/$1"; id="$2"; shift 2
 has() { f="docs/agents/$1"; shift; [ -f "$f" ] || return 0
   for h in "$@"; do grep -qxF -- "$h" "$f" || echo "$f: $h"; done; }
 on() { grep -qiE "^[|] *$1 *[|] *on *[|]" docs/agents/workflow.md 2>/dev/null; }
-need issue-tracker.md issue-tracker "## Tracker" "## Operating rules" "## Operations" "### resolve" "### load" "### comment" "### transition" "## States"
+need issue-tracker.md issue-tracker "## Tracker" "## Operating rules" "## Operations" "### resolve" "### load" "### search" "### comment" "### transition" "## States"
 need forge.md forge "## Forge" "## Operations" "### find-pr" "### read-pr" "### ci" "### feedback" "### comment" "### merge" "### post-merge-ci" "## CI gate" "## Pull requests" "## Identity limits"
 need workflow.md workflow "## Features" "## Worktrees" "## Human verification"
 on Bundles && has issue-tracker.md "## Bundles"
@@ -119,8 +119,10 @@ On each rider, post a `## Completion` comment with only the pull request URL, th
 
 On a retry, accept an already merged pull request and already completed members, repair only the members still missing their comment or transition, and never attempt a duplicate merge or transition.
 
+Then find what the merge unblocked. Take the tickets each member blocks: from the relations `load` returns, and, where the tracker keeps blockers only as `Blocked by:` lines, from `search` for the lines that name the member. Leave out the members themselves and every ticket in a terminal state. `load` each one left and read its blockers: it is unblocked when every one of them is now `done`, this merge's members included. A canceled blocker keeps it blocked, since start-ticket treats one as an open question.
+
 ## 5. Report
 
-Return the pull request URL, the reviewed head, the merge commit, the verification evidence, the tracker result for every member, and any remaining cleanup. End with `Status: DONE`.
+Return the pull request URL, the reviewed head, the merge commit, the verification evidence, the tracker result for every member, and any remaining cleanup. Then name the tickets the merge unblocked on one line, `Unblocked: ACM-15, ACM-16`, or `Unblocked: none`, and end with `Status: DONE`.
 
 Never delete branches, remove the active worktree, or switch checkouts. Report the worktree's path for the user to remove when they are ready.

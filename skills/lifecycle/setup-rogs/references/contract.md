@@ -151,7 +151,8 @@ R is required. F is required only when the feature it belongs to is on. A dash m
 |---|---|---|---|---|---|---|
 | issue-tracker `## Tracker`, `## Operating rules`, `## States` | R | R | R | R | R | R |
 | issue-tracker `resolve`, `load` | R | R | R | R | R | R |
-| issue-tracker `search`, `metadata`, `create`, `update`, `relate` | R | - | - | - | - | - |
+| issue-tracker `search` | R | - | - | - | - | R |
+| issue-tracker `metadata`, `create`, `update`, `relate` | R | - | - | - | - | - |
 | issue-tracker `## Labels and priority`, `## Ticket conventions` | R | - | - | - | - | - |
 | issue-tracker `list-in-flight` | - | R | R | - | - | - |
 | issue-tracker `comment`, `transition` | - | - | R | - | - | R |
