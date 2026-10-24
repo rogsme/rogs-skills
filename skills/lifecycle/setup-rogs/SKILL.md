@@ -12,7 +12,7 @@ metadata:
 
 Write the prose configuration the lifecycle skills (`create-ticket`, `suggest-tickets`, `start-ticket`, `work-ticket`, `review-pr`, `address-pr-review`, `verify-pr`, `finish-ticket`) read in this repository: where tickets live, how the forge is driven, how the code is verified, where the domain docs are, and which optional features are on. [references/contract.md](references/contract.md) defines every file and heading; the seeds and built-in guides in `assets/` follow it.
 
-This is a prompt-driven skill. Explore, record what the repository and the live checks settle, ask only the decisions they leave open, show a summary of the drafts, then write. Running it again is always safe: it updates its own files in place, never duplicates anything, never overwrites an edit without showing it, and never deletes a file.
+This is a prompt-driven skill. Explore, record what the repository and the live checks settle, ask only the decisions they leave open, show a summary of the drafts, then write. Running it again is always safe: it updates its own files in place, never duplicates anything, never overwrites an edit without showing it, and never deletes a file; the glossary rename in step 6 moves files with `git mv`, only on approval.
 
 ## Asking
 
@@ -62,7 +62,7 @@ G. Verification: the format command, the full check, focused checks per area, te
 
 H. Worktrees, commits and sync: the usual worktree location, paths that are never committed, the message style, and sync notes.
 
-I. Domain docs: the glossary file (an existing `CONTEXT.md` or `GLOSSARY.md`, otherwise `CONTEXT.md`), one context or several, and the ADR directories.
+I. Domain docs: the glossary file (an existing `GLOSSARY.md` or `CONTEXT.md`, otherwise `GLOSSARY.md`), one context or several, and the ADR directories. When the glossary is named `CONTEXT.md`, offer the rename step 6 describes, recommended; declining keeps `CONTEXT.md`, which stays valid.
 
 J. Rules and review: rule files per area, reference implementations and their terms, data boundaries, review invariants, house standards, and the commands for focused reproduction.
 
@@ -107,12 +107,13 @@ The write set is the files above plus the marked block. Within it:
 - A marker with an older version gets the missing headings added and keeps its content. A newer version means the installed skills are older than the configuration: stop and tell the user to run `npx skills update`.
 - The block goes into `AGENTS.md` when `CLAUDE.md` only imports or links it; otherwise into `CLAUDE.md`, else `AGENTS.md`; when neither file exists, ask which one to create. Replace only the text between the markers. A repository holds one block. A hand-written section about the same lifecycle stays until the user, shown both, agrees that the block replaces it.
 - A section the user declines stays absent, and the skills that need it will refuse with a pointer back here.
+- The glossary rename, when the user accepted it in step I: rename the root `CONTEXT.md` to `GLOSSARY.md`, `CONTEXT-MAP.md` to `GLOSSARY-MAP.md`, and each per-context `CONTEXT.md` the map names to `GLOSSARY.md`, with `git mv`, so history follows them. Fix the links and mentions of the old names that `git grep` finds in `docs/`, `AGENTS.md`, `CLAUDE.md` and the glossaries themselves, and write the new names into `domain.md`; report a mention in a file this skill never edits as a finding. When one directory holds both a `CONTEXT.md` and a `GLOSSARY.md`, ask which one is the glossary instead of renaming either. Step 5's table lists each rename.
 
-Never edit `.gitignore` (propose the lines instead), harness configuration, CI files, rule files, skill folders or pull request template files; never delete a file; and make no tracker or forge writes.
+Never edit `.gitignore` (propose the lines instead), harness configuration, CI files, rule files, skill folders or pull request template files; never delete a file (the glossary rename moves files and deletes none); and make no tracker or forge writes.
 
 ## 7. Report
 
-List the files created, updated and left unchanged, the docs the configuration supersedes, and any proposed `.gitignore` lines. Tell the user to commit `docs/agents/` and the block to the base branch before cutting ticket worktrees, since the lifecycle skills read the configuration from the checkout they run in. Then ask whether to commit them now or leave them uncommitted; on commit, call the Skill tool with "commit", scoped to exactly those files.
+List the files created, updated and left unchanged, the docs the configuration supersedes, and any proposed `.gitignore` lines. Tell the user to commit `docs/agents/`, the block and any renamed glossary files to the base branch before cutting ticket worktrees, since the lifecycle skills read the configuration from the checkout they run in. Then ask whether to commit them now or leave them uncommitted; on commit, call the Skill tool with "commit", scoped to exactly those files.
 
 End with `Status: CONFIGURED`.
 
@@ -121,7 +122,7 @@ End with `Status: CONFIGURED`.
 Run this after every write, and on its own in check mode:
 
 1. Every lifecycle skill's preflight from the contract passes against the files, for the features that are on.
-2. Live probes: the tracker connection answers and the key and states exist; the forge's base branch and merge style match the file; the CI path filters match the workflow files; every verification command exists; the pull request template carries the required headings, or `pull-request.md` exists; the glossary is where `domain.md` says, or not created yet; `playwright-cli` and its skill are present when the browser pass is on; the `simplify-branch` skill is installed when the taste pass is on; the `verify-pr` skill is installed when agent verification is on; plan review and agent verification are on when autonomous runs are; the client notes path is readable when client notes are on; each configured reviewer guide's check passes when plan review is on.
+2. Live probes: the tracker connection answers and the key and states exist; the forge's base branch and merge style match the file; the CI path filters match the workflow files; every verification command exists; the pull request template carries the required headings, or `pull-request.md` exists; the glossary is where `domain.md` says, or not created yet (a glossary named `CONTEXT.md` is OK, with a note that `/setup-rogs` can rename it to `GLOSSARY.md`); `playwright-cli` and its skill are present when the browser pass is on; the `simplify-branch` skill is installed when the taste pass is on; the `verify-pr` skill is installed when agent verification is on; plan review and agent verification are on when autonomous runs are; the client notes path is readable when client notes are on; each configured reviewer guide's check passes when plan review is on.
 3. The configuration is on the base branch: fetch, then `git diff --quiet <remote>/<base> -- docs/agents <block file>`.
 4. No same-name skill from another source shadows a rogs skill.
 5. When plan presentation is on, call the Skill tool with "present-plan" for a check-only probe of its recorded renderer/state/port and pinned npx execution. Confirm the artifact root is external to every worktree and permitted by the planning agent. This check opens no browser and makes no local installation; npm's cache may be populated. Browser interaction is verified separately. Report presentation drift without changing the independent plan-review setting.

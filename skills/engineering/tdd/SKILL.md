@@ -10,7 +10,7 @@ metadata:
 
 TDD is the red-green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle: consult them before and during the loop, not after.
 
-When exploring the codebase, read the project's domain glossary and the ADRs in the area you're touching, so test names and interface vocabulary match the project's domain language and the tests respect recorded decisions. When the project has a `docs/agents/domain.md`, it says where those live; otherwise look for `CONTEXT.md` or `GLOSSARY.md` at the repository root and ADRs under `docs/adr/`.
+When exploring the codebase, read the project's domain glossary and the ADRs in the area you're touching, so test names and interface vocabulary match the project's domain language and the tests respect recorded decisions. When the project has a `docs/agents/domain.md`, it says where those live; otherwise look for `GLOSSARY.md` or `CONTEXT.md` at the repository root and ADRs under `docs/adr/`.
 
 ## What a good test is
 

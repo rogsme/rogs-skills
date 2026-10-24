@@ -123,7 +123,7 @@ Plan presentation is additive and optional under contract v1. It never changes t
 
 | Heading | Holds |
 |---|---|
-| `## Glossary` | The glossary file (`CONTEXT.md` unless the project uses another name), and whether the project has one context or several with a map file. |
+| `## Glossary` | The glossary file (`GLOSSARY.md` unless the project uses another name, such as `CONTEXT.md`), and whether the project has one context or several with a map file. |
 | `## ADRs` | The ADR directories. |
 | `## Consumer rules` | Read before exploring, proceed silently when files are absent, use the glossary's terms, flag ADR conflicts. |
 | `## Recording decisions` | When a decision earns an ADR, the ADR format, and the numbering rule. |
