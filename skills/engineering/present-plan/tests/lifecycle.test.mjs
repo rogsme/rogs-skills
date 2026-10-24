@@ -92,6 +92,16 @@ test("start-ticket, work-ticket and address-pr-review share the blocked tickets 
   for (const other of rest) assert.equal(other, first);
 });
 
+test("every skill a runner starts follows workflow.md's autonomous runs section", async () => {
+  for (const name of ["start-ticket", "work-ticket", "review-pr", "address-pr-review", "verify-pr", "finish-ticket"]) {
+    const text = await readFile(path.join(root, `lifecycle/${name}/SKILL.md`), "utf8");
+    assert.match(text, /^on "Autonomous runs" && has workflow\.md "## Autonomous runs"$/m, `${name} does not check the section`);
+    const begin = text.indexOf("\n## Autonomous runs\n");
+    assert.ok(begin >= 0, `${name} has no autonomous runs section`);
+    assert.match(text.slice(begin), /whose request says "This run is autonomous"\. Follow `## Autonomous runs` in `workflow\.md`/, name);
+  }
+});
+
 test("lifecycle keeps review before presentation and approval outside browser state", async () => {
   const work = await readFile(path.join(root, "lifecycle/work-ticket/SKILL.md"), "utf8");
   assert.ok(start.indexOf('Skill tool with "review-plan"') < start.indexOf('Skill tool with "present-plan"'));

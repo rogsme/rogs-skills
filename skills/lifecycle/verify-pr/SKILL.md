@@ -34,6 +34,7 @@ on() { grep -qiE "^[|] *$1 *[|] *on *[|]" docs/agents/workflow.md 2>/dev/null; }
 need forge.md forge "## Forge" "## Operations" "### find-pr" "### read-pr" "### ci" "### feedback" "### post-review" "## CI gate" "## Pull requests"
 need workflow.md workflow "## Features" "## Worktrees" "## Project rules" "## Human verification"
 on "Browser pass" && { has forge.md "### attach"; need browser-pass.md browser-pass "## When it applies" "## Instances" "## Procedure" "## Captures"; }
+on "Autonomous runs" && has workflow.md "## Autonomous runs"
 true'
 ```
 
@@ -51,6 +52,8 @@ When the check reports files missing here that exist in the main worktree (the f
 From here on, "the forge" and every operation named in backticks (`read-pr`, `post-review`, ...) mean what those files define, under their operating rules. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`.
 
 Ask the user through the harness's structured question tool (`AskUserQuestion` in Claude Code, `question` in OpenCode) when it has one, and again when an answer leaves the decision open. A turn that ends in plain text while the run waits for the user is a stop, even one that only answers the user's reply to an earlier question: its `Reason:` names the decision. After the report, a reply to a later message from the user ends with the status line that applies then. A runner that watches the session reads a turn with neither a pending question nor a status line as a finished run.
+
+When the request says the run is autonomous, follow [Autonomous runs](#autonomous-runs) in place of every question below.
 
 The `Agent verification` row in `## Features` tells a runner whether to start this skill after a clean review. A user who asks for it directly gets it either way.
 
@@ -104,6 +107,10 @@ Return the review link, the verified head, and one line per step. End with:
 - `Status: VERIFIED` when every step passed;
 - `Status: VERIFICATION_FAILED` when any step failed. The posted report is feedback that `address-pr-review` picks up;
 - `Status: VERIFICATION_INCOMPLETE` when no step failed and at least one was not run. The user runs those steps.
+
+## Autonomous runs
+
+An autonomous run is one whose request says "This run is autonomous". Follow `## Autonomous runs` in `workflow.md` in place of every step that asks the user, and stop with `Status: BLOCKED` when the row for autonomous runs is off or that section is missing. In this skill, the run goes as written: an autonomous run cannot merge on a report that is not `PASSED`, so a step stays `NOT RUN` or `FAILED` exactly as observed. When step 1 finds this session wrote the change, stop with `Status: BLOCKED`.
 
 ## Gotchas
 

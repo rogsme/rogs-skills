@@ -37,6 +37,7 @@ need workflow.md workflow "## Features" "## Worktrees" "## Verification" "## Com
 need domain.md domain "## Glossary" "## ADRs" "## Consumer rules" "## Recording decisions"
 on Bundles && has issue-tracker.md "## Bundles"
 on "Browser pass" && { has issue-tracker.md "### attach"; has forge.md "### attach"; need browser-pass.md browser-pass "## When it applies" "## Instances" "## Procedure" "## Captures"; }
+on "Autonomous runs" && has workflow.md "## Autonomous runs"
 grep -qF "docs/agents/pull-request.md" docs/agents/forge.md 2>/dev/null && need pull-request.md pull-request "## Review brief"
 true'
 ```
@@ -55,6 +56,8 @@ When the check reports files missing here that exist in the main worktree (the f
 From here on, "the tracker", "the forge" and every operation named in backticks (`feedback`, `reply`, `push`, ...) mean what those files define, under their operating rules. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`.
 
 Ask the user through the harness's structured question tool (`AskUserQuestion` in Claude Code, `question` in OpenCode) when it has one, and again when an answer leaves the decision open. A turn that ends in plain text while the run waits for the user is a stop, even one that only answers the user's reply to an earlier question: its `Reason:` names the decision. After the report, a reply to a later message from the user ends with the status line that applies then. A runner that watches the session reads a turn with neither a pending question nor a status line as a finished run.
+
+When the request says the run is autonomous, follow [Autonomous runs](#autonomous-runs) in place of every question below.
 
 ## 1. Verify the branch and the pull request
 
@@ -164,6 +167,14 @@ Two rounds is the hard cap for one run of this skill. An automated reviewer can 
 ## Report
 
 Return whether step 3 merged the base, the classifications, the commits, the push result, the verification performed, links to the replies, and any behavior intentionally left unchanged. When there was no feedback, return the new head and its CI result instead, or that the branch was already up to date. End with `Status: READY_FOR_REVIEW`, so a fresh review session can revalidate the head and resolve the threads.
+
+## Autonomous runs
+
+An autonomous run is one whose request says "This run is autonomous". Follow `## Autonomous runs` in `workflow.md` in place of every step that asks the user, and stop with `Status: BLOCKED` when the row for autonomous runs is off or that section is missing. In this skill:
+
+- Divergence, overlapping uncommitted work, or a member in an unexpected state ends the run with `Status: BLOCKED`.
+- A decision that needs product policy, and a merge-conflict hunk that decides product behavior, are settled as `## Autonomous runs` says: record the assumption in the reply that makes it and in the pull request's `## Assumptions` section.
+- A finding that names a hard stop, or a fix that would touch one, marks the ticket blocked as [Blocked tickets](#blocked-tickets) says, naming the hard stop.
 
 ## Blocked tickets
 
