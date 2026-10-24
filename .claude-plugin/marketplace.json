@@ -37,6 +37,7 @@
         "./skills/lifecycle/setup-rogs",
         "./skills/lifecycle/start-ticket",
         "./skills/lifecycle/suggest-tickets",
+        "./skills/lifecycle/verify-pr",
         "./skills/lifecycle/work-ticket"
       ]
     },
