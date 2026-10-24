@@ -83,7 +83,7 @@ Every run syncs before it collects feedback, including a run after a review or a
 
 1. Confirm the worktree is clean apart from explicitly unrelated pre-existing files.
 2. Fetch the base and read the pull request with `read-pr`. When `<remote>/<base>` is an ancestor of `HEAD` and the pull request does not conflict, the branch is up to date: continue with step 4.
-3. Otherwise sync per `## Sync`: merge the base. When the merge stops on conflicts, call the Skill tool with "resolving-merge-conflicts" with the constraints that it stays a merge, stages only resolved paths and asks about any hunk that decides product behavior; then conclude it with `git commit --no-edit`.
+3. Otherwise sync per `## Sync`: merge the base. When the merge stops on conflicts, resolve each conflict from what both sides meant, keeping it a merge, staging only resolved paths and asking about any hunk that decides product behavior; then conclude it with `git commit --no-edit`.
 4. Rerun the focused checks for the code the merge changed. Commit nothing beyond the merge.
 
 The merge stays local until step 6 pushes it with the round's fixes, or step 4 pushes it alone when no feedback is waiting.

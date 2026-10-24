@@ -38,7 +38,7 @@ Read only. Run every command from the repository root (`git rev-parse --show-top
 
 ## Domain docs
 
-- `CONTEXT.md`, `GLOSSARY.md`, `CONTEXT-MAP.md` or `GLOSSARY-MAP.md` at the root, per-context glossaries, `docs/adr/` and any context-level ADR directories.
+- `GLOSSARY.md`, `CONTEXT.md`, `GLOSSARY-MAP.md` or `CONTEXT-MAP.md` at the root, per-context glossaries, `docs/adr/` and any context-level ADR directories. Note which name the glossaries use: a `CONTEXT.md` gets the rename offer in step I.
 - Monorepo signals (a `pnpm-workspace.yaml`, a `workspaces` field in `package.json`, several packages with their own source trees) suggest asking about several contexts.
 
 ## Commit style

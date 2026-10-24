@@ -32,8 +32,7 @@ Never install skills into this checkout. `.gitignore` keeps a test install out o
 - finish-ticket's rule that the user may confirm steps from verify-pr's evidence, which the merge line `tkt merge --evidence` sends;
 - review-pr's rule that a clean merge of the base keeps the review brief current: `tkt sync` makes such merges and pushes them itself, with no agent, and leaves the brief as it was;
 - finish-ticket's rule that a human verification confirmation carries over clean merges of the base: `tkt merge` names the head the steps passed on, and keeps a merge order across `tkt sync`;
-- finish-ticket's `Unblocked:` line, from which `tkt done` offers to start the tickets the merge unblocked;
-- the `resolving-merge-conflicts` skill, whose name tkt's resolve stage line asks for when a base merge conflicts.
+- finish-ticket's `Unblocked:` line, from which `tkt done` offers to start the tickets the merge unblocked.
 
 Before changing any of them, check tkt's `internal/contract` package, which pins each one with a fixture, and update it in step. Skills never call tkt.
 
@@ -60,7 +59,7 @@ metadata:
 
 Skills are model-invoked by default. Their description is written for the model: what the skill does first, then each distinct trigger once.
 
-A user-invoked skill sets `disable-model-invocation: true` (Claude Code) and `opencode/autoinvoke: "false"` under `metadata` (OpenCode), always as a pair. Its description is a one-line summary for a person browsing slash commands. `setup-rogs` is the only user-invoked skill.
+A user-invoked skill sets `disable-model-invocation: true` (Claude Code) and `opencode/autoinvoke: "false"` under `metadata` (OpenCode), always as a pair. Its description is a one-line summary for a person browsing slash commands. Make a skill user-invoked only when it runs at a person's request and no other skill needs to call it, as `setup-rogs` does; each bucket README lists them under **User-invoked**.
 
 A step that runs another skill says so as an instruction to call the Skill tool, one skill per call: `Call the Skill tool with "commit"`. Only model-invoked skills can be reached that way; for a user-invoked skill, the step tells the user to run it. The lifecycle skills never call one another: each ends with a status line, and the human starts the next stage.
 
@@ -124,11 +123,15 @@ The repository is MIT. Text derived from mattpocock/skills (MIT, Copyright (c) 2
 
 | Skill | Upstream (mattpocock/skills) | Pinned commit |
 |---|---|---|
-| `tdd` | `skills/engineering/tdd/` | `49dd158` |
-| `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
-| `resolving-merge-conflicts` | `skills/engineering/resolving-merge-conflicts/` | `3216582` (frozen: upstream deleted the skill in `daa01d8`) |
-| `grill-with-docs` | `skills/engineering/grill-with-docs/` folded with `skills/productivity/grilling/` and `skills/engineering/domain-modeling/` | `49dd158` |
-| `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
+| `tdd` | `skills/engineering/tdd/` | `5beb35b` |
+| `writing-for-agents` | `skills/productivity/writing-for-agents/` | `5beb35b` |
+| `grill-with-docs` | `skills/engineering/grill-with-docs/` folded with `skills/productivity/grilling/` and `skills/engineering/domain-modeling/` | `5beb35b` |
+| `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `5beb35b` |
+| `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
+| `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |
+| `retro` | `skills/engineering/retro/` | `5beb35b` |
+| `wait-what` | `skills/productivity/wait-what/` | `5beb35b` |
+| `to-questionnaire` | `skills/productivity/to-questionnaire/` | `5beb35b` |
 
 To sync a fork, download the upstream files at the pinned commit and at the new one into a scratch directory outside this checkout, diff the two, port the changes that fit this repository's conventions, then update the pinned commit here and in the "Credits" table of `README.md`.
 

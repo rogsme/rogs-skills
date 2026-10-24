@@ -15,8 +15,8 @@ Interview the user relentlessly until you reach a shared understanding of the pl
 Before the first round, find where the glossary and the decisions live:
 
 1. When `docs/agents/domain.md` exists, it names the glossary file, the layout (one context or several) and the ADR directories. Use those.
-2. Otherwise use what the repository already has: `CONTEXT.md` or `GLOSSARY.md` at the root, or a `CONTEXT-MAP.md` or `GLOSSARY-MAP.md` that points at one glossary per context, plus `docs/adr/` and any context-level `docs/adr/` directories.
-3. When nothing exists, create files lazily, only once there is something to write: a root `CONTEXT.md` when the first term is resolved, `docs/adr/` when the first ADR is needed. A repository with several contexts gets a root `CONTEXT-MAP.md` listing them.
+2. Otherwise use what the repository already has: `GLOSSARY.md` or `CONTEXT.md` at the root, or a `GLOSSARY-MAP.md` or `CONTEXT-MAP.md` that points at one glossary per context, plus `docs/adr/` and any context-level `docs/adr/` directories.
+3. When nothing exists, create files lazily, only once there is something to write: a root `GLOSSARY.md` when the first term is resolved, `docs/adr/` when the first ADR is needed. A repository with several contexts gets a root `GLOSSARY-MAP.md` listing them.
 
 Read the glossary and the ADRs for the area under discussion before the first round.
 

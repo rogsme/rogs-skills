@@ -109,7 +109,7 @@ When the taste pass is on, call the Skill tool with "simplify-branch" once the l
 1. Run the format command, inspect what it changed, and commit those changes with their logical change.
 2. Run the full check.
 3. Confirm every intended change is committed and nothing unrelated is staged. Stop before syncing when the worktree is not safely clean.
-4. Sync per `## Sync`: merge the base. When the merge stops on conflicts, call the Skill tool with "resolving-merge-conflicts" and state the constraints: this is a merge and stays one; stage only resolved paths; ask the user about any hunk that decides product behavior. Once it reports back, conclude the merge with `git commit --no-edit` and confirm it in `git log`.
+4. Sync per `## Sync`: merge the base. When the merge stops on conflicts, resolve each conflict from what both sides meant, under these constraints: this is a merge and stays one; stage only resolved paths; ask the user about any hunk that decides product behavior. Then conclude the merge with `git commit --no-edit` and confirm it in `git log`.
 5. When the sync changed the branch, rerun the complete verification.
 6. Immediately before pushing, fetch and require `<remote>/<base>` to be an ancestor of `HEAD`. When the base moved in the meantime (`## CI gate` names the automation that moves it), repeat item 4 first.
 7. `push`. Never force-push.

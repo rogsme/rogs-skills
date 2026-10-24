@@ -123,7 +123,7 @@ Plan presentation is additive and optional under contract v1. It never changes t
 
 | Heading | Holds |
 |---|---|
-| `## Glossary` | The glossary file (`CONTEXT.md` unless the project uses another name), and whether the project has one context or several with a map file. |
+| `## Glossary` | The glossary file (`GLOSSARY.md` unless the project uses another name, such as `CONTEXT.md`), and whether the project has one context or several with a map file. |
 | `## ADRs` | The ADR directories. |
 | `## Consumer rules` | Read before exploring, proceed silently when files are absent, use the glossary's terms, flag ADR conflicts. |
 | `## Recording decisions` | When a decision earns an ADR, the ADR format, and the numbering rule. |
@@ -229,4 +229,4 @@ Two cases get a different second line:
 - The files are missing here but present in the main worktree (the first entry of `git worktree list --porcelain`): "The configuration exists in <main worktree path> but not on this branch. Commit `docs/agents/` to the base branch, then merge the base into this branch."
 - The marker version differs: "The configuration is version <n>; this skill expects version 1." Then, for an older configuration, "Run /setup-rogs here to update it."; for a newer one, "Run `npx skills update` to update the installed skills."
 
-The engineering skills (`tdd`, `diagnosing-bugs`, `grill-with-docs`, `resolving-merge-conflicts`, `commit`, `wiki`, `simplify-branch`) read these files when present and never refuse without them. `review-plan`, which start-ticket calls, reads `## Plan review` and hands the plan back unreviewed when the feature is off. `present-plan` reads `## Plan presentation` for lifecycle handovers; explicit standalone requests can supply their settings without lifecycle configuration.
+The engineering skills (`tdd`, `diagnosing-bugs`, `grill-with-docs`, `improve-codebase-architecture`, `commit`, `wiki`, `simplify-branch`) read these files when present and never refuse without them. `review-plan`, which start-ticket calls, reads `## Plan review` and hands the plan back unreviewed when the feature is off. `present-plan` reads `## Plan presentation` for lifecycle handovers; explicit standalone requests can supply their settings without lifecycle configuration.

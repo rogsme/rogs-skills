@@ -55,7 +55,7 @@ verify-pr           run the human verification steps, post the evidence
 finish-ticket       merge, verify, complete the tickets     Status: DONE
 ```
 
-- The lifecycle skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `simplify-branch` for the optional taste pass, `review-plan` to have the plan reviewed before you see it, `present-plan` for optional browser presentation, `tdd`, `diagnosing-bugs` and `resolving-merge-conflicts` where they apply.
+- The lifecycle skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `simplify-branch` for the optional taste pass, `review-plan` to have the plan reviewed before you see it, `present-plan` for optional browser presentation, `tdd` and `diagnosing-bugs` where they apply.
 - The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
 - Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base. Only a human verification step carries over to a later head, across clean merges of the base, as `finish-ticket` defines them.
 - A ticket that waits on a blocker sits in the tracker's blocked state, with a `## Blocked` comment that says why, until the merge or the run that clears its blockers moves it back with an `## Unblocked` comment.
@@ -101,11 +101,16 @@ Model-invoked:
 
 ### Engineering
 
+User-invoked:
+
+- [improve-codebase-architecture](skills/engineering/improve-codebase-architecture/SKILL.md): scan the codebase for shallow modules, present the deepening opportunities as a visual HTML report, then grill through the one you pick.
+- [retro](skills/engineering/retro/SKILL.md): run a retrospective on a coding session and suggest changes to the agent's environment (navigation pointers, automated checks, review standards, tool economy), most severe first.
+
 Model-invoked:
 
 - [tdd](skills/engineering/tdd/SKILL.md): test-driven development in vertical red-green slices, testing behavior at agreed seams.
+- [codebase-design](skills/engineering/codebase-design/SKILL.md): the shared vocabulary for deep modules (module, interface, depth, seam, adapter, leverage, locality), with the deletion test and the design-it-twice pattern.
 - [writing-for-agents](skills/engineering/writing-for-agents/SKILL.md): how to write skills, `AGENTS.md`/`CLAUDE.md` and any other document an agent reads.
-- [resolving-merge-conflicts](skills/engineering/resolving-merge-conflicts/SKILL.md): resolve an in-progress merge or rebase conflict hunk by hunk, by tracing each side's intent to its source.
 - [diagnosing-bugs](skills/engineering/diagnosing-bugs/SKILL.md): reproduce a hard bug or performance regression with a tight loop that goes red, then minimise, hypothesise, instrument, fix and clean up.
 - [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md): grill a plan or design in rounds until every decision is settled, recording glossary terms and ADRs as they land.
 - [commit](skills/engineering/commit/SKILL.md): turn the worktree, or a scope another skill hands over, into atomic commits that follow the repository's conventions.
@@ -117,6 +122,11 @@ Model-invoked:
 - [wiki](skills/engineering/wiki/SKILL.md): generate and maintain a codebase wiki in `docs/wiki/`, kept accurate by incremental, audit and full runs.
 
 ### Writing
+
+User-invoked:
+
+- [wait-what](skills/writing/wait-what/SKILL.md): when the last message did not land, have the agent re-pitch it with some context, in the glossary's terms and in Simplified Technical English.
+- [to-questionnaire](skills/writing/to-questionnaire/SKILL.md): turn a decision you cannot answer alone into a Markdown questionnaire for the person who holds the missing knowledge.
 
 Model-invoked:
 
@@ -136,13 +146,17 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 
 | Skill | Upstream source | Commit |
 |---|---|---|
-| `tdd` | `skills/engineering/tdd/` | `49dd158` |
-| `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
-| `resolving-merge-conflicts` | `skills/engineering/resolving-merge-conflicts/` (deleted upstream in `daa01d8`) | `3216582` |
-| `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/productivity/grilling/`, `skills/engineering/domain-modeling/` | `49dd158` |
-| `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
-| `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `49dd158` |
-| `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `49dd158` |
+| `tdd` | `skills/engineering/tdd/` | `5beb35b` |
+| `writing-for-agents` | `skills/productivity/writing-for-agents/` | `5beb35b` |
+| `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/productivity/grilling/`, `skills/engineering/domain-modeling/` | `5beb35b` |
+| `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `5beb35b` |
+| `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
+| `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |
+| `retro` | `skills/engineering/retro/` | `5beb35b` |
+| `wait-what` | `skills/productivity/wait-what/` | `5beb35b` |
+| `to-questionnaire` | `skills/productivity/to-questionnaire/` | `5beb35b` |
+| `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `5beb35b` |
+| `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `5beb35b` |
 
 Other bundled work:
 
