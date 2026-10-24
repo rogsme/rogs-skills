@@ -2,6 +2,10 @@
 
 Skills for everyday code work. Each one runs on its own, and the lifecycle skills call some of them.
 
+## User-invoked
+
+- [improve-codebase-architecture](./improve-codebase-architecture/SKILL.md): scan the codebase for shallow modules, present the deepening opportunities as a visual HTML report, then grill through the one you pick.
+
 ## Model-invoked
 
 - [tdd](./tdd/SKILL.md): test-driven development in vertical red-green slices, testing behavior at agreed seams.

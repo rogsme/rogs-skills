@@ -59,7 +59,7 @@ metadata:
 
 Skills are model-invoked by default. Their description is written for the model: what the skill does first, then each distinct trigger once.
 
-A user-invoked skill sets `disable-model-invocation: true` (Claude Code) and `opencode/autoinvoke: "false"` under `metadata` (OpenCode), always as a pair. Its description is a one-line summary for a person browsing slash commands. `setup-rogs` is the only user-invoked skill.
+A user-invoked skill sets `disable-model-invocation: true` (Claude Code) and `opencode/autoinvoke: "false"` under `metadata` (OpenCode), always as a pair. Its description is a one-line summary for a person browsing slash commands. Make a skill user-invoked only when it runs at a person's request and no other skill needs to call it, as `setup-rogs` does; each bucket README lists them under **User-invoked**.
 
 A step that runs another skill says so as an instruction to call the Skill tool, one skill per call: `Call the Skill tool with "commit"`. Only model-invoked skills can be reached that way; for a user-invoked skill, the step tells the user to run it. The lifecycle skills never call one another: each ends with a status line, and the human starts the next stage.
 
@@ -128,6 +128,7 @@ The repository is MIT. Text derived from mattpocock/skills (MIT, Copyright (c) 2
 | `grill-with-docs` | `skills/engineering/grill-with-docs/` folded with `skills/productivity/grilling/` and `skills/engineering/domain-modeling/` | `49dd158` |
 | `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
 | `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
+| `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |
 
 To sync a fork, download the upstream files at the pinned commit and at the new one into a scratch directory outside this checkout, diff the two, port the changes that fit this repository's conventions, then update the pinned commit here and in the "Credits" table of `README.md`.
 
