@@ -89,7 +89,7 @@ The merge stays local until step 6 pushes it with the round's fixes, or step 4 p
 
 Refresh and record the pull request number and head commit, then collect every channel with `feedback`: each inline review comment and its replies, review-summary bodies (including requested changes outside the diff), conversation comments, and thread states. Keep the comment ids, so replies land in the original threads.
 
-A reply this skill posted starts with one of the four prefixes in step 7. Treat a comment as answered when such a reply follows it, unless the reviewer added new feedback after that reply. A conversation comment from `finish-ticket` recording a failed human verification step (`HUMAN_QA_FAILED`) is feedback like any other.
+A reply this skill posted starts with one of the four prefixes in step 7. Treat a comment as answered when such a reply follows it, unless the reviewer added new feedback after that reply. A conversation comment from `finish-ticket` recording a failed human verification step (`HUMAN_QA_FAILED`) is feedback like any other. So is a `verify-pr` report that says `Verification: FAILED`: each step it marks `FAILED` is one point, with the expected result and the observation as its evidence, and a step it marks `NOT RUN` is no point at all.
 
 When there is no unanswered feedback:
 
@@ -113,7 +113,7 @@ An accepted finding whose fix waits on a blocker, such as another ticket that ha
 
 ## 6. Implement the accepted fixes
 
-Fix each accepted issue at its shared root cause, with the smallest regression test; in the test-first areas `## Verification` lists, call the Skill tool with "tdd" for it. When an accepted bug's root cause is not evident from the comment and the code, as with a failed human verification step, call the Skill tool with "diagnosing-bugs" first. Preserve unrelated work, and follow `AGENTS.md` (or `CLAUDE.md`) and the rule files `## Project rules` lists for the touched areas.
+Fix each accepted issue at its shared root cause, with the smallest regression test; in the test-first areas `## Verification` lists, call the Skill tool with "tdd" for it. When an accepted bug's root cause is not evident from the comment and the code, as with a failed human verification step or a step `verify-pr` reports failed, call the Skill tool with "diagnosing-bugs" first. Preserve unrelated work, and follow `AGENTS.md` (or `CLAUDE.md`) and the rule files `## Project rules` lists for the touched areas.
 
 Commit each fix with its test as one unit: state the exact paths, the constraints (never amend; no AI attribution and no co-author trailers unless `## Commits` says otherwise; never bypass a hook; leave every other path untouched) and the intent, then call the Skill tool with "commit" and confirm the commit with `git log`. Create no commit for a rejected or no-code-change comment.
 
