@@ -130,6 +130,7 @@ The repository is MIT. Text derived from mattpocock/skills (MIT, Copyright (c) 2
 | `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
 | `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |
 | `retro` | `skills/engineering/retro/` | `5beb35b` |
+| `wait-what` | `skills/productivity/wait-what/` | `5beb35b` |
 
 To sync a fork, download the upstream files at the pinned commit and at the new one into a scratch directory outside this checkout, diff the two, port the changes that fit this repository's conventions, then update the pinned commit here and in the "Credits" table of `README.md`.
 

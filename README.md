@@ -123,6 +123,10 @@ Model-invoked:
 
 ### Writing
 
+User-invoked:
+
+- [wait-what](skills/writing/wait-what/SKILL.md): when the last message did not land, have the agent re-pitch it with some context, in the glossary's terms and in Simplified Technical English.
+
 Model-invoked:
 
 - [avoid-ai-tropes](skills/writing/avoid-ai-tropes/SKILL.md): write, proofread or deep-rewrite prose without the tells of machine-written text, keeping its meaning and the author's voice.
@@ -148,6 +152,7 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 | `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
 | `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |
 | `retro` | `skills/engineering/retro/` | `5beb35b` |
+| `wait-what` | `skills/productivity/wait-what/` | `5beb35b` |
 | `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `49dd158` |
 | `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `49dd158` |
 
