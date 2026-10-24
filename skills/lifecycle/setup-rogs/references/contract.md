@@ -104,7 +104,7 @@ Forge operations:
 
 | Heading | Holds |
 |---|---|
-| `## Features` | A table turning each feature on or off: `Bundles`, `Browser pass`, `Model routing`, `Client notes`, `Plan review`, `Plan presentation`, `Taste pass`, `Changelog`. An absent `Plan presentation`, `Taste pass` or `Changelog` row in an older v1 configuration means off. |
+| `## Features` | A table turning each feature on or off: `Bundles`, `Browser pass`, `Model routing`, `Client notes`, `Plan review`, `Plan presentation`, `Taste pass`, `Changelog`, `Agent verification`. An absent `Plan presentation`, `Taste pass`, `Changelog` or `Agent verification` row in an older v1 configuration means off. A runner, such as tkt, starts `verify-pr` after a clean review only when `Agent verification` is on. |
 | `## Worktrees` | The rule (branch name equals the worktree directory name equals the lead ticket id), where worktrees usually live, and who creates them (the user, never a skill). |
 | `## Verification` | The format command, the full check, focused checks per area, the areas that are test-first, hook behavior, and any environment notes. A command the project lacks is written as `not configured`. |
 | `## Commits` | Paths never committed, commit rules beyond the defaults, and the attribution policy. |

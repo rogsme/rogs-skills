@@ -60,7 +60,7 @@ finish-ticket       merge, verify, complete the tickets     Status: DONE
 - Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base. Only a human verification step carries over to a later head, across clean merges of the base, as `finish-ticket` defines them.
 - A ticket that waits on a blocker sits in the tracker's blocked state, with a `## Blocked` comment that says why, until the merge or the run that clears its blockers moves it back with an `## Unblocked` comment.
 - Branches take the base by merging it; nothing rebases or force-pushes a published branch.
-- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, plan review by another vendor, local browser plan presentation after review, a taste pass that `simplify-branch` runs before the pull request opens, and a `## Changelog` section in every pull request body.
+- Optional, per repository: bundles (one pull request delivering several tickets), a browser pass with captures (it needs the `playwright-cli` skill, installed with `playwright-cli install --skills`), model routing, read-only client notes, plan review by another vendor, local browser plan presentation after review, a taste pass that `simplify-branch` runs before the pull request opens, a `## Changelog` section in every pull request body, and agent verification, where a runner starts `verify-pr` after a clean review.
 
 ### Browser plan review
 
