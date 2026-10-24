@@ -146,17 +146,17 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 
 | Skill | Upstream source | Commit |
 |---|---|---|
-| `tdd` | `skills/engineering/tdd/` | `49dd158` |
-| `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
-| `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/productivity/grilling/`, `skills/engineering/domain-modeling/` | `49dd158` |
-| `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
+| `tdd` | `skills/engineering/tdd/` | `5beb35b` |
+| `writing-for-agents` | `skills/productivity/writing-for-agents/` | `5beb35b` |
+| `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/productivity/grilling/`, `skills/engineering/domain-modeling/` | `5beb35b` |
+| `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `5beb35b` |
 | `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
 | `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |
 | `retro` | `skills/engineering/retro/` | `5beb35b` |
 | `wait-what` | `skills/productivity/wait-what/` | `5beb35b` |
 | `to-questionnaire` | `skills/productivity/to-questionnaire/` | `5beb35b` |
-| `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `49dd158` |
-| `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `49dd158` |
+| `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `5beb35b` |
+| `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `5beb35b` |
 
 Other bundled work:
 
