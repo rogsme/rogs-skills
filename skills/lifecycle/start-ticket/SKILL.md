@@ -54,11 +54,11 @@ Status: SETUP_REQUIRED
 
 When the check reports files missing here that exist in the main worktree (the first entry of `git worktree list --porcelain`), the second line says instead: "The configuration exists in <path> but not on this branch. Commit `docs/agents/` to the base branch, then merge the base into this branch." When it reports a version, the second line says: "The configuration is version <n>; this skill expects version 1.", followed by "Run /setup-rogs here to update it." for an older version or "Run `npx skills update` to update the installed skills." for a newer one.
 
-From here on, "the tracker", "the forge" and every operation named in backticks (`load`, `list-in-flight`, ...) mean what those files define, under their operating rules. The tracker stays read-only for this whole skill, apart from the state moves in step 2 and the comments [Blocked tickets](#blocked-tickets) asks for. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`.
+From here on, "the tracker", "the forge" and every operation named in backticks (`load`, `list-in-flight`, ...) mean what those files define, under their operating rules. The tracker stays read-only for this whole skill, apart from the state moves in step 2, the comments [Blocked tickets](#blocked-tickets) asks for, and, in an autonomous run, the `## Autonomous run` comment. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`.
 
 ## 1. Verify the ticket worktree
 
-Extract the full ticket id from the request, in the format `## Tracker` gives. Ask when it is missing or ambiguous. When the request says the run is unattended, follow [Unattended runs](#unattended-runs) from here on; when it says the run is autonomous, follow [Autonomous runs](#autonomous-runs).
+Extract the full ticket id from the request, in the format `## Tracker` gives. Ask when it is missing or ambiguous. When the request says the run is unattended, follow [Unattended runs](#unattended-runs) from here on; when it says the run is autonomous, follow [Autonomous runs](#autonomous-runs), which replaces Unattended runs when the request says both.
 
 Before reading the tracker:
 

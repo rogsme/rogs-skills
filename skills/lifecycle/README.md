@@ -15,4 +15,4 @@ Skills that carry a ticket from creation to a merged pull request. Run `/setup-r
 - [review-pr](./review-pr/SKILL.md): review a pull request independently at its exact head and post evidence-backed findings with a verdict.
 - [verify-pr](./verify-pr/SKILL.md): run a reviewed pull request's human verification steps against its exact head and post the evidence for each step.
 - [address-pr-review](./address-pr-review/SKILL.md): bring the branch up to date with the base, then verify and answer review feedback in at most two rounds.
-- [finish-ticket](./finish-ticket/SKILL.md): merge the reviewed pull request after human verification, verify the merge, and complete its tickets.
+- [finish-ticket](./finish-ticket/SKILL.md): merge the reviewed pull request after human verification, or after verify-pr's passing report in an autonomous run, verify the merge, and complete its tickets.

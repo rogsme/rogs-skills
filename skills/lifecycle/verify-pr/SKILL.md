@@ -75,6 +75,7 @@ Sort each step:
 
 - A step you can run goes ahead: a page you can drive with the `playwright-cli` skill, or a command, API call, query or log you can run from this checkout.
 - A step that needs a person is `NOT RUN`, with the reason: a real phone or device, a real inbox or account outside the test data, a physical action, or a judgment the step reserves for the user.
+- A step that acts on anything other than the instances this run starts and this checkout, such as a staging environment, a shared service or production data, is `NOT RUN` with that reason, unless `## Project rules` allows this skill to use it. Reading such a target is fine; changing it is the user's call.
 
 When every step needs a person, skip to step 5 and report.
 
