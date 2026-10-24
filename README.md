@@ -104,6 +104,7 @@ Model-invoked:
 User-invoked:
 
 - [improve-codebase-architecture](skills/engineering/improve-codebase-architecture/SKILL.md): scan the codebase for shallow modules, present the deepening opportunities as a visual HTML report, then grill through the one you pick.
+- [retro](skills/engineering/retro/SKILL.md): run a retrospective on a coding session and suggest changes to the agent's environment (navigation pointers, automated checks, review standards, tool economy), most severe first.
 
 Model-invoked:
 
@@ -146,6 +147,7 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 | `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
 | `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
 | `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |
+| `retro` | `skills/engineering/retro/` | `5beb35b` |
 | `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `49dd158` |
 | `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `49dd158` |
 
