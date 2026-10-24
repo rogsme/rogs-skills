@@ -5,6 +5,7 @@ Skills for prose that people read: style that does not read as machine-written, 
 ## User-invoked
 
 - [wait-what](./wait-what/SKILL.md): when the last message did not land, have the agent re-pitch it with some context, in the glossary's terms and in Simplified Technical English.
+- [to-questionnaire](./to-questionnaire/SKILL.md): turn a decision you cannot answer alone into a Markdown questionnaire for the person who holds the missing knowledge.
 
 ## Model-invoked
 

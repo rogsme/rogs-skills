@@ -126,6 +126,7 @@ Model-invoked:
 User-invoked:
 
 - [wait-what](skills/writing/wait-what/SKILL.md): when the last message did not land, have the agent re-pitch it with some context, in the glossary's terms and in Simplified Technical English.
+- [to-questionnaire](skills/writing/to-questionnaire/SKILL.md): turn a decision you cannot answer alone into a Markdown questionnaire for the person who holds the missing knowledge.
 
 Model-invoked:
 
@@ -153,6 +154,7 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 | `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |
 | `retro` | `skills/engineering/retro/` | `5beb35b` |
 | `wait-what` | `skills/productivity/wait-what/` | `5beb35b` |
+| `to-questionnaire` | `skills/productivity/to-questionnaire/` | `5beb35b` |
 | `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `49dd158` |
 | `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `49dd158` |
 
