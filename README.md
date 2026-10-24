@@ -48,7 +48,10 @@ review-pr           findings pinned to the exact head
      |   when changes were requested or the base moved
 address-pr-review   verify, fix or push back, reply; at most two rounds
                                                             Status: READY_FOR_REVIEW
-     |   you run the human verification steps
+     |   a fresh session, after a clean review
+verify-pr           run the human verification steps, post the evidence
+                                       Verification: PASSED | FAILED | INCOMPLETE
+     |   you confirm the steps, from the evidence or by running them
 finish-ticket       merge, verify, complete the tickets     Status: DONE
 ```
 
@@ -92,6 +95,7 @@ Model-invoked:
 - [start-ticket](skills/lifecycle/start-ticket/SKILL.md): move a ticket to in-progress, investigate it in its worktree, and return a plan for approval.
 - [work-ticket](skills/lifecycle/work-ticket/SKILL.md): implement the approved plan through atomic commits, the optional taste pass, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
 - [review-pr](skills/lifecycle/review-pr/SKILL.md): review a pull request independently at its exact head and post evidence-backed findings with a verdict.
+- [verify-pr](skills/lifecycle/verify-pr/SKILL.md): run a reviewed pull request's human verification steps against its exact head and post the evidence for each step.
 - [address-pr-review](skills/lifecycle/address-pr-review/SKILL.md): bring the branch up to date with the base, then verify and answer review feedback in at most two rounds.
 - [finish-ticket](skills/lifecycle/finish-ticket/SKILL.md): merge the reviewed pull request after human verification, verify the merge, and complete its tickets.
 

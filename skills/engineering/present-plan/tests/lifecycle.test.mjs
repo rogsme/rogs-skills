@@ -48,10 +48,11 @@ test("only enabled presentation requires its heading", async (t) => {
 });
 
 test("preflight helper functions remain identical across the lifecycle", async () => {
-  const names = ["create-ticket", "suggest-tickets", "start-ticket", "work-ticket", "review-pr", "address-pr-review", "finish-ticket"];
+  const names = ["create-ticket", "suggest-tickets", "start-ticket", "work-ticket", "review-pr", "address-pr-review", "verify-pr", "finish-ticket"];
   const helpers = await Promise.all(names.map(async (name) => {
     const text = await readFile(path.join(root, `lifecycle/${name}/SKILL.md`), "utf8");
-    return text.slice(text.indexOf("need() {"), text.indexOf("need issue-tracker.md"));
+    const begin = text.indexOf("need() {");
+    return text.slice(begin, text.indexOf("\nneed ", begin));
   }));
   for (const helper of helpers) assert.equal(helper, helpers[0]);
 });

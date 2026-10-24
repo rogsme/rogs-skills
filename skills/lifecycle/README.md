@@ -13,5 +13,6 @@ Skills that carry a ticket from creation to a merged pull request. Run `/setup-r
 - [start-ticket](./start-ticket/SKILL.md): move a ticket to in-progress, investigate it, optionally review and present its plan in the browser, then wait for approval in the conversation.
 - [work-ticket](./work-ticket/SKILL.md): implement the approved plan through atomic commits, the optional taste pass, the browser pass, a pull request with green exact-head CI, and the tracker handoff.
 - [review-pr](./review-pr/SKILL.md): review a pull request independently at its exact head and post evidence-backed findings with a verdict.
+- [verify-pr](./verify-pr/SKILL.md): run a reviewed pull request's human verification steps against its exact head and post the evidence for each step.
 - [address-pr-review](./address-pr-review/SKILL.md): bring the branch up to date with the base, then verify and answer review feedback in at most two rounds.
 - [finish-ticket](./finish-ticket/SKILL.md): merge the reviewed pull request after human verification, verify the merge, and complete its tickets.
