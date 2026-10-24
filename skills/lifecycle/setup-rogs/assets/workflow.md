@@ -16,6 +16,7 @@ How this project runs the ticket lifecycle. Written by `/setup-rogs`; edit it fr
 | Taste pass | {{FILL: on or off; missing in older configurations means off}} |
 | Changelog | {{FILL: on or off; missing in older configurations means off}} |
 | Agent verification | {{FILL: on or off; missing in older configurations means off}} |
+| Autonomous runs | {{FILL: on or off; missing in older configurations means off}} |
 
 ## Worktrees
 
