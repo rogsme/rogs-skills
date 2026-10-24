@@ -127,6 +127,7 @@ The repository is MIT. Text derived from mattpocock/skills (MIT, Copyright (c) 2
 | `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
 | `grill-with-docs` | `skills/engineering/grill-with-docs/` folded with `skills/productivity/grilling/` and `skills/engineering/domain-modeling/` | `49dd158` |
 | `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
+| `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
 
 To sync a fork, download the upstream files at the pinned commit and at the new one into a scratch directory outside this checkout, diff the two, port the changes that fit this repository's conventions, then update the pinned commit here and in the "Credits" table of `README.md`.
 

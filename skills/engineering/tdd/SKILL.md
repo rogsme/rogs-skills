@@ -28,7 +28,7 @@ When a plan the user already approved names the seams (a ticket's approved imple
 
 Ask: "What's the public interface, and which seams should we test?" Give each proposed seam a one-line note on what it catches and what it misses.
 
-When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), settle it with the user before writing the test. Inside an approved plan, that question is a change to the plan: stop and ask.
+When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), call the Skill tool with "codebase-design" for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms, and it is a reference to consult, not a session to run. Settle the shape with the user before writing the test; inside an approved plan, that question is a change to the plan: stop and ask.
 
 ## Anti-patterns
 

@@ -5,6 +5,7 @@ Skills for everyday code work. Each one runs on its own, and the lifecycle skill
 ## Model-invoked
 
 - [tdd](./tdd/SKILL.md): test-driven development in vertical red-green slices, testing behavior at agreed seams.
+- [codebase-design](./codebase-design/SKILL.md): the shared vocabulary for deep modules (module, interface, depth, seam, adapter, leverage, locality), with the deletion test and the design-it-twice pattern.
 - [writing-for-agents](./writing-for-agents/SKILL.md): how to write skills, `AGENTS.md`/`CLAUDE.md` and any other document an agent reads.
 - [diagnosing-bugs](./diagnosing-bugs/SKILL.md): reproduce a hard bug or performance regression with a tight loop that goes red, then minimise, hypothesise, instrument, fix and clean up.
 - [grill-with-docs](./grill-with-docs/SKILL.md): grill a plan or design in rounds until every decision is settled, recording glossary terms and ADRs as they land.

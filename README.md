@@ -104,6 +104,7 @@ Model-invoked:
 Model-invoked:
 
 - [tdd](skills/engineering/tdd/SKILL.md): test-driven development in vertical red-green slices, testing behavior at agreed seams.
+- [codebase-design](skills/engineering/codebase-design/SKILL.md): the shared vocabulary for deep modules (module, interface, depth, seam, adapter, leverage, locality), with the deletion test and the design-it-twice pattern.
 - [writing-for-agents](skills/engineering/writing-for-agents/SKILL.md): how to write skills, `AGENTS.md`/`CLAUDE.md` and any other document an agent reads.
 - [diagnosing-bugs](skills/engineering/diagnosing-bugs/SKILL.md): reproduce a hard bug or performance regression with a tight loop that goes red, then minimise, hypothesise, instrument, fix and clean up.
 - [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md): grill a plan or design in rounds until every decision is settled, recording glossary terms and ADRs as they land.
@@ -139,6 +140,7 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 | `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
 | `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/productivity/grilling/`, `skills/engineering/domain-modeling/` | `49dd158` |
 | `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
+| `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
 | `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `49dd158` |
 | `create-ticket` | `skills/engineering/to-tickets/` (slicing rules and breakdown review) | `49dd158` |
 
