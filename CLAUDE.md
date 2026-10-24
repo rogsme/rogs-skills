@@ -32,8 +32,7 @@ Never install skills into this checkout. `.gitignore` keeps a test install out o
 - finish-ticket's rule that the user may confirm steps from verify-pr's evidence, which the merge line `tkt merge --evidence` sends;
 - review-pr's rule that a clean merge of the base keeps the review brief current: `tkt sync` makes such merges and pushes them itself, with no agent, and leaves the brief as it was;
 - finish-ticket's rule that a human verification confirmation carries over clean merges of the base: `tkt merge` names the head the steps passed on, and keeps a merge order across `tkt sync`;
-- finish-ticket's `Unblocked:` line, from which `tkt done` offers to start the tickets the merge unblocked;
-- the `resolving-merge-conflicts` skill, whose name tkt's resolve stage line asks for when a base merge conflicts.
+- finish-ticket's `Unblocked:` line, from which `tkt done` offers to start the tickets the merge unblocked.
 
 Before changing any of them, check tkt's `internal/contract` package, which pins each one with a fixture, and update it in step. Skills never call tkt.
 
@@ -126,7 +125,6 @@ The repository is MIT. Text derived from mattpocock/skills (MIT, Copyright (c) 2
 |---|---|---|
 | `tdd` | `skills/engineering/tdd/` | `49dd158` |
 | `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
-| `resolving-merge-conflicts` | `skills/engineering/resolving-merge-conflicts/` | `3216582` (frozen: upstream deleted the skill in `daa01d8`) |
 | `grill-with-docs` | `skills/engineering/grill-with-docs/` folded with `skills/productivity/grilling/` and `skills/engineering/domain-modeling/` | `49dd158` |
 | `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
 

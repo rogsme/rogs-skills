@@ -55,7 +55,7 @@ verify-pr           run the human verification steps, post the evidence
 finish-ticket       merge, verify, complete the tickets     Status: DONE
 ```
 
-- The lifecycle skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `simplify-branch` for the optional taste pass, `review-plan` to have the plan reviewed before you see it, `present-plan` for optional browser presentation, `tdd`, `diagnosing-bugs` and `resolving-merge-conflicts` where they apply.
+- The lifecycle skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `simplify-branch` for the optional taste pass, `review-plan` to have the plan reviewed before you see it, `present-plan` for optional browser presentation, `tdd` and `diagnosing-bugs` where they apply.
 - The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
 - Every claim (CI is green, reviewed, verified) names the exact head SHA, and that head contains the current base. Only a human verification step carries over to a later head, across clean merges of the base, as `finish-ticket` defines them.
 - A ticket that waits on a blocker sits in the tracker's blocked state, with a `## Blocked` comment that says why, until the merge or the run that clears its blockers moves it back with an `## Unblocked` comment.
@@ -105,7 +105,6 @@ Model-invoked:
 
 - [tdd](skills/engineering/tdd/SKILL.md): test-driven development in vertical red-green slices, testing behavior at agreed seams.
 - [writing-for-agents](skills/engineering/writing-for-agents/SKILL.md): how to write skills, `AGENTS.md`/`CLAUDE.md` and any other document an agent reads.
-- [resolving-merge-conflicts](skills/engineering/resolving-merge-conflicts/SKILL.md): resolve an in-progress merge or rebase conflict hunk by hunk, by tracing each side's intent to its source.
 - [diagnosing-bugs](skills/engineering/diagnosing-bugs/SKILL.md): reproduce a hard bug or performance regression with a tight loop that goes red, then minimise, hypothesise, instrument, fix and clean up.
 - [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md): grill a plan or design in rounds until every decision is settled, recording glossary terms and ADRs as they land.
 - [commit](skills/engineering/commit/SKILL.md): turn the worktree, or a scope another skill hands over, into atomic commits that follow the repository's conventions.
@@ -138,7 +137,6 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 |---|---|---|
 | `tdd` | `skills/engineering/tdd/` | `49dd158` |
 | `writing-for-agents` | `skills/productivity/writing-for-agents/` | `49dd158` |
-| `resolving-merge-conflicts` | `skills/engineering/resolving-merge-conflicts/` (deleted upstream in `daa01d8`) | `3216582` |
 | `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/productivity/grilling/`, `skills/engineering/domain-modeling/` | `49dd158` |
 | `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `49dd158` |
 | `setup-rogs` | `skills/engineering/setup-matt-pocock-skills/` (setup flow, tracker and domain seeds) and `skills/engineering/domain-modeling/ADR-FORMAT.md` | `49dd158` |
