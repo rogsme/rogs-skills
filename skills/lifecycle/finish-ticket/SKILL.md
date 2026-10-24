@@ -72,6 +72,8 @@ For an open pull request, refresh it with `read-pr` immediately before merging a
 - A concrete, numbered human verification procedure in that final review summary.
 - Every numbered human step explicitly confirmed as passed by the user, or explicitly waived by the user with a reason.
 
+The user may confirm steps from the evidence `verify-pr` posted instead of running them; that confirmation is the user's and counts like any other. When the merge instruction says so, require a `verify-pr` report for the confirmed head that marks each of those steps `PASSED`; a step it marks otherwise, or a report that is missing, leaves that step unconfirmed.
+
 When human steps remain and the merge instruction did not confirm them, ask one concise question that lists only those step numbers and actions. When any step failed, do not merge: post one conversation comment with `comment` that records the failed step, what the user observed, and the reviewed head SHA, so `address-pr-review` picks it up as feedback; leave the tracker unchanged; and end with `Status: HUMAN_QA_FAILED`. Never infer that a step passed, invent observations, or accept a verdict for an older head.
 
 A confirmation counts for the head it names, or, when it names none, for the head of the final review summary the user had when they gave it. A confirmation given on an earlier head still counts when every commit after that head is a clean merge of the base and the final review summary asks the same steps as the summary for the confirmed head, matched by action and expected result rather than by number; a step that is new, or whose action or expected result changed, needs its own confirmation. A clean merge of the base is a merge commit whose second parent is an ancestor of the base, and whose tree (`git rev-parse <merge>^{tree}`) equals the one `git merge-tree --write-tree <merge>^1 <merge>^2` prints; check each one yourself. The commits after a head are the branch's own, the ones `git rev-list --first-parent <that head>..<the current head>` lists, and the oldest of them has that head as its first parent; the base's commits come in through each merge's second parent. Any other commit after the confirmed head, such as a fix or a conflict resolution, voids the confirmations given before it.
@@ -112,7 +114,7 @@ Post this on the lead with `comment`, reusing an equivalent existing completion 
 
 ### Human verification
 
-- Step {number}: {passed on `{the head it was confirmed on}`, and who confirmed it; or waived, with the reason}
+- Step {number}: {passed on `{the head it was confirmed on}`, and who confirmed it, adding "from verify-pr's evidence ({report link})" when the user confirmed it that way; or waived, with the reason}
 - Observed limitations: {any limitation the user reported, or None}
 ```
 
