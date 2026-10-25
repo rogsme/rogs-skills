@@ -125,7 +125,9 @@ The repository is MIT. Text derived from mattpocock/skills (MIT, Copyright (c) 2
 |---|---|---|
 | `tdd` | `skills/engineering/tdd/` | `5beb35b` |
 | `writing-for-agents` | `skills/productivity/writing-for-agents/` | `5beb35b` |
-| `grill-with-docs` | `skills/engineering/grill-with-docs/` folded with `skills/productivity/grilling/` and `skills/engineering/domain-modeling/` | `5beb35b` |
+| `grilling` | `skills/productivity/grilling/` | `5beb35b` |
+| `grill-me` | `skills/productivity/grill-me/` | `5beb35b` |
+| `grill-with-docs` | `skills/engineering/grill-with-docs/` folded with `skills/engineering/domain-modeling/` | `5beb35b` |
 | `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `5beb35b` |
 | `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
 | `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |

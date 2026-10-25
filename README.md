@@ -104,6 +104,7 @@ Model-invoked:
 User-invoked:
 
 - [improve-codebase-architecture](skills/engineering/improve-codebase-architecture/SKILL.md): scan the codebase for shallow modules, present the deepening opportunities as a visual HTML report, then grill through the one you pick.
+- [grill-me](skills/engineering/grill-me/SKILL.md): grill a plan or design in rounds until every decision is settled, without writing any docs.
 - [retro](skills/engineering/retro/SKILL.md): run a retrospective on a coding session and suggest changes to the agent's environment (navigation pointers, automated checks, review standards, tool economy), most severe first.
 
 Model-invoked:
@@ -112,7 +113,8 @@ Model-invoked:
 - [codebase-design](skills/engineering/codebase-design/SKILL.md): the shared vocabulary for deep modules (module, interface, depth, seam, adapter, leverage, locality), with the deletion test and the design-it-twice pattern.
 - [writing-for-agents](skills/engineering/writing-for-agents/SKILL.md): how to write skills, `AGENTS.md`/`CLAUDE.md` and any other document an agent reads.
 - [diagnosing-bugs](skills/engineering/diagnosing-bugs/SKILL.md): reproduce a hard bug or performance regression with a tight loop that goes red, then minimise, hypothesise, instrument, fix and clean up.
-- [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md): grill a plan or design in rounds until every decision is settled, recording glossary terms and ADRs as they land.
+- [grilling](skills/engineering/grilling/SKILL.md): the grilling interview itself: rounds of numbered questions with recommended answers, worked down a design tree until every decision is settled; grill-me and grill-with-docs run it.
+- [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md): grill a plan or design against the project's domain docs, recording glossary terms and ADRs as decisions land.
 - [commit](skills/engineering/commit/SKILL.md): turn the worktree, or a scope another skill hands over, into atomic commits that follow the repository's conventions.
 - [create-pr](skills/engineering/create-pr/SKILL.md): open one pull request on any forge from the repository's template, with every field verified after publishing; work-ticket publishes through it.
 - [simplify-branch](skills/engineering/simplify-branch/SKILL.md): run a taste pass over a branch's change, applying and committing only the cleanups that keep behavior; work-ticket runs it when the taste pass is on.
@@ -148,7 +150,9 @@ Several skills are adapted from [mattpocock/skills](https://github.com/mattpococ
 |---|---|---|
 | `tdd` | `skills/engineering/tdd/` | `5beb35b` |
 | `writing-for-agents` | `skills/productivity/writing-for-agents/` | `5beb35b` |
-| `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/productivity/grilling/`, `skills/engineering/domain-modeling/` | `5beb35b` |
+| `grilling` | `skills/productivity/grilling/` | `5beb35b` |
+| `grill-me` | `skills/productivity/grill-me/` | `5beb35b` |
+| `grill-with-docs` | `skills/engineering/grill-with-docs/`, `skills/engineering/domain-modeling/` | `5beb35b` |
 | `diagnosing-bugs` | `skills/engineering/diagnosing-bugs/` | `5beb35b` |
 | `codebase-design` | `skills/engineering/codebase-design/` | `5beb35b` |
 | `improve-codebase-architecture` | `skills/engineering/improve-codebase-architecture/` | `5beb35b` |
