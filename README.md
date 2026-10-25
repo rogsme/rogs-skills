@@ -64,11 +64,11 @@ finish-ticket       merge, verify, complete the tickets     Status: DONE
 
 ### Browser plan review
 
-Enable `Plan presentation` through `/setup-rogs` after preparing the renderer that `present-plan` describes. It needs Node.js 22+ and npm/npx. Lavish runs through pinned `npx` execution, with no local or global installation; npm may download it to its cache on first use. Only Marked and Mermaid need the separate renderer directory outside the checkout. No upstream Lavish skill, MCP server or global hook is required. Setup checks these prerequisites without local installation or agent-setting changes.
+Enable `Plan presentation` through `/setup-rogs`. The viewer is plain JavaScript on Node.js 22+, with nothing to install: it loads Marked, Mermaid and its fonts from jsDelivr at pinned versions with integrity hashes, and caches Marked after the first fetch.
 
-`start-ticket` presents the full canonical plan, diagrams and adversarial findings in Lavish. The agent saves feedback with its polled source revision and checks delayed comments against earlier snapshots. Substantial human-requested revisions receive another single adversarial round when plan review is on. Plan approval stays in the agent conversation, and implementation still starts through `work-ticket`. Closing a browser or seeing a delivery receipt never authorizes work.
+`start-ticket` presents the full canonical plan, diagrams and adversarial findings in the viewer, one shared server for every open plan. Comments are off until you press Comment (or `c`); then you select text, or click a word, a diagram box or a whole diagram, and send your drafts as one batch. The agent answers each comment, and the open page reloads to the new revision with the answers. Substantial human-requested revisions receive another single adversarial round when plan review is on. Approve, on the current revision with every batch answered, approves the plan and starts `work-ticket`; you can still approve in the conversation instead. Closing the tab never authorizes work. With `Listen: all`, the default, the links work from your other machines too, over Tailscale or the local network; each review's link carries its own token.
 
-Presentation is independent of plan review and optional under configuration v1. A missing feature row means off. An unattended run, whose request says so, skips it: a runner approves the plan, so `start-ticket` asks every open question through the agent's question tool and returns the full report in the terminal. Missing dependencies or browser failures return the full report in the terminal with an explanation, including any review-failure warning. Artifacts stay outside worktrees, telemetry is disabled, assets load locally, and the wrapper rejects non-loopback or other-owner services. To revert, turn presentation off; preserve other sessions and saved artifacts.
+Presentation is independent of plan review and optional under configuration v1. A missing feature row means off. An unattended run, whose request says so, skips it: a runner approves the plan, so `start-ticket` asks every open question through the agent's question tool and returns the full report in the terminal. A failed fetch or browser failure returns the full report in the terminal with an explanation, including any review-failure warning. Artifacts stay outside worktrees, and the viewer never stops another service or a viewer with open reviews. To revert, turn presentation off; preserve other sessions and saved artifacts.
 
 ## Requirements
 
@@ -76,7 +76,7 @@ Presentation is independent of plan review and optional under configuration v1. 
 - The tracker's MCP server or CLI, connected in your agent. `/setup-rogs` checks the connection but never edits your agent's configuration.
 - The forge's CLI, signed in: `gh` 2.99 or newer, `tea`, or `glab`.
 - For plan review, the reviewer's agent CLI, signed in: `claude`, or `opencode` with the read-only agent that `/setup-rogs` describes.
-- For plan presentation, the `present-plan` skill, Node.js 22+, npm/npx, its Marked/Mermaid renderer dependencies, and a local browser. Its setup reference holds the pinned npx command and renderer preparation procedure.
+- For plan presentation, the `present-plan` skill, Node.js 22+, network access to `cdn.jsdelivr.net`, and a browser.
 
 ## Skills
 
@@ -119,7 +119,7 @@ Model-invoked:
 - [create-pr](skills/engineering/create-pr/SKILL.md): open one pull request on any forge from the repository's template, with every field verified after publishing; work-ticket publishes through it.
 - [simplify-branch](skills/engineering/simplify-branch/SKILL.md): run a taste pass over a branch's change, applying and committing only the cleanups that keep behavior; work-ticket runs it when the taste pass is on.
 - [review-plan](skills/engineering/review-plan/SKILL.md): have a model from another vendor review a finished plan before you see it, then settle every finding against the code; start-ticket calls it when plan review is on.
-- [present-plan](skills/engineering/present-plan/SKILL.md): present the canonical plan and its review findings in a local Lavish browser session, with saved source revisions and approval kept in the conversation.
+- [present-plan](skills/engineering/present-plan/SKILL.md): present the canonical plan and its review findings in a local browser viewer, where you comment on text, words and diagrams and approve the plan.
 - [git-archaeology](skills/engineering/git-archaeology/SKILL.md): report what a repository's history says about churn, ownership concentration, fix hotspots and momentum, as indicators to investigate.
 - [wiki](skills/engineering/wiki/SKILL.md): generate and maintain a codebase wiki in `docs/wiki/`, kept accurate by incremental, audit and full runs.
 

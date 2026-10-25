@@ -20,6 +20,6 @@ Skills for everyday code work. Each one runs on its own, and the lifecycle skill
 - [create-pr](./create-pr/SKILL.md): open one pull request on any forge from the repository's template, with every field verified after publishing; work-ticket publishes through it.
 - [simplify-branch](./simplify-branch/SKILL.md): run a taste pass over a branch's change, applying and committing only the cleanups that keep behavior; work-ticket runs it when the taste pass is on.
 - [review-plan](./review-plan/SKILL.md): have a model from another vendor review a finished plan before you see it, then settle every finding against the code; start-ticket calls it when plan review is on.
-- [present-plan](./present-plan/SKILL.md): show the settled plan and its review findings in a local Lavish browser session, with saved source revisions and approval kept in the conversation.
+- [present-plan](./present-plan/SKILL.md): show the settled plan and its review findings in a local browser viewer, where the user comments on text, words and diagrams and approves the plan.
 - [git-archaeology](./git-archaeology/SKILL.md): report what a repository's history says about churn, ownership concentration, fix hotspots and momentum, as indicators to investigate.
 - [wiki](./wiki/SKILL.md): generate and maintain a codebase wiki in `docs/wiki/`, kept accurate by incremental, audit and full runs.
