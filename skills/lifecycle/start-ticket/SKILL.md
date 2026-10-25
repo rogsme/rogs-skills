@@ -113,6 +113,8 @@ Open the report with `## Overview`, written for a person who has not read the co
 
 Keep diagrams local-only: no URLs, images, icons or `%%{` directives, or the presenter shows them as source text. Every claim in the overview restates a detail below it.
 
+Call the Skill tool with "asd-ste100" to write the overview's prose and its diagram box labels in Simplified Technical English, in every run. The rest of the report keeps its code references in plain technical prose.
+
 After the overview, report:
 
 - The title, current state, dependencies and acceptance criteria of the lead and of every rider, naming the bundle first.

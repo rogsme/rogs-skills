@@ -105,6 +105,7 @@ test("every skill a runner starts follows workflow.md's autonomous runs section"
 test("lifecycle keeps review before presentation and approves only the current revision", async () => {
   const work = await readFile(path.join(root, "lifecycle/work-ticket/SKILL.md"), "utf8");
   assert.ok(start.indexOf('Skill tool with "review-plan"') < start.indexOf('Skill tool with "present-plan"'));
+  assert.ok(start.indexOf('Skill tool with "asd-ste100"') < start.indexOf("## 5. Review the plan"));
   assert.match(start, /one round per human-requested candidate/);
   assert.match(start, /Not presented: <reason>/);
   assert.match(start, /Status: AWAITING_APPROVAL/);
