@@ -113,6 +113,8 @@ Open the report with `## Overview`, written for a person who has not read the co
 
 Keep diagrams local-only: no URLs, images, icons or `%%{` directives, or the presenter shows them as source text. Every claim in the overview restates a detail below it.
 
+Draw a before-and-after diagram today first. Mermaid draws unlinked subgraphs in reverse order, so link them with an invisible link: a `flowchart TB` holding a `Today` subgraph, then an `After` subgraph, each with `direction LR`, and the line `Today ~~~ After` after both.
+
 Call the Skill tool with "asd-ste100" to write the overview's prose and its diagram box labels in Simplified Technical English, in every run. The rest of the report keeps its code references in plain technical prose.
 
 After the overview, report:
