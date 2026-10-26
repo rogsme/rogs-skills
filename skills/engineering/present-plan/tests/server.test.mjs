@@ -68,7 +68,7 @@ test("a review link needs its own token, then works from a cookie", async (t) =>
 test("serves only its own assets and known routes", async (t) => {
   const { origin, review } = await viewer(t);
   const a = await review();
-  assert.equal((await fetch(`${origin}/assets/viewer.js`)).status, 200);
+  for (const asset of ["viewer.js", "attention.js"]) assert.equal((await fetch(`${origin}/assets/${asset}`)).status, 200, asset);
   for (const route of ["/assets/server.mjs", "/assets/../scripts/common.mjs", "/assets/%2e%2e/scripts/common.mjs", "/r/0123/", `/r/${"0".repeat(32)}/`, "/"]) {
     assert.equal((await fetch(origin + route)).status, 404, route);
   }

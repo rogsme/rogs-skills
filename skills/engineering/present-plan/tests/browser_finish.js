@@ -4,6 +4,13 @@ async (page) => {
   await page.waitForFunction((revision) => document.documentElement.dataset.planRevision === String(revision), config.revision, { timeout: 30_000 });
   await page.getByRole("heading", { name: "Revision check", exact: true, includeHidden: true }).waitFor({ state: "attached" });
   if (await page.evaluate(() => document.documentElement.dataset.theme) !== "dark") throw new Error("The reloaded page lost the dark theme.");
+  // This browser saw revision 1 and the tab has no focus, so revision 2 marks the title until it gets focus.
+  const seen = () => page.evaluate(() => ({ title: document.title, seen: localStorage.getItem(`present-plan:${location.pathname}:seen`) }));
+  const arrived = await seen();
+  if (arrived.title !== "(new) ACM-123 | Plan review" || arrived.seen !== String(config.revision - 1)) throw new Error(`Revision ${config.revision} did not mark the title: ${JSON.stringify(arrived)}`);
+  await page.evaluate(() => dispatchEvent(new Event("focus")));
+  const acknowledged = await seen();
+  if (acknowledged.title.startsWith("(new) ") || acknowledged.seen !== String(config.revision)) throw new Error(`Focus did not acknowledge the revision: ${JSON.stringify(acknowledged)}`);
   await page.keyboard.press("c");
   await page.locator(".pp-answer").filter({ hasText: "Changed" }).first().waitFor();
   await page.locator(".pp-answer").filter({ hasText: "Kept" }).first().waitFor();
@@ -25,5 +32,5 @@ async (page) => {
   if (!(await page.locator("#pp-comment").isDisabled())) throw new Error("Comments stayed open after approval.");
   const external = page.__presentPlanExternal || [];
   if (external.length) throw new Error(`External requests: ${external.join(", ")}`);
-  return { passed: true, revision: config.revision, approved: true };
+  return { passed: true, revision: config.revision, approved: true, attention: { arrived, acknowledged } };
 }

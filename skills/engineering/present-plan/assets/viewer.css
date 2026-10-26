@@ -53,7 +53,7 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 button:disabled { opacity: .45; cursor: not-allowed; }
 .count { margin-left: .45rem; padding: 0 .4rem; border-radius: 999px; background: var(--green); color: #000; font-size: .75rem; font-weight: 700; }
 .hint { color: var(--muted); font-size: .78rem; max-width: 26rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#pp-theme { min-width: 2.4rem; }
+#pp-theme, #pp-notify { min-width: 2.4rem; }
 
 #pp-banner { padding: .7rem 1rem; text-align: center; font-size: .9rem; background: var(--th); border-bottom: 1px solid var(--line); }
 #pp-banner.approved { background: var(--ok-bg); color: var(--ok); font-weight: 700; }

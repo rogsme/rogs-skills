@@ -10,6 +10,7 @@
   const $ = (selector) => document.querySelector(selector);
   const commentButton = $("#pp-comment");
   const themeButton = $("#pp-theme");
+  const notifyButton = $("#pp-notify");
   const approveButton = $("#pp-approve");
   const hint = $("#pp-hint");
   const banner = $("#pp-banner");
@@ -445,6 +446,45 @@
     } catch { offline = true; }
     if (locked() && commentMode) setCommentMode(false);
     render();
+  }
+
+  // Attention: a page that reloads onto a revision while nobody looks marks its tab title,
+  // and shows a notification when the tab is hidden and the browser allows them.
+  const seenKey = `present-plan:${base}:seen`;
+  const title = document.title;
+  function readSeen() {
+    try { const value = localStorage.getItem(seenKey); return value === null ? null : Number(value); } catch { return null; }
+  }
+  function storeSeen(value) {
+    try { localStorage.setItem(seenKey, String(value)); } catch { /* the next load then counts as a first load */ }
+  }
+  function acknowledge() {
+    if (document.visibilityState !== "visible") return;
+    document.title = title;
+    if (!(readSeen() >= revision)) storeSeen(revision);
+  }
+  const canAsk = () => live && "Notification" in globalThis && isSecureContext && Notification.permission === "default";
+  notifyButton.textContent = "\u{1F514}";
+  notifyButton.hidden = !canAsk();
+  notifyButton.addEventListener("click", async () => {
+    try { await Notification.requestPermission(); } catch { /* the title mark still works */ }
+    notifyButton.hidden = !canAsk();
+  });
+  if (live && globalThis.PlanAttention) {
+    const decision = PlanAttention.decide({
+      seen: readSeen(), revision, focused: document.hasFocus(), visibility: document.visibilityState,
+      permission: "Notification" in globalThis ? Notification.permission : "unsupported",
+    });
+    if (decision.store !== null) storeSeen(decision.store);
+    if (decision.mark) document.title = `(new) ${title}`;
+    if (decision.notify) {
+      try {
+        const notice = new Notification(`Revision ${revision} is ready`, { body: article.querySelector("h1")?.textContent.trim() || title, tag: seenKey });
+        notice.addEventListener("click", () => { focus(); notice.close(); });
+      } catch { /* the title mark still shows */ }
+    }
+    addEventListener("focus", acknowledge);
+    document.addEventListener("visibilitychange", acknowledge);
   }
 
   render();

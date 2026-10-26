@@ -163,7 +163,7 @@ test("loads Mermaid from the CDN at its pinned version and hash", async (t) => {
   assert.doesNotMatch(html, /class="mermaid"/);
   assert.match(html, /api\[API\] --&gt; store/);
   assert.ok(html.includes(`<script defer src="${CDN}${PINS.mermaid.file}" integrity="${PINS.mermaid.integrity}" crossorigin="anonymous"></script>`));
-  assert.match(html, /<script defer src="\/assets\/diagrams\.js"><\/script>\n  <script defer src="\/assets\/viewer\.js"><\/script>/);
+  assert.match(html, /<script defer src="\/assets\/diagrams\.js"><\/script>\n  <script defer src="\/assets\/attention\.js"><\/script>\n  <script defer src="\/assets\/viewer\.js"><\/script>/);
   assert.deepEqual((await readdir(result.session)).filter((name) => name === "assets"), []);
   assert.match(await readFile(new URL("../assets/diagrams.js", import.meta.url), "utf8"), /securityLevel: "strict"/);
 });

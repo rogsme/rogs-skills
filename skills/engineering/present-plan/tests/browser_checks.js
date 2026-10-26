@@ -25,6 +25,10 @@ async (page) => {
   const node = overview.locator(".diagram svg g.node").filter({ hasText: "API" });
   await node.waitFor({ timeout: 30_000 });
   if (await page.locator("#pp-approve").textContent() !== "Approve") throw new Error("A ticket plan shows no Approve button.");
+  // The bell shows only where the browser can still be asked for notifications.
+  const bell = await page.evaluate(() => ({ hidden: document.querySelector("#pp-notify").hidden, permission: "Notification" in window ? Notification.permission : "unsupported", secure: isSecureContext }));
+  if (bell.hidden !== !(bell.secure && bell.permission === "default")) throw new Error(`The notification bell is wrong: ${JSON.stringify(bell)}`);
+  if (await page.title() !== "ACM-123 | Plan review") throw new Error(`The first load marked the title: ${await page.title()}`);
 
   // Theme: the toggle switches to dark, and the server keeps the choice.
   await page.locator("#pp-theme").click();
@@ -81,5 +85,7 @@ async (page) => {
   if (geometry.content > geometry.width + 1) throw new Error(`Mobile page overflows: ${JSON.stringify(geometry)}`);
   await page.setViewportSize({ width: 1440, height: 1000 });
   if (external.length) throw new Error(`External requests: ${external.join(", ")}`);
-  return { passed: true, comments: 5, theme: "dark", mobile: geometry };
+  // The reload onto revision 2 happens while this tab looks unfocused, as a background tab would.
+  await page.addInitScript(() => { Document.prototype.hasFocus = () => false; });
+  return { passed: true, comments: 5, theme: "dark", bell, mobile: geometry };
 }

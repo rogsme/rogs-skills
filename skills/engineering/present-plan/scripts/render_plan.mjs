@@ -209,6 +209,7 @@ export async function renderPlan(options) {
       SCRIPTS: [
         rendered.tabs && '<script defer src="/assets/tabs.js"></script>',
         rendered.diagrams && `<script defer src="${CDN}${PINS.mermaid.file}" ${pin(PINS.mermaid)}></script>\n  <script defer src="/assets/diagrams.js"></script>`,
+        '<script defer src="/assets/attention.js"></script>',
         '<script defer src="/assets/viewer.js"></script>',
       ].filter(Boolean).join("\n  "),
     };
