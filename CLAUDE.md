@@ -21,7 +21,7 @@ Never install skills into this checkout. `.gitignore` keeps a test install out o
 [tkt](https://git.rogs.me/rogs/tkt), the terminal tool that runs the lifecycle's mechanical steps, lives in its own repository and reads no skill files. It depends on these lines from this one:
 
 - the configuration contract's markers, `- Ticket ids:` line and `## Forge` fields;
-- the status lines in the registry below;
+- the status lines in the registry below, including `Status: PLAN_APPROVED`, which marks the work phase begun when the user approves in the plan viewer, since no runner sends that approval;
 - review-pr's `Verdict:` and `Reviewed head:` lines, and the numbered steps under `## Human verification` in its ready summary;
 - verify-pr's report: its `Verified head:` and `Verification:` lines and its step lines (`1. PASSED: ...`), which `tkt show --steps` and the tkt agent's `/check` show next to each step;
 - the skill names in its built-in stage lines (`start-ticket`, `address-pr-review`, `review-pr`, `verify-pr`), in the approval line `tkt approve` sends (`work-ticket`), in the merge line `tkt merge` sends (`finish-ticket`), and in the lines `tkt suggest` sends, for a count and for a request in the user's words (`suggest-tickets`);
@@ -90,6 +90,7 @@ The lifecycle skills hand off through these lines. A skill restates the lines it
 | `Status: AWAITING_CREATE_APPROVAL`, `Status: TICKETS_CREATED` | create-ticket | the user |
 | `Status: TICKETS_SUGGESTED`, after a `Suggested:` line with the picks | suggest-tickets | the user starts the picks with start-ticket |
 | `Status: AWAITING_APPROVAL` | start-ticket | the user approves (in an unattended or autonomous run, the runner that started it), then work-ticket |
+| `Status: PLAN_APPROVED` | start-ticket, when an approval starts the work phase in the same session | work-ticket goes on in that session; a runner marks the work phase begun |
 | `Status: READY_FOR_REVIEW` | work-ticket, address-pr-review | review-pr in a fresh session |
 | `Status: AWAITING_POST_APPROVAL`, `Status: REVIEW_POSTED`, `Status: READY_FOR_HUMAN` | review-pr | address-pr-review, or verify-pr and the human verification |
 | `Verdict: CHANGES_REQUESTED`, `Verdict: READY_FOR_HUMAN`, with `Reviewed head:` and `Reviewed base:` lines | review-pr, inside the posted summary | address-pr-review, finish-ticket |
