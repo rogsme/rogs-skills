@@ -29,6 +29,7 @@ async (page) => {
   const bell = await page.evaluate(() => ({ hidden: document.querySelector("#pp-notify").hidden, permission: "Notification" in window ? Notification.permission : "unsupported", secure: isSecureContext }));
   if (bell.hidden !== !(bell.secure && bell.permission === "default")) throw new Error(`The notification bell is wrong: ${JSON.stringify(bell)}`);
   if (await page.title() !== "ACM-123 | Plan review") throw new Error(`The first load marked the title: ${await page.title()}`);
+  if (await page.locator("#pp-changes").isVisible()) throw new Error("The first load shows changes with nothing to compare.");
 
   // Theme: the toggle switches to dark, and the server keeps the choice.
   await page.locator("#pp-theme").click();

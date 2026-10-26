@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import { APP, SCHEMA, SESSION_ID, atomicWrite, inside, invokedDirectly, makePrivateDirectory, readJSON, registryDirectory, revisionFile, safePath, viewerDirectory, viewerVersion } from "./common.mjs";
 
 const assets = fileURLToPath(new URL("../assets/", import.meta.url));
-const ASSETS = { "viewer.js": "text/javascript", "viewer.css": "text/css", "tabs.js": "text/javascript", "diagrams.js": "text/javascript", "attention.js": "text/javascript" };
+const ASSETS = { "viewer.js": "text/javascript", "viewer.css": "text/css", "tabs.js": "text/javascript", "diagrams.js": "text/javascript", "attention.js": "text/javascript", "changes.js": "text/javascript" };
 const POLICY = "default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
 const TARGETS = new Set(["text", "word", "box", "diagram", "general"]);
 

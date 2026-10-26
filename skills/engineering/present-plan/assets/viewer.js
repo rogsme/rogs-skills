@@ -11,6 +11,7 @@
   const commentButton = $("#pp-comment");
   const themeButton = $("#pp-theme");
   const notifyButton = $("#pp-notify");
+  const changesButton = $("#pp-changes");
   const approveButton = $("#pp-approve");
   const hint = $("#pp-hint");
   const banner = $("#pp-banner");
@@ -91,7 +92,8 @@
     return stack.map((item) => item.text);
   }
 
-  const blockOf = (node) => (node.nodeType === 1 ? node : node.parentElement).closest("p, li, td, th, pre, blockquote, h1, h2, h3, h4, h5, h6, figcaption, summary") || article;
+  const BLOCKS = "p, li, td, th, pre, blockquote, h1, h2, h3, h4, h5, h6, figcaption, summary";
+  const blockOf = (node) => (node.nodeType === 1 ? node : node.parentElement).closest(BLOCKS) || article;
 
   function textTarget(range, kindOfTarget) {
     const block = blockOf(range.startContainer);
@@ -485,6 +487,130 @@
     }
     addEventListener("focus", acknowledge);
     document.addEventListener("visibilitychange", acknowledge);
+  }
+
+  // Changes: this browser keeps the blocks of the last two revisions it showed of each review, and marks
+  // what changed since the earlier one. Changed words get a highlight and new blocks a class, so the
+  // plan's text and structure never change.
+  const revisionsKey = `present-plan:${base}:revisions`;
+  const showChangesKey = "present-plan:changes";
+
+  // Each block's own text, with whitespace collapsed, and where each of its characters sits in the DOM.
+  function pageBlocks() {
+    const found = new Map();
+    const walker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const block = blockOf(node);
+      if (block === article || block.closest(".eyebrow, .source-details, figure[data-diagram]")) continue;
+      let entry = found.get(block);
+      if (!entry) found.set(block, entry = { element: block, characters: [], positions: [] });
+      for (let offset = 0; offset < node.data.length; offset++) {
+        const space = /\s/.test(node.data[offset]);
+        if (space && (!entry.characters.length || entry.characters.at(-1) === " ")) continue;
+        entry.characters.push(space ? " " : node.data[offset]);
+        entry.positions.push([node, offset]);
+      }
+    }
+    const blocks = [];
+    for (const entry of found.values()) {
+      if (entry.characters.at(-1) === " ") { entry.characters.pop(); entry.positions.pop(); }
+      if (entry.characters.length) blocks.push({ element: entry.element, positions: entry.positions, tab: tabOf(entry.element), tag: entry.element.tagName.toLowerCase(), text: entry.characters.join("") });
+    }
+    const diagrams = [...article.querySelectorAll("figure[data-diagram]")].map((figure) => ({ element: figure, tab: tabOf(figure), digest: figure.dataset.digest || "" }));
+    return { blocks, diagrams };
+  }
+
+  // Keeps only the reviews this browser opened most recently.
+  function pruneRevisions(keep = 20) {
+    const records = [];
+    for (let index = 0; index < localStorage.length; index++) {
+      const key = localStorage.key(index);
+      if (!/^present-plan:.*:revisions$/.test(key)) continue;
+      let at = 0;
+      try { at = JSON.parse(localStorage.getItem(key)).at || 0; } catch { /* a broken record goes first */ }
+      records.push({ key, at });
+    }
+    records.sort((a, b) => b.at - a.at);
+    for (const { key } of records.slice(keep)) localStorage.removeItem(key);
+  }
+
+  // Stores this revision and returns the one to compare it with: the previous revision when this one is
+  // already stored, so a reload keeps the marks, or the stored one when this revision is newer.
+  function rememberRevision(page) {
+    const record = () => ({
+      revision,
+      blocks: page.blocks.map(({ tab, tag, text }) => ({ tab, tag, text })),
+      diagrams: page.diagrams.map(({ tab, digest }) => ({ tab, digest })),
+    });
+    let stored = null;
+    try { stored = JSON.parse(localStorage.getItem(revisionsKey) || "null"); } catch { /* a broken record starts over */ }
+    let baseline = null;
+    let next = null;
+    if (stored?.current?.revision === revision) { baseline = stored.previous || null; next = { ...stored, at: Date.now() }; }
+    else if (stored?.current?.revision < revision) { baseline = stored.current; next = { current: record(), previous: stored.current, at: Date.now() }; }
+    else if (!stored?.current) next = { current: record(), previous: null, at: Date.now() };
+    // A newer revision already stored means this page is out of date: it compares with nothing.
+    if (next) {
+      try { localStorage.setItem(revisionsKey, JSON.stringify(next)); pruneRevisions(); } catch { /* the marks then last only for this load */ }
+    }
+    return baseline;
+  }
+
+  function changesSince(page, baseline) {
+    if (!baseline || !globalThis.PlanChanges) return null;
+    const oldBlocks = Array.isArray(baseline.blocks) ? baseline.blocks : [];
+    const ranges = [];
+    const elements = [];
+    let count = 0;
+    for (const [index, item] of PlanChanges.align(oldBlocks, page.blocks).entries()) {
+      if (item.status === "same") continue;
+      count++;
+      const block = page.blocks[index];
+      const spans = item.status === "changed" ? PlanChanges.wordDiff(oldBlocks[item.from].text, block.text) : [];
+      // A change that only removed words leaves nothing to highlight, so the block shows it.
+      if (!spans.length) { elements.push(block.element); continue; }
+      for (const [start, end] of spans) {
+        const range = document.createRange();
+        range.setStart(...block.positions[start]);
+        const [node, offset] = block.positions[end - 1];
+        range.setEnd(node, offset + 1);
+        ranges.push(range);
+      }
+    }
+    const digests = new Set((Array.isArray(baseline.diagrams) ? baseline.diagrams : []).map((diagram) => `${diagram.tab}:${diagram.digest}`));
+    for (const diagram of page.diagrams) {
+      if (digests.has(`${diagram.tab}:${diagram.digest}`)) continue;
+      count++;
+      elements.push(diagram.element);
+    }
+    return { ranges, elements, count, since: baseline.revision };
+  }
+
+  function paintChanges(changes, show) {
+    for (const item of changes.elements) item.classList.toggle("pp-changed-block", show);
+    if (globalThis.CSS?.highlights) {
+      if (show) CSS.highlights.set("pp-changed", new Highlight(...changes.ranges));
+      else CSS.highlights.delete("pp-changed");
+    }
+    changesButton.setAttribute("aria-pressed", String(show));
+  }
+
+  if (live) {
+    const page = pageBlocks();
+    const changes = changesSince(page, rememberRevision(page));
+    if (changes?.count) {
+      let show = true;
+      try { show = localStorage.getItem(showChangesKey) !== "hidden"; } catch { /* marks show by default */ }
+      changesButton.textContent = `Changes (${changes.count})`;
+      changesButton.title = `Mark what changed since revision ${changes.since}`;
+      changesButton.hidden = false;
+      changesButton.addEventListener("click", () => {
+        const next = changesButton.getAttribute("aria-pressed") !== "true";
+        try { localStorage.setItem(showChangesKey, next ? "shown" : "hidden"); } catch { /* the choice then lasts only for this load */ }
+        paintChanges(changes, next);
+      });
+      paintChanges(changes, show);
+    }
   }
 
   render();
