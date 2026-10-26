@@ -51,6 +51,26 @@ node "<skill-dir>/scripts/viewer.mjs" end --session "<session>"
 
 `poll` waits, without a time limit, for the next event the page sent, prints it, then moves it from `events/` to `delivered/`. An interruption between the two delivers the same event again; it never loses one. Use the agent's foreground or background-completion mechanism.
 
+A `feedback` event holds the batch's comments. Each target's `kind` is `word`, `text` (a selected range), `box`, `diagram` or `general`. A general comment is on the plan as a whole: the human types it in the comment panel with nothing selected, so its target carries no quote, diagram or label, and it has no tab or headings. A batch may hold only general comments.
+
+```json
+{
+  "seq": 1,
+  "type": "feedback",
+  "revision": 1,
+  "comments": [
+    {
+      "id": "c1", "text": "Name the format.", "tab": "overview", "headings": ["ACM-123: Pagination", "Overview"], "revision": 1,
+      "target": { "kind": "word", "quote": "format", "prefix": "Preserve the current response ", "suffix": ".", "diagram": null, "label": "" }
+    },
+    {
+      "id": "c2", "text": "Say how this ships.", "tab": null, "headings": [], "revision": 1,
+      "target": { "kind": "general", "quote": "", "prefix": "", "suffix": "", "diagram": null, "label": "" }
+    }
+  ]
+}
+```
+
 The reply file is JSON:
 
 ```json

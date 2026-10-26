@@ -129,7 +129,7 @@ figure.pp-target { outline: 3px solid var(--green); outline-offset: 2px; }
 g.pp-target > :is(rect, polygon, circle, ellipse, path) { stroke: var(--green) !important; stroke-width: 3px !important; }
 
 .pp-composer { position: absolute; z-index: 30; width: min(360px, calc(100vw - 32px)); padding: .8rem; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
-.pp-composer textarea, .pp-card textarea { width: 100%; min-height: 5.5rem; padding: .5rem; font: 15px/1.5 var(--sans); color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; resize: vertical; }
+.pp-composer textarea, .pp-card textarea, .pp-general textarea { width: 100%; min-height: 5.5rem; padding: .5rem; font: 15px/1.5 var(--sans); color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; resize: vertical; }
 .pp-row { display: flex; justify-content: flex-end; gap: .5rem; margin-top: .5rem; }
 .pp-target-label { color: var(--muted); font-size: .76rem; margin-bottom: .45rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
@@ -142,6 +142,11 @@ body.panel-open .layout { margin-right: 380px; }
 .pp-panel-body h3 { font-size: .85rem; margin: 1rem 0 .5rem; color: var(--muted); }
 .pp-panel-body h3::before { content: "// "; content: "// " / ""; color: var(--green); }
 .pp-empty { color: var(--muted); font-size: .85rem; }
+.pp-general { padding-bottom: .8rem; border-bottom: 1px dotted var(--line); }
+.pp-general label { display: block; margin-bottom: .4rem; color: var(--muted); font-size: .85rem; font-weight: 700; }
+.pp-general label::before { content: "// "; content: "// " / ""; color: var(--green); }
+.pp-general textarea { min-height: 4rem; }
+.pp-general textarea:disabled { opacity: .45; }
 .pp-panel-foot { padding: .8rem 1rem; border-top: 1px solid var(--line); }
 .pp-panel-foot button { width: 100%; }
 .pp-card { padding: .6rem .7rem; margin-bottom: .6rem; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }

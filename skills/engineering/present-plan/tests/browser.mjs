@@ -92,10 +92,13 @@ try {
   assert.equal(feedback.event.type, "feedback");
   assert.equal(feedback.approval, false);
   const comments = feedback.event.comments;
-  assert.deepEqual(comments.map((comment) => comment.target.kind), ["word", "box", "diagram", "text"]);
+  assert.deepEqual(comments.map((comment) => comment.target.kind), ["word", "box", "diagram", "text", "general"]);
   assert.equal(comments[1].target.label, "API");
   assert.equal(comments[3].target.quote.includes("Empty page test"), true);
-  assert.ok(comments.every((comment) => comment.revision === 1 && comment.tab === "overview"));
+  assert.ok(comments.slice(0, 4).every((comment) => comment.revision === 1 && comment.tab === "overview"));
+  assert.equal(comments[4].text, "Say how this ships.");
+  assert.equal(comments[4].tab, null);
+  assert.deepEqual(comments[4].headings, []);
   assert.deepEqual(comments[3].headings, ["ACM-123: Pagination", "Plan review"]);
 
   const reply = path.join(plan.session, "reply.json");

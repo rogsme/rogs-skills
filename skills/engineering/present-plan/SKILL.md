@@ -41,7 +41,7 @@ Run `poll` through an agent-supported wait or completion-notification path. Befo
 
 Each poll result carries one event:
 
-- `feedback`: a comment batch. Each comment has its text, its target (a text range or word with surrounding text, a diagram box with the diagram number and box label, or a whole diagram), its tab and heading path, and the revision it was made on. `staleComments` counts comments on an older revision than the current one; reconcile those against the source snapshots, and ask when the target stays ambiguous.
+- `feedback`: a comment batch. Each comment has its text, its target (a text range or word with surrounding text, a diagram box with the diagram number and box label, a whole diagram, or the plan as a whole), its tab and heading path, and the revision it was made on. A comment on the plan as a whole has the target kind `general` and no tab or headings. `staleComments` counts comments on an older revision than the current one; reconcile those against the source snapshots, and ask when the target stays ambiguous.
 - `approval`: the human clicked Approve. `"approval": true` means its revision and digest match the current canonical source.
 - `done`: the human finished a standalone document.
 - `ended`: the review was ended.

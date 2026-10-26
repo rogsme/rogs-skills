@@ -142,6 +142,7 @@
   }
 
   function describe(target) {
+    if (target.kind === "general") return "General comment";
     if (target.kind === "box") return `Diagram ${target.diagram}, box "${target.label}"`;
     if (target.kind === "diagram") return `Diagram ${target.diagram}`;
     if (target.kind === "word") return `Word "${target.quote}"`;
@@ -272,13 +273,32 @@
   }, true);
 
   // Panel
+  // A general comment is on the plan as a whole, so it has no target to highlight.
+  const generalField = element("textarea", { id: "pp-general-text", "aria-label": "General comment", placeholder: "A comment on the whole plan" });
+  const addGeneral = () => {
+    const text = generalField.value.trim();
+    if (!text) return generalField.focus();
+    drafts.push({
+      id: `c${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, text, tab: null, headings: [], revision, sourceDigest,
+      target: { kind: "general", quote: "", prefix: "", suffix: "", diagram: null, label: "" },
+    });
+    generalField.value = "";
+    saveDrafts();
+    render();
+  };
+  generalField.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) { event.preventDefault(); addGeneral(); }
+  });
+  const generalButton = element("button", { type: "button", id: "pp-general-add", class: "pp-button", text: "Add", onclick: addGeneral });
+  const general = element("div", { class: "pp-general" },
+    element("label", { for: "pp-general-text", text: "General comment" }), generalField, element("div", { class: "pp-row" }, generalButton));
   const draftList = element("div", { id: "pp-drafts" });
   const sentList = element("div", { id: "pp-sent" });
   const sendButton = element("button", { type: "button", id: "pp-send", class: "pp-button primary", text: "Send comments", disabled: "" });
   const panel = element("aside", { id: "pp-panel", "aria-label": "Comments" },
     element("div", { class: "pp-panel-head" }, element("span", { text: "Comments" }),
       element("button", { type: "button", class: "pp-button", text: "Close", onclick: () => setCommentMode(false) })),
-    element("div", { class: "pp-panel-body" }, element("h3", { text: "Drafts" }), draftList, element("h3", { text: "Sent" }), sentList),
+    element("div", { class: "pp-panel-body" }, general, element("h3", { text: "Drafts" }), draftList, element("h3", { text: "Sent" }), sentList),
     element("div", { class: "pp-panel-foot" }, sendButton));
   document.body.append(panel);
 
@@ -405,8 +425,9 @@
     count.hidden = !drafts.length;
     hint.textContent = commentMode ? "Select text, or click a word, box or diagram." : reason && !closed() ? reason : "";
     sendButton.disabled = !drafts.length || locked();
+    generalField.disabled = generalButton.disabled = locked();
     sendButton.textContent = drafts.length ? `Send ${drafts.length} comment${drafts.length === 1 ? "" : "s"}` : "Send comments";
-    draftList.replaceChildren(...(drafts.length ? drafts.map(draftCard) : [element("p", { class: "pp-empty", text: "Turn on comment mode, then select text or click a word, a box or a diagram." })]));
+    draftList.replaceChildren(...(drafts.length ? drafts.map(draftCard) : [element("p", { class: "pp-empty", text: "Select text or click a word, a box or a diagram, or write a general comment above." })]));
     sentList.replaceChildren(...sentCards());
     if (!live) showBanner("offline", "Open this page through the link the agent printed to comment or approve.");
     else if (offline) showBanner("offline", "The viewer is not reachable. Your drafts stay in this tab.");
