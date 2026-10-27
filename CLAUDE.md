@@ -34,6 +34,7 @@ Never install skills into this checkout. `.gitignore` keeps a test install out o
 - review-pr's rule that a clean merge of the base keeps the review brief current: `tkt sync` makes such merges and pushes them itself, with no agent, and leaves the brief as it was;
 - finish-ticket's rule that a human verification confirmation carries over clean merges of the base: `tkt merge` names the head the steps passed on, and keeps a merge order across `tkt sync`;
 - finish-ticket's `Unblocked:` line, from which `tkt done` offers to start the tickets the merge unblocked.
+- the `## Review accepted` conversation comment, with its `Accepted head:`, `Accepted review:` and `Reason:` lines, which `tkt accept` posts at the user's word: finish-ticket and verify-pr take it in place of a clean review for that head, and for a head that only clean merges of the base follow, with the procedure from the pull request body; address-pr-review and review-pr leave its findings alone.
 
 Before changing any of them, check tkt's `internal/contract` package, which pins each one with a fixture, and update it in step. Skills never call tkt.
 
