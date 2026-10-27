@@ -80,6 +80,7 @@ Skills say "the tracker" and "the forge" and take every concrete operation from 
 - Material that two or more lifecycle skills need lives in the project configuration, seeded from `setup-rogs/assets/`. Material that only one skill needs lives in that skill's `references/`.
 - The ADR rules exist twice on purpose: `setup-rogs/assets/domain.md` for configured projects and `engineering/grill-with-docs/ADR-FORMAT.md` for any repository. Change them together.
 - The definition of a clean merge of the base exists twice on purpose, word for word, in review-pr and finish-ticket: it is git's, the same in every project, so no project configuration holds it. present-plan's `tests/lifecycle.test.mjs` checks that the copies match; change them together.
+- chat-paste carries a trimmed copy of present-plan's plan viewer on purpose, since a skill never links into another's folder. Its `assets/attention.js` and `assets/changes.js` match present-plan's word for word, and chat-paste's `tests/viewer-copies.test.mjs` checks them; change them together, and carry a fix to the shared server or page code into both.
 
 ## Status lines
 
