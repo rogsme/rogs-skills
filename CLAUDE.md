@@ -67,6 +67,8 @@ A step that runs another skill says so as an instruction to call the Skill tool,
 
 A skill never links into another skill's folder. Material that two skills need lives in a model-invoked skill they both call, or in the project configuration that `setup-rogs` writes.
 
+Claude Code replaces `$0`, `$1` and so on in a `SKILL.md` with the words of the skill's arguments before the agent reads it, and it cannot tell them from shell variables. OpenCode does the same in commands. Shell inside a `SKILL.md` writes positional parameters braced, as `${1}`, which both harnesses leave alone. Scripts in `scripts/` and files in `references/` are not substituted, so they can use either form.
+
 ## Agnosticism
 
 Skills say "the tracker" and "the forge" and take every concrete operation from the project's configuration. Only the built-in guides (`skills/lifecycle/setup-rogs/assets/tracker-*.md` and `assets/forge-*.md`) name a tracker, a forge, their CLIs or their MCP tools. `setup-rogs/SKILL.md` and `setup-rogs/references/explore.md` may name the built-in guides when offering them, and a `## Sources` section may cite a vendor's documentation. The plan reviewer guides (`assets/reviewer-*.md`) are the only place that gives an agent CLI's flags; `review-plan` runs whatever command the project's `## Plan review` section holds.
@@ -145,7 +147,7 @@ To sync a fork, download the upstream files at the pinned commit and at the new 
 
 Run these from the repository root before pushing.
 
-Frontmatter, size, links and marketplace groups:
+Frontmatter, size, bare positional parameters, links and marketplace groups:
 
 ```bash
 uv run --quiet --with pyyaml python3 - <<'PY'
@@ -183,6 +185,7 @@ for md in skills:
         "invocation keys must pair up": (fm.get("disable-model-invocation") is True)
         == (meta.get("opencode/autoinvoke") == "false"),
         "SKILL.md must stay under 500 lines": text.count("\n") < 500,
+        "a bare $ before a digit becomes a skill argument, write ${1}": not re.search(r"\$\d", text),
     }
     errors += [f"{md}: {message}" for message, ok in checks.items() if not ok]
 for md in sorted(pathlib.Path("skills").rglob("*.md")):
